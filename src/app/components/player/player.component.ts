@@ -5,7 +5,7 @@ import { metronomAudio } from 'src/app/model/metronom-audio';
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  //changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayerComponent implements OnInit {
   tempo = 60;
@@ -13,7 +13,7 @@ export class PlayerComponent implements OnInit {
   currKey: string | null = null;
   prevKey: string | null = null;
   nextKey: string | null = null;
-  counter = 0;
+  counter = -1;
   snd = new Audio(metronomAudio);
 
   keys = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
@@ -40,6 +40,8 @@ export class PlayerComponent implements OnInit {
     if (this.interval) {
       clearInterval(this.interval);
     }
+
+    this.counter = -1;
   }
 
   changeTempo(newTempo: number | string) {
@@ -49,17 +51,17 @@ export class PlayerComponent implements OnInit {
       this.tempo = newTempo;
     }
 
-    this.counter = -1;
+    this.counter = 0;
 
     if (this.interval) {
       clearInterval(this.interval);
     }
 
     this.updateChord();
-    this.interval = setInterval(
-      () => this.updateChord(),
-      (60 / this.tempo) * 1000
-    );
+    this.interval = setInterval(() => {
+      this.counter++;
+      this.updateChord();
+    }, (60 / this.tempo) * 1000);
   }
 
   private updateChord(): void {
@@ -74,7 +76,6 @@ export class PlayerComponent implements OnInit {
     }
 
     this.beep();
-    this.counter++;
   }
 
   private getNextKey(): string {

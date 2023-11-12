@@ -72,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "music-flash-cards:build:production"
+              "buildTarget": "music-flash-cards:build:production"
             },
             "development": {
-              "browserTarget": "music-flash-cards:build:development"
+              "buildTarget": "music-flash-cards:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -83,7 +83,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "music-flash-cards:build"
+            "buildTarget": "music-flash-cards:build"
           }
         },
         "test": {
