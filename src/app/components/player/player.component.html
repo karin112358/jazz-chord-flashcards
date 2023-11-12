@@ -1,0 +1,23 @@
+<div id="chords">
+  <div id="prevChord" [innerHTML]="prevKey ?? '&nbsp;'"></div>
+  <div id="currentChord" [innerHTML]="currKey ?? '&nbsp;'"></div>
+  <div id="nextChord" [innerHTML]="nextKey ?? '&nbsp;'"></div>
+</div>
+
+<div id="tempoSlider">
+  <input type="range" min="20" max="200" #tempoInput [value]="tempo" (change)="changeTempo(tempoInput.value)" />
+</div>
+
+<div id="tempo">{{ tempo }}</div>
+
+<div id="beats">
+  <div class="beat" [ngClass]="{'highlight-beat': counter % 4 === 0}"></div>
+  <div class="beat" [ngClass]="{'highlight-beat': counter % 4 === 1}"></div>
+  <div class="beat" [ngClass]="{'highlight-beat': counter % 4 === 2}"></div>
+  <div class="beat" [ngClass]="{'highlight-beat': counter % 4 === 3}"></div>
+</div>
+
+<div id="buttons">
+  <div class="button" id="startButton" (click)="start()">Start</div>
+  <div class="button" id="stopButton" (click)="stop()">Stop</div>
+</div>

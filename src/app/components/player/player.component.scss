@@ -1,0 +1,76 @@
+#chords {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  width: 100%;
+  align-items: center;
+  justify-items: center;
+  grid-gap: 20px;
+}
+
+#buttons {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.button {
+  border: solid 1px #fff;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #333;
+}
+
+#prevChord,
+#nextChord,
+#currentChord {
+  display: flex;
+  align-items: center;
+  line-height: 1em;
+}
+
+#prevChord,
+#nextChord {
+  font-size: 5vw;
+  font-weight: 300;
+}
+
+#currentChord {
+  font-size: 10vw;
+  font-weight: bold;
+}
+
+#tempoSlider {
+  display: flex;
+  justify-content: center;
+}
+
+#tempoSlider input {
+  width: 50vw;
+}
+
+#tempo {
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+#beats {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.beat {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #555;
+}
+
+.highlight-beat {
+  background-color: #72bf44;
+}
