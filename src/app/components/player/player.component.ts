@@ -1,11 +1,16 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { metronomAudio } from 'src/app/model/metronom-audio';
 
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss'],
-  //changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayerComponent implements OnInit {
   tempo = 60;
@@ -13,26 +18,29 @@ export class PlayerComponent implements OnInit {
   currKey: string | null = null;
   prevKey: string | null = null;
   nextKey: string | null = null;
-  counter = -1;
+  counter = signal(-1);
   snd = new Audio(metronomAudio);
 
   keys = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 
   chordTypes = [
-    { key: 'major', name: 'Major', symbol: 'maj7', subscript: false },
-    { key: 'minor', name: 'Minor', symbol: '-7', subscript: false },
-    { key: 'dominant', name: 'Dominant', symbol: '7', subscript: false },
+    { key: '', name: '', symbol: '', subscript: false },
+    // { key: 'major', name: 'Major', symbol: 'maj7', subscript: false },
+    // { key: 'minor', name: 'Minor', symbol: '-7', subscript: false },
+    // { key: 'dominant', name: 'Dominant', symbol: '7', subscript: false },
     //{ key: 'diminished', name: 'Diminished', symbol: 'dim', subscript: true },
     // { key: 'half diminished', name: 'Half-Diminished', symbol: 'ø' },
     // { key: 'augmented', name: 'Augmented', symbol: '+' },
   ];
+
+  voicingTypes = ['A Voicing', 'B Voicing'];
 
   constructor() {}
 
   ngOnInit(): void {}
 
   start() {
-    this.counter = 0;
+    this.counter.set(0);
     this.changeTempo(this.tempo);
   }
 
@@ -41,7 +49,7 @@ export class PlayerComponent implements OnInit {
       clearInterval(this.interval);
     }
 
-    this.counter = -1;
+    this.counter.set(-1);
   }
 
   changeTempo(newTempo: number | string) {
@@ -51,7 +59,7 @@ export class PlayerComponent implements OnInit {
       this.tempo = newTempo;
     }
 
-    this.counter = 0;
+    this.counter.set(0);
 
     if (this.interval) {
       clearInterval(this.interval);
@@ -59,13 +67,13 @@ export class PlayerComponent implements OnInit {
 
     this.updateChord();
     this.interval = setInterval(() => {
-      this.counter++;
+      this.counter.update((value) => value + 1);
       this.updateChord();
     }, (60 / this.tempo) * 1000);
   }
 
   private updateChord(): void {
-    if (this.counter % 4 === 0) {
+    if (this.counter() % 4 === 0) {
       this.prevKey = this.currKey ?? '&nbsp;';
       this.currKey = this.nextKey ?? '&nbsp;';
       this.nextKey = this.getNextKey();
@@ -87,8 +95,13 @@ export class PlayerComponent implements OnInit {
     const chordType =
       this.chordTypes[Math.floor(Math.random() * this.chordTypes.length)];
 
+    const voicingType =
+      this.voicingTypes[Math.floor(Math.random() * this.voicingTypes.length)];
+
     return (
-      '<span>' +
+      '<span><span class="voicing-type">' +
+      voicingType +
+      '</span><br/>' +
       key +
       `</span><span class="type ${!!chordType.subscript ? 'subscript' : ''}">` +
       chordType.symbol +

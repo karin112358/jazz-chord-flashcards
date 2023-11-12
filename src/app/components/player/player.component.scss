@@ -1,3 +1,7 @@
+:host {
+  width: 100%;
+}
+
 #chords {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -30,6 +34,7 @@
   display: flex;
   align-items: center;
   line-height: 1em;
+  text-align: center;
 }
 
 #prevChord,
@@ -39,7 +44,7 @@
 }
 
 #currentChord {
-  font-size: 10vw;
+  font-size: 5vw;
   font-weight: bold;
 }
 
