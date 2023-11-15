@@ -39,16 +39,17 @@
 
 #prevChord,
 #nextChord {
-  font-size: 5vw;
+  font-size: 2.5vw;
   font-weight: 300;
 }
 
 #currentChord {
-  font-size: 5vw;
+  font-size: 2.5vw;
   font-weight: bold;
 }
 
 #tempoSlider {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
 }

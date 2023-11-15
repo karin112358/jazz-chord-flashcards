@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  HostListener,
   OnInit,
   signal,
 } from '@angular/core';
@@ -13,6 +14,37 @@ import { metronomAudio } from 'src/app/model/metronom-audio';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayerComponent implements OnInit {
+  @HostListener('document:keyup', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === ' ') {
+      if (this.isRunning) {
+        this.stop();
+      } else {
+        this.start();
+      }
+    } else if (event.key === 'ArrowLeft') {
+      if (event.ctrlKey) {
+        this.tempo -= 5;
+      } else {
+        this.tempo--;
+      }
+
+      if (this.isRunning) {
+        this.changeTempo(this.tempo);
+      }
+    } else if (event.key === 'ArrowRight') {
+      if (event.ctrlKey) {
+        this.tempo += 5;
+      } else {
+        this.tempo++;
+      }
+
+      if (this.isRunning) {
+        this.changeTempo(this.tempo);
+      }
+    }
+  }
+
   tempo = 60;
   interval: any | null = null;
   currKey: string | null = null;
@@ -20,20 +52,21 @@ export class PlayerComponent implements OnInit {
   nextKey: string | null = null;
   counter = signal(-1);
   snd = new Audio(metronomAudio);
+  isRunning = false;
 
   keys = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+  keysSharp = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
   chordTypes = [
-    { key: '', name: '', symbol: '', subscript: false },
-    // { key: 'major', name: 'Major', symbol: 'maj7', subscript: false },
-    // { key: 'minor', name: 'Minor', symbol: '-7', subscript: false },
-    // { key: 'dominant', name: 'Dominant', symbol: '7', subscript: false },
+    { key: 'major', name: 'Major', symbol: 'maj7', subscript: false },
+    { key: 'minor', name: 'Minor', symbol: '-7', subscript: false },
+    { key: 'dominant', name: 'Dominant', symbol: '7', subscript: false },
     //{ key: 'diminished', name: 'Diminished', symbol: 'dim', subscript: true },
     // { key: 'half diminished', name: 'Half-Diminished', symbol: 'ø' },
     // { key: 'augmented', name: 'Augmented', symbol: '+' },
   ];
 
-  voicingTypes = ['A Voicing', 'B Voicing'];
+  voicingTypes = ['A Voicing', 'B Voicing', 'Rooted Voicing'];
 
   constructor() {}
 
@@ -42,6 +75,7 @@ export class PlayerComponent implements OnInit {
   start() {
     this.counter.set(0);
     this.changeTempo(this.tempo);
+    this.isRunning = true;
   }
 
   stop() {
@@ -50,6 +84,7 @@ export class PlayerComponent implements OnInit {
     }
 
     this.counter.set(-1);
+    this.isRunning = false;
   }
 
   changeTempo(newTempo: number | string) {
@@ -76,20 +111,45 @@ export class PlayerComponent implements OnInit {
     if (this.counter() % 4 === 0) {
       this.prevKey = this.currKey ?? '&nbsp;';
       this.currKey = this.nextKey ?? '&nbsp;';
-      this.nextKey = this.getNextKey();
+      this.nextKey = this.getNextKeyIIVI();
 
       while (this.nextKey === this.currKey) {
-        this.nextKey = this.getNextKey();
+        this.nextKey = this.getNextKeyIIVI();
       }
     }
 
     this.beep();
   }
 
-  private getNextKey(): string {
+  private getNextKeyIIVI(): string {
     let key = this.currKey;
+    let keyIndex = 0;
+
     while (key === this.currKey) {
-      key = this.keys[Math.floor(Math.random() * this.keys.length)];
+      keyIndex = Math.floor(Math.random() * this.keys.length);
+      key = this.keys[keyIndex];
+    }
+
+    const voicingType =
+      this.voicingTypes[Math.floor(Math.random() * this.voicingTypes.length)];
+
+    let keys = this.keys;
+    if (['G', 'D', 'A', 'E', 'B'].includes(this.keys[keyIndex])) {
+      keys = this.keysSharp;
+    }
+
+    return `<span><span class="voicing-type">${voicingType}</span><br/>${
+      keys[(keyIndex + 2) % 12]
+    }min - ${keys[(keyIndex + 7) % 12]}7 - ${keys[keyIndex]}maj7`;
+  }
+
+  private getNextKeyChord(): string {
+    let key = this.currKey;
+    let keyIndex = 0;
+
+    while (key === this.currKey) {
+      keyIndex = Math.floor(Math.random() * this.keys.length);
+      key = this.keys[keyIndex];
     }
 
     const chordType =
