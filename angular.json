@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "music-flash-cards": {
+    "jazz-chord-flashcards": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -20,15 +20,20 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/music-flash-cards",
-            "baseHref": "/music-flash-cards/",
+            "outputPath": "dist/jazz-chord-flashcards",
+            "baseHref": "/jazz-chord-flashcards/",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles/styles.scss"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -68,10 +73,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "music-flash-cards:build:production"
+              "buildTarget": "jazz-chord-flashcards:build:production"
             },
             "development": {
-              "buildTarget": "music-flash-cards:build:development"
+              "buildTarget": "jazz-chord-flashcards:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -79,7 +84,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "music-flash-cards:build"
+            "buildTarget": "jazz-chord-flashcards:build"
           }
         },
         "test": {
@@ -90,8 +95,13 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "scss",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles/styles.scss"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles/styles.scss"
+            ],
             "scripts": []
           }
         }

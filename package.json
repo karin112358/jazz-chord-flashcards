@@ -1,5 +1,5 @@
 {
-  "name": "music-flash-cards",
+  "name": "jazz-chord-flashcards",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -9,7 +9,7 @@
     "test": "ng test"
   },
   "private": true,
-  "homepage": "https://karin112358.github.io/music-flash-cards/",
+  "homepage": "https://karin112358.github.io/jazz-chord-flashcards/",
   "dependencies": {
     "@angular/animations": "^17.0.2",
     "@angular/common": "^17.0.2",

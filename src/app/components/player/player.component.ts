@@ -87,16 +87,7 @@ export class PlayerComponent implements OnInit {
   ];
   private audioContext!: AudioContext;
 
-  /*chordTypes = [
-    { key: 'major', name: 'Major', symbol: 'maj7', subscript: false },
-    { key: 'minor', name: 'Minor', symbol: '-7', subscript: false },
-    { key: 'dominant', name: 'Dominant', symbol: '7', subscript: false },
-    //{ key: 'diminished', name: 'Diminished', symbol: 'dim', subscript: true },
-    // { key: 'half diminished', name: 'Half-Diminished', symbol: 'ø' },
-    // { key: 'augmented', name: 'Augmented', symbol: '+' },
-  ];*/
-
-  voicingTypes = ['A Voicing', 'B Voicing', 'Rooted Voicing'];
+  private voicingTypes = ['A Voicing', 'B Voicing', 'Rooted Voicing'];
 
   constructor() {
     this.audioContext = new window.AudioContext();
