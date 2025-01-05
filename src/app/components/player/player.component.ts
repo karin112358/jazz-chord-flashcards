@@ -5,7 +5,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { metronomAudio } from 'src/app/model/metronom-audio';
+import { Timer } from 'src/app/model/timer';
 
 @Component({
   selector: 'app-player',
@@ -51,37 +51,72 @@ export class PlayerComponent implements OnInit {
   prevKey: string | null = null;
   nextKey: string | null = null;
   counter = signal(-1);
-  snd = new Audio(metronomAudio);
   isRunning = false;
+  private timer = new Timer((60 / this.tempo) * 1000, () => {
+    this.counter.update((value) => value + 1);
+    this.updateChord();
+  });
 
-  keys = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
-  keysSharp = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  private keys = [
+    'C',
+    'Db',
+    'D',
+    'Eb',
+    'E',
+    'F',
+    'Gb',
+    'G',
+    'Ab',
+    'A',
+    'Bb',
+    'B',
+  ];
+  private keysSharp = [
+    'C',
+    'C#',
+    'D',
+    'D#',
+    'E',
+    'F',
+    'F#',
+    'G',
+    'G#',
+    'A',
+    'A#',
+    'B',
+  ];
+  private audioContext!: AudioContext;
 
-  chordTypes = [
+  /*chordTypes = [
     { key: 'major', name: 'Major', symbol: 'maj7', subscript: false },
     { key: 'minor', name: 'Minor', symbol: '-7', subscript: false },
     { key: 'dominant', name: 'Dominant', symbol: '7', subscript: false },
     //{ key: 'diminished', name: 'Diminished', symbol: 'dim', subscript: true },
     // { key: 'half diminished', name: 'Half-Diminished', symbol: 'ø' },
     // { key: 'augmented', name: 'Augmented', symbol: '+' },
-  ];
+  ];*/
 
   voicingTypes = ['A Voicing', 'B Voicing', 'Rooted Voicing'];
 
-  constructor() {}
+  constructor() {
+    this.audioContext = new window.AudioContext();
+  }
 
   ngOnInit(): void {}
 
   start() {
-    this.counter.set(0);
+    this.counter.set(-1);
     this.changeTempo(this.tempo);
+    this;
     this.isRunning = true;
   }
 
   stop() {
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
+    this.timer.stop();
+
+    this.currKey = null;
+    this.prevKey = null;
+    this.nextKey = null;
 
     this.counter.set(-1);
     this.isRunning = false;
@@ -94,17 +129,9 @@ export class PlayerComponent implements OnInit {
       this.tempo = newTempo;
     }
 
-    this.counter.set(0);
-
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-
-    this.updateChord();
-    this.interval = setInterval(() => {
-      this.counter.update((value) => value + 1);
-      this.updateChord();
-    }, (60 / this.tempo) * 1000);
+    this.timer.stop();
+    this.timer.setInterval((60 / this.tempo) * 1000);
+    this.timer.run();
   }
 
   private updateChord(): void {
@@ -118,7 +145,20 @@ export class PlayerComponent implements OnInit {
       }
     }
 
-    this.beep();
+    // play sound
+    const osc = this.audioContext.createOscillator();
+    const envelope = this.audioContext.createGain();
+
+    osc.connect(envelope);
+    envelope.connect(this.audioContext.destination);
+
+    osc.frequency.value = this.counter() % 4 == 0 ? 600 : 400;
+    envelope.gain.value = 1;
+    envelope.gain.exponentialRampToValueAtTime(1, 0 + 0.001);
+    envelope.gain.exponentialRampToValueAtTime(0.001, 0 + 0.02);
+
+    osc.start(this.audioContext.currentTime);
+    osc.stop(this.audioContext.currentTime + 0.03);
   }
 
   private getNextKeyIIVI(): string {
@@ -141,35 +181,5 @@ export class PlayerComponent implements OnInit {
     return `<span><span class="voicing-type">${voicingType}</span><br/>${
       keys[(keyIndex + 2) % 12]
     }min - ${keys[(keyIndex + 7) % 12]}7 - ${keys[keyIndex]}maj7`;
-  }
-
-  private getNextKeyChord(): string {
-    let key = this.currKey;
-    let keyIndex = 0;
-
-    while (key === this.currKey) {
-      keyIndex = Math.floor(Math.random() * this.keys.length);
-      key = this.keys[keyIndex];
-    }
-
-    const chordType =
-      this.chordTypes[Math.floor(Math.random() * this.chordTypes.length)];
-
-    const voicingType =
-      this.voicingTypes[Math.floor(Math.random() * this.voicingTypes.length)];
-
-    return (
-      '<span><span class="voicing-type">' +
-      voicingType +
-      '</span><br/>' +
-      key +
-      `</span><span class="type ${!!chordType.subscript ? 'subscript' : ''}">` +
-      chordType.symbol +
-      '</span>'
-    );
-  }
-
-  private beep(): void {
-    this.snd.play();
   }
 }
