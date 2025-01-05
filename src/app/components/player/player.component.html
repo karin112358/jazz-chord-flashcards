@@ -4,11 +4,9 @@
   <div id="nextChord" [innerHTML]="nextKey ?? '&nbsp;'"></div>
 </div>
 
-<div id="tempoSlider">
-  <input type="range" min="20" max="200" #tempoInput [value]="tempo" (change)="changeTempo(tempoInput.value)" />
-</div>
-
-<div id="tempo">{{ tempo }}</div>
+<!--<div id="tempoSlider">
+  <input type="range" min="20" max="300" #tempoInput [value]="tempo" (change)="changeTempo(tempoInput.value)" />
+</div>-->
 
 <div id="beats">
   <div class="beat" [ngClass]="{'highlight-beat': counter() % 4 === 0}"></div>
@@ -20,4 +18,15 @@
 <div id="buttons">
   <div class="button" id="startButton" (click)="start()">Start</div>
   <div class="button" id="stopButton" (click)="stop()">Stop</div>
+</div>
+
+<div id="configuration">
+  <h2>Configuration</h2>
+
+  <div class="configuration-item">
+    <label for="tempo">Tempo</label>
+    <input type="range" min="20" max="300" #tempoInput [value]="tempo" (change)="changeTempo(tempoInput.value)" />
+  </div>
+
+  <div id="tempo">{{ tempo }}</div>
 </div>

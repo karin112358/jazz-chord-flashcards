@@ -35,6 +35,10 @@
   align-items: center;
   line-height: 1em;
   text-align: center;
+
+  background-color: #ffffff33;
+  padding: 20px;
+  min-width: 100px;
 }
 
 #prevChord,
@@ -48,7 +52,7 @@
   font-weight: bold;
 }
 
-#tempoSlider {
+/*#tempoSlider {
   margin-top: 20px;
   display: flex;
   justify-content: center;
@@ -62,9 +66,10 @@
   font-size: 30px;
   display: flex;
   justify-content: center;
-}
+}*/
 
 #beats {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -79,4 +84,10 @@
 
 .highlight-beat {
   background-color: #72bf44;
+}
+
+#configuration {
+  margin-top: 40px;
+  text-align: center;
+  max-width: max(100dvw, 800px);
 }

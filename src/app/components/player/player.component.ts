@@ -46,16 +46,22 @@ export class PlayerComponent implements OnInit {
   }
 
   tempo = 60;
-  interval: any | null = null;
   currKey: string | null = null;
   prevKey: string | null = null;
   nextKey: string | null = null;
   counter = signal(-1);
-  isRunning = false;
+
+  private isRunning = false;
   private timer = new Timer((60 / this.tempo) * 1000, () => {
     this.counter.update((value) => value + 1);
     this.updateChord();
   });
+
+  private excercises = [
+    { name: 'Imaj7', chord: 'I<sup>maj7</sup>' },
+    { name: 'Im7', chord: 'I<sup>m7</sup>' },
+    { name: 'I7', chord: 'I<sup>7</sup>' },
+  ];
 
   private keys = [
     'C',
@@ -129,10 +135,10 @@ export class PlayerComponent implements OnInit {
     if (this.counter() % 4 === 0) {
       this.prevKey = this.currKey ?? '&nbsp;';
       this.currKey = this.nextKey ?? '&nbsp;';
-      this.nextKey = this.getNextKeyIIVI();
+      this.nextKey = this.getNextChord();
 
       while (this.nextKey === this.currKey) {
-        this.nextKey = this.getNextKeyIIVI();
+        this.nextKey = this.getNextChord();
       }
     }
 
@@ -152,7 +158,7 @@ export class PlayerComponent implements OnInit {
     osc.stop(this.audioContext.currentTime + 0.03);
   }
 
-  private getNextKeyIIVI(): string {
+  private getNextChord(): string {
     let key = this.currKey;
     let keyIndex = 0;
 
@@ -169,8 +175,9 @@ export class PlayerComponent implements OnInit {
       keys = this.keysSharp;
     }
 
-    return `<span><span class="voicing-type">${voicingType}</span><br/>${
+    /*return `<span><span class="voicing-type">${voicingType}</span><br/>${
       keys[(keyIndex + 2) % 12]
-    }min - ${keys[(keyIndex + 7) % 12]}7 - ${keys[keyIndex]}maj7`;
+    }min - ${keys[(keyIndex + 7) % 12]}7 - ${keys[keyIndex]}maj7`;*/
+    return `${keys[keyIndex]}<sup>maj7</sup>`;
   }
 }
