@@ -26,7 +26,6 @@
 </div>
 
 <div id="configuration">
-
   <div class="configuration-grid">
     <label for="tempo">Tempo</label>
     <div class="configuration-item tempo">
@@ -55,7 +54,11 @@
       </select>
     </div>
   </div>
+</div>
 
+<div id="open-keyboard-shortcuts" (click)="openShortcuts()">Keyboard shortcuts</div>
+
+<dialog id="shortcuts">
   <h2>Keyboard Shortcuts</h2>
   <div class="keyboard-shortcuts">
     <div>SPACE</div>
@@ -78,5 +81,10 @@
 
     <div>CTRL + &rarr;</div>
     <div>Tempo + 10</div>
+
+    <div>ESC</div>
+    <div>Close keyboard shortcuts</div>
   </div>
-</div>
+
+  <button id="close-shortcuts" (click)="closeShortcuts()">Close</button>
+</dialog>

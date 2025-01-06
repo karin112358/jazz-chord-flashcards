@@ -29,6 +29,8 @@ export class PlayerComponent implements OnInit {
       } else {
         this.start();
       }
+    } else if (event.key === 'Escape') {
+      this.closeShortcuts();
     } else if (event.key === 'ArrowLeft') {
       let newTempo = this.tempo;
       if (event.ctrlKey) {
@@ -242,5 +244,15 @@ export class PlayerComponent implements OnInit {
     config = config.replace(/V|v/g, keys[(keyIndex + 7) % 12]);
 
     return { index: keyIndex, chord: config };
+  }
+
+  openShortcuts() {
+    const dialog = document.querySelector('#shortcuts') as HTMLDialogElement;
+    dialog.showModal();
+  }
+
+  closeShortcuts() {
+    const dialog = document.querySelector('#shortcuts') as HTMLDialogElement;
+    dialog.close();
   }
 }
