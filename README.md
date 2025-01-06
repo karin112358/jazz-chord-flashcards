@@ -1,6 +1,8 @@
-# MusicFlashCards
+# Jazz Chord Flashcards
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.0.3.
+The Jazz Chord Trainer is a web application designed to help musicians practice jazz chords in an interactive and structured way. The app displays random chord flashcards (e.g., Cmaj7, G7, Dm7) on the screen, challenging users to play them in time with the specified tempo.
+
+With a built-in tempo control, users can adjust the speed to match their skill level, making it useable for beginners and advanced players alike.
 
 ## Development server
 
