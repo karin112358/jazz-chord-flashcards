@@ -1,7 +1,27 @@
 export const configuration = [
   {
-    name: 'II - V - I',
-    configuration: ``,
+    name: 'Major 7',
+    configuration: 'I<sup>maj7</sup>',
+  },
+  {
+    name: 'Minor 7',
+    configuration: 'Im<sup>7</sup>',
+  },
+  {
+    name: 'Dominant 7',
+    configuration: 'I<sup>7</sup>',
+  },
+  {
+    name: 'Maj 7 / Min 7 / Dom 7',
+    configuration: ['I<sup>maj7</sup>', 'Im<sup>7</sup>', 'I<sup>7</sup>'],
+  },
+  {
+    name: 'ii7 - V7 - Imaj7',
+    configuration: 'iim<sup>7</sup> - V<sup>7</sup> - I<sup>maj7</sup>',
+  },
+  {
+    name: 'ii7(b5) - V7 - Im6',
+    configuration: 'iim<sup>7(b5)</sup> - V<sup>7</sup> - Im<sup>6</sup>',
   },
 ];
 
@@ -37,16 +57,16 @@ export const keysSharp = [
 
 export const modes = [
   { name: 'Random', key: 'R' },
-  { name: 'Perfect 4th up', key: '5' },
-  { name: 'Perfect 4th down', key: '-5' },
-  { name: 'Major 3rd up', key: '4' },
-  { name: 'Major 3rd down', key: '-4' },
-  { name: 'Minor 3rd up', key: '3' },
-  { name: 'Minor 3rd down', key: '-3' },
-  { name: 'Major 2nd up', key: '2' },
-  { name: 'Major 2nd down', key: '-2' },
-  { name: 'Minor 2nd up', key: '1' },
-  { name: 'Minor 2nd down', key: '-1' },
+  // { name: 'Perfect 4th up', key: '5' },
+  // { name: 'Perfect 4th down', key: '-5' },
+  // { name: 'Major 3rd up', key: '4' },
+  // { name: 'Major 3rd down', key: '-4' },
+  // { name: 'Minor 3rd up', key: '3' },
+  // { name: 'Minor 3rd down', key: '-3' },
+  // { name: 'Major 2nd up', key: '2' },
+  // { name: 'Major 2nd down', key: '-2' },
+  // { name: 'Minor 2nd up', key: '1' },
+  // { name: 'Minor 2nd down', key: '-1' },
 ];
 
 /*chordTypes = [

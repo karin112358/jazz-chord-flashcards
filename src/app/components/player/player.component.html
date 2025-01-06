@@ -3,7 +3,7 @@
 <div id="chords">
   <div id="nextChord" [innerHTML]="nextKey2 ?? '&nbsp;'"></div>
   <div id="nextChord" [innerHTML]="nextKey1 ?? '&nbsp;'"></div>
-  <div id="currentChord" [innerHTML]="currKey ?? '&nbsp;'"></div>
+  <div id="currentChord" [innerHTML]="currKey ?? '&nbsp;'">{{ currKey }}</div>
 </div>
 
 <div id="beats">
@@ -19,17 +19,25 @@
 </div>
 
 <div id="configuration">
-  <h2>Configuration</h2>
 
   <div class="configuration-grid">
     <label for="tempo">Tempo</label>
     <div class="configuration-item tempo">
-      <div class="button" (click)="changeTempo(-10)" title="CTRL + ARROW LEFT">-10</div>
-      <div class="button" (click)="changeTempo(-1)" title="ARROW LEFT">-1</div>
+      <div class="button" (click)="changeTempo(-10)" title="CTRL + &larr;">-10</div>
+      <div class="button" (click)="changeTempo(-1)" title="&larr;">-1</div>
       <input class="tempo-input" type="number" min="minTempo" max="maxTempo" #tempoInput [value]="tempo"
         (change)="setTempo(tempoInput.value)" />
-      <div class="button" (click)="changeTempo(tempo + 1)" title="ARROW RIGHT">+1</div>
-      <div class="button" (click)="changeTempo(tempo + 10)" title="CTRL + ARROW RIGHT">+10</div>
+      <div class="button" (click)="changeTempo(1)" title="&rarr;">+1</div>
+      <div class="button" (click)="changeTempo(10)" title="CTRL + &rarr;">+10</div>
+    </div>
+
+    <label for="mode">Chords</label>
+    <div class="configuration-item chords">
+      <select (change)="setConfiguration($event)">
+        <option *ngFor="let configurationItem of configuration" [value]="configurationItem.configuration"
+          [selected]="configurationItem.name === selectedConfiguration().name">{{ configurationItem.name }}
+        </option>
+      </select>
     </div>
 
     <label for="mode">Mode</label>
@@ -41,5 +49,27 @@
     </div>
   </div>
 
+  <h2>Keyboard Shortcuts</h2>
+  <div class="keyboard-shortcuts">
+    <div>SPACE</div>
+    <div>Start / Stop</div>
 
+    <div>&larr;</div>
+    <div>Tempo - 1</div>
+
+    <div>SHIFT + &larr;</div>
+    <div>Tempo - 5</div>
+
+    <div>CTLR + &larr;</div>
+    <div>Tempo - 10</div>
+
+    <div>&rarr;</div>
+    <div>Tempo + 1</div>
+
+    <div>SHIFT + &rarr;</div>
+    <div>Tempo + 5</div>
+
+    <div>CTRL + &rarr;</div>
+    <div>Tempo + 10</div>
+  </div>
 </div>
