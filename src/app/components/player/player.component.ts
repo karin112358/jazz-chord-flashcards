@@ -5,6 +5,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
+import { keys, keysSharp } from 'src/app/model/configuration';
 import { Timer } from 'src/app/model/timer';
 
 @Component({
@@ -23,34 +24,40 @@ export class PlayerComponent implements OnInit {
         this.start();
       }
     } else if (event.key === 'ArrowLeft') {
+      let newTempo = this.tempo;
       if (event.ctrlKey) {
-        this.tempo -= 5;
+        newTempo -= 10;
+      } else if (event.shiftKey) {
+        newTempo -= 5;
       } else {
-        this.tempo--;
+        newTempo--;
       }
 
-      if (this.isRunning) {
-        this.changeTempo(this.tempo);
-      }
+      this.setTempo(newTempo);
     } else if (event.key === 'ArrowRight') {
+      let newTempo = this.tempo;
       if (event.ctrlKey) {
-        this.tempo += 5;
+        newTempo += 10;
+      } else if (event.shiftKey) {
+        newTempo += 5;
       } else {
-        this.tempo++;
+        newTempo++;
       }
 
-      if (this.isRunning) {
-        this.changeTempo(this.tempo);
-      }
+      this.setTempo(newTempo);
     }
   }
 
+  minTempo = 20;
+  maxTempo = 300;
   tempo = 60;
   currKey: string | null = null;
-  prevKey: string | null = null;
-  nextKey: string | null = null;
+  nextKey1: string | null = null;
+  nextKey2: string | null = null;
   counter = signal(-1);
 
+  private keys = keys;
+  private keysSharp = keysSharp;
   private isRunning = false;
   private timer = new Timer((60 / this.tempo) * 1000, () => {
     this.counter.update((value) => value + 1);
@@ -63,34 +70,6 @@ export class PlayerComponent implements OnInit {
     { name: 'I7', chord: 'I<sup>7</sup>' },
   ];
 
-  private keys = [
-    'C',
-    'Db',
-    'D',
-    'Eb',
-    'E',
-    'F',
-    'Gb',
-    'G',
-    'Ab',
-    'A',
-    'Bb',
-    'B',
-  ];
-  private keysSharp = [
-    'C',
-    'C#',
-    'D',
-    'D#',
-    'E',
-    'F',
-    'F#',
-    'G',
-    'G#',
-    'A',
-    'A#',
-    'B',
-  ];
   private audioContext!: AudioContext;
 
   private voicingTypes = ['A Voicing', 'B Voicing', 'Rooted Voicing'];
@@ -103,8 +82,11 @@ export class PlayerComponent implements OnInit {
 
   start() {
     this.counter.set(-1);
-    this.changeTempo(this.tempo);
-    this;
+
+    this.timer.stop();
+    this.timer.setInterval((60 / this.tempo) * 1000);
+    this.timer.run();
+
     this.isRunning = true;
   }
 
@@ -112,33 +94,60 @@ export class PlayerComponent implements OnInit {
     this.timer.stop();
 
     this.currKey = null;
-    this.prevKey = null;
-    this.nextKey = null;
-
+    this.nextKey1 = null;
+    this.nextKey2 = null;
     this.counter.set(-1);
     this.isRunning = false;
   }
 
-  changeTempo(newTempo: number | string) {
+  changeTempo(change: number) {
+    if (change > 0) {
+      if (this.tempo + change > this.maxTempo) {
+        this.tempo = this.maxTempo;
+      } else {
+        this.tempo += change;
+      }
+    } else {
+      if (this.tempo + change < this.minTempo) {
+        this.tempo = this.minTempo;
+      } else {
+        this.tempo += change;
+      }
+    }
+
+    if (this.isRunning) {
+      this.timer.stop();
+      this.timer.setInterval((60 / this.tempo) * 1000);
+      this.timer.run();
+    }
+  }
+
+  setTempo(newTempo: number | string) {
     if (typeof newTempo === 'string') {
       this.tempo = parseInt(newTempo);
     } else {
       this.tempo = newTempo;
     }
 
-    this.timer.stop();
-    this.timer.setInterval((60 / this.tempo) * 1000);
-    this.timer.run();
+    if (this.isRunning) {
+      this.timer.stop();
+      this.timer.setInterval((60 / this.tempo) * 1000);
+      this.timer.run();
+    }
   }
 
   private updateChord(): void {
     if (this.counter() % 4 === 0) {
-      this.prevKey = this.currKey ?? '&nbsp;';
-      this.currKey = this.nextKey ?? '&nbsp;';
-      this.nextKey = this.getNextChord();
+      this.currKey = this.nextKey1 ?? '&nbsp;';
 
-      while (this.nextKey === this.currKey) {
-        this.nextKey = this.getNextChord();
+      this.nextKey1 = this.nextKey2 ?? '&nbsp;';
+      while (this.nextKey1 === this.currKey) {
+        this.nextKey1 = this.getNextChord();
+      }
+
+      this.nextKey2 = this.getNextChord();
+      while (this.nextKey2 === this.nextKey1) {
+        this.nextKey2 = this.getNextChord();
       }
     }
 

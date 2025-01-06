@@ -1,12 +1,10 @@
-<div id="chords">
-  <div id="prevChord" [innerHTML]="prevKey ?? '&nbsp;'"></div>
-  <div id="currentChord" [innerHTML]="currKey ?? '&nbsp;'"></div>
-  <div id="nextChord" [innerHTML]="nextKey ?? '&nbsp;'"></div>
-</div>
+<h1>Jazz Chord Trainer</h1>
 
-<!--<div id="tempoSlider">
-  <input type="range" min="20" max="300" #tempoInput [value]="tempo" (change)="changeTempo(tempoInput.value)" />
-</div>-->
+<div id="chords">
+  <div id="nextChord" [innerHTML]="nextKey2 ?? '&nbsp;'"></div>
+  <div id="nextChord" [innerHTML]="nextKey1 ?? '&nbsp;'"></div>
+  <div id="currentChord" [innerHTML]="currKey ?? '&nbsp;'"></div>
+</div>
 
 <div id="beats">
   <div class="beat" [ngClass]="{'highlight-beat': counter() % 4 === 0}"></div>
@@ -23,10 +21,15 @@
 <div id="configuration">
   <h2>Configuration</h2>
 
-  <div class="configuration-item">
+  <div class="configuration-grid">
     <label for="tempo">Tempo</label>
-    <input type="range" min="20" max="300" #tempoInput [value]="tempo" (change)="changeTempo(tempoInput.value)" />
+    <div class="configuration-item tempo">
+      <div class="button" (click)="changeTempo(-10)" title="CTRL + ARROW LEFT">-10</div>
+      <div class="button" (click)="changeTempo(-1)" title="ARROW LEFT">-1</div>
+      <input class="tempo-input" type="number" min="minTempo" max="maxTempo" #tempoInput [value]="tempo"
+        (change)="setTempo(tempoInput.value)" />
+      <div class="button" (click)="changeTempo(tempo + 1)" title="ARROW RIGHT">+1</div>
+      <div class="button" (click)="changeTempo(tempo + 10)" title="CTRL + ARROW RIGHT">+10</div>
+    </div>
   </div>
-
-  <div id="tempo">{{ tempo }}</div>
 </div>

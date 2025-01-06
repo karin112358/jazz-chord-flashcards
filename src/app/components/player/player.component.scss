@@ -1,10 +1,29 @@
 :host {
-  width: 100%;
+  display: inline-block;
+  width: auto;
+  font-size: 18px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+input {
+  padding: 5px 10px;
+  font-size: 18px;
+  height: 24px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 #chords {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
   width: 100%;
   align-items: center;
   justify-items: center;
@@ -28,45 +47,28 @@
   background-color: #333;
 }
 
-#prevChord,
 #nextChord,
 #currentChord {
   display: flex;
   align-items: center;
   line-height: 1em;
   text-align: center;
+  justify-content: center;
 
+  font-size: 30px;
   background-color: #ffffff33;
   padding: 20px;
-  min-width: 100px;
+  min-width: 150px;
 }
 
 #prevChord,
 #nextChord {
-  font-size: 2.5vw;
   font-weight: 300;
 }
 
 #currentChord {
-  font-size: 2.5vw;
   font-weight: bold;
 }
-
-/*#tempoSlider {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-}
-
-#tempoSlider input {
-  width: 50vw;
-}
-
-#tempo {
-  font-size: 30px;
-  display: flex;
-  justify-content: center;
-}*/
 
 #beats {
   margin-top: 20px;
@@ -90,4 +92,39 @@
   margin-top: 40px;
   text-align: center;
   max-width: max(100dvw, 800px);
+}
+
+.configuration-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  .configuration-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.configuration-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+
+  &.tempo {
+    .button {
+      padding: 5px 10px;
+      width: 30px;
+    }
+
+    input[type="number"] {
+      text-align: right;
+      width: 60px;
+      -webkit-appearance: none;
+      -moz-appearance: textfield;
+      appearance: none;
+    }
+  }
 }
