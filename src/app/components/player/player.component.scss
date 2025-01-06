@@ -1,6 +1,7 @@
 :host {
   display: inline-block;
-  width: auto;
+  width: 100%;
+  max-width: 500px;
   font-size: 18px;
   font-family: "Segoe UI", sans-serif;
 }
@@ -152,6 +153,10 @@ input::-webkit-inner-spin-button {
       appearance: none;
     }
   }
+}
+
+#description {
+  margin-top: 60px;
 }
 
 #open-keyboard-shortcuts {

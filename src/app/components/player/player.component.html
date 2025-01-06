@@ -2,14 +2,13 @@
 </h1>
 
 <div id="chords">
-  <!-- <div id="nextChord" [innerHTML]="nextKey2 ?? '&nbsp;'"></div> -->
   <div class="next-chord">
     <div>next</div>
-    <div id="nextChord" [innerHTML]="nextKey1 ?? '&nbsp;'"></div>
+    <div id="nextChord" [innerHTML]="nextKey1() ?? '&nbsp;'"></div>
   </div>
   <div class="current-chord">
     <div>play</div>
-    <div id="currentChord" [innerHTML]="currKey ?? '&nbsp;'"></div>
+    <div id="currentChord" [innerHTML]="currKey() ?? '&nbsp;'"></div>
   </div>
 </div>
 
@@ -31,7 +30,7 @@
     <div class="configuration-item tempo">
       <div class="button" (click)="changeTempo(-10)" title="CTRL + &larr;">-10</div>
       <div class="button" (click)="changeTempo(-1)" title="&larr;">-1</div>
-      <input class="tempo-input" type="number" min="minTempo" max="maxTempo" #tempoInput [value]="tempo"
+      <input class="tempo-input" type="number" min="minTempo" max="maxTempo" #tempoInput [value]="tempo()"
         (change)="setTempo(tempoInput.value)" />
       <div class="button" (click)="changeTempo(1)" title="&rarr;">+1</div>
       <div class="button" (click)="changeTempo(10)" title="CTRL + &rarr;">+10</div>
@@ -57,6 +56,16 @@
 </div>
 
 <div id="open-keyboard-shortcuts" (click)="openShortcuts()">Keyboard shortcuts</div>
+
+<div id="description">
+  <h2>Description</h2>
+  <p>The Jazz Chord Trainer is a web application designed to help musicians practice jazz chords in an interactive and
+    structured way. The app displays random chord flashcards (e.g., C<sup>maj7</sup>, G<sup>7</sup>, Dm<sup>7</sup>) on
+    the screen, challenging users to play them in time with the specified tempo.</p>
+
+  <p>With a built-in tempo control, users can adjust the speed to match their skill level, making it useable for
+    beginners and advanced players alike.</p>
+</div>
 
 <dialog id="shortcuts">
   <h2>Keyboard Shortcuts</h2>

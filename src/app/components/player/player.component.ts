@@ -32,7 +32,7 @@ export class PlayerComponent implements OnInit {
     } else if (event.key === 'Escape') {
       this.closeShortcuts();
     } else if (event.key === 'ArrowLeft') {
-      let newTempo = this.tempo;
+      let newTempo = this.tempo();
       if (event.ctrlKey) {
         newTempo -= 10;
       } else if (event.shiftKey) {
@@ -43,7 +43,7 @@ export class PlayerComponent implements OnInit {
 
       this.setTempo(newTempo);
     } else if (event.key === 'ArrowRight') {
-      let newTempo = this.tempo;
+      let newTempo = this.tempo();
       if (event.ctrlKey) {
         newTempo += 10;
       } else if (event.shiftKey) {
@@ -58,10 +58,10 @@ export class PlayerComponent implements OnInit {
 
   minTempo = 20;
   maxTempo = 300;
-  tempo = 60;
-  currKey: string | null = null;
-  nextKey1: string | null = null;
-  nextKey2: string | null = null;
+  tempo = signal(60);
+  currKey: WritableSignal<string | null> = signal(null);
+  nextKey1: WritableSignal<string | null> = signal(null);
+  nextKey2: WritableSignal<string | null> = signal(null);
   counter = signal(-1);
   modes = modes;
   configuration = configuration;
@@ -77,7 +77,7 @@ export class PlayerComponent implements OnInit {
   private keys = keys;
   private keysSharp = keysSharp;
   private isRunning = false;
-  private timer = new Timer((60 / this.tempo) * 1000, () => {
+  private timer = new Timer((60 / this.tempo()) * 1000, () => {
     this.counter.update((value) => value + 1);
     this.updateChord();
   });
@@ -94,7 +94,7 @@ export class PlayerComponent implements OnInit {
     this.counter.set(-1);
 
     this.timer.stop();
-    this.timer.setInterval((60 / this.tempo) * 1000);
+    this.timer.setInterval((60 / this.tempo()) * 1000);
     this.timer.run();
 
     this.isRunning = true;
@@ -103,45 +103,45 @@ export class PlayerComponent implements OnInit {
   stop() {
     this.timer.stop();
 
-    this.currKey = null;
-    this.nextKey1 = null;
-    this.nextKey2 = null;
+    this.currKey.set(null);
+    this.nextKey1.set(null);
+    this.nextKey2.set(null);
     this.counter.set(-1);
     this.isRunning = false;
   }
 
   changeTempo(change: number) {
     if (change > 0) {
-      if (this.tempo + change > this.maxTempo) {
-        this.tempo = this.maxTempo;
+      if (this.tempo() + change > this.maxTempo) {
+        this.tempo.set(this.maxTempo);
       } else {
-        this.tempo += change;
+        this.tempo.update((value) => value + change);
       }
     } else {
-      if (this.tempo + change < this.minTempo) {
-        this.tempo = this.minTempo;
+      if (this.tempo() + change < this.minTempo) {
+        this.tempo.set(this.minTempo);
       } else {
-        this.tempo += change;
+        this.tempo.update((value) => value + change);
       }
     }
 
     if (this.isRunning) {
       //this.timer.stop();
-      this.timer.setInterval((60 / this.tempo) * 1000);
+      this.timer.setInterval((60 / this.tempo()) * 1000);
       //this.timer.run();
     }
   }
 
   setTempo(newTempo: number | string) {
     if (typeof newTempo === 'string') {
-      this.tempo = parseInt(newTempo);
+      this.tempo.set(parseInt(newTempo));
     } else {
-      this.tempo = newTempo;
+      this.tempo.set(newTempo);
     }
 
     if (this.isRunning) {
       //this.timer.stop();
-      this.timer.setInterval((60 / this.tempo) * 1000);
+      this.timer.setInterval((60 / this.tempo()) * 1000);
       //this.timer.run();
     }
   }
@@ -164,23 +164,23 @@ export class PlayerComponent implements OnInit {
 
   private updateChord(): void {
     if (this.counter() % 4 === 0) {
-      this.currKey = this.nextKey1 ?? '&nbsp;';
+      this.currKey.set(this.nextKey1() ?? '&nbsp;');
       this.currentKeyIndex = this.nextKey1Index;
 
-      this.nextKey1 = this.nextKey2 ?? '&nbsp;';
+      this.nextKey1.set(this.nextKey2() ?? '&nbsp;');
       this.nextKey1Index = this.nextKey2Index;
-      while (this.nextKey1 === this.currKey) {
+      while (this.nextKey1() === this.currKey()) {
         const nextChord = this.getNextChord(this.currentKeyIndex);
-        this.nextKey1 = nextChord.chord;
+        this.nextKey1.set(nextChord.chord);
         this.nextKey1Index = nextChord.index;
       }
 
       const nextChord = this.getNextChord(this.nextKey1Index);
-      this.nextKey2 = nextChord.chord;
+      this.nextKey2.set(nextChord.chord);
       this.nextKey2Index = nextChord.index;
-      while (this.nextKey2 === this.nextKey1) {
+      while (this.nextKey2() === this.nextKey1()) {
         const nextChord = this.getNextChord(this.nextKey1Index);
-        this.nextKey2 = nextChord.chord;
+        this.nextKey2.set(nextChord.chord);
         this.nextKey2Index = nextChord.index;
       }
     }
@@ -212,7 +212,6 @@ export class PlayerComponent implements OnInit {
       if (this.selectedMode() === 'R') {
         keyIndex = Math.floor(Math.random() * this.keys.length);
       } else {
-        //const currentKeyIndex = this.keys.indexOf(currKey);
         const mode = parseInt(this.selectedMode());
         keyIndex = (currentKeyIndex + mode) % this.keys.length;
       }
