@@ -31,5 +31,15 @@
       <div class="button" (click)="changeTempo(tempo + 1)" title="ARROW RIGHT">+1</div>
       <div class="button" (click)="changeTempo(tempo + 10)" title="CTRL + ARROW RIGHT">+10</div>
     </div>
+
+    <label for="mode">Mode</label>
+    <div class="configuration-item mode">
+      <select (change)="setMode($event)">
+        <option *ngFor="let mode of modes" [value]="mode.key" [selected]="mode.key === selectedMode()">{{ mode.name }}
+        </option>
+      </select>
+    </div>
   </div>
+
+
 </div>

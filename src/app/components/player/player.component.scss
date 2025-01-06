@@ -9,10 +9,14 @@ h1 {
   text-align: center;
 }
 
-input {
-  padding: 5px 10px;
+input,
+select {
+  padding-left: 10px;
+  padding-right: 10px;
   font-size: 18px;
-  height: 24px;
+  height: 33px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 input::-webkit-outer-spin-button,
@@ -101,17 +105,11 @@ input::-webkit-inner-spin-button {
   align-items: center;
 }
 
-@media (max-width: 600px) {
-  .configuration-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .configuration-item {
   display: flex;
   gap: 10px;
   align-items: center;
-  justify-content: center;
+  // justify-content: center;
 
   &.tempo {
     .button {
@@ -126,5 +124,16 @@ input::-webkit-inner-spin-button {
       -moz-appearance: textfield;
       appearance: none;
     }
+  }
+}
+
+@media (max-width: 600px) {
+  .configuration-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .configuration-item {
+    justify-content: center;
   }
 }

@@ -5,7 +5,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { keys, keysSharp } from 'src/app/model/configuration';
+import { keys, keysSharp, modes } from 'src/app/model/configuration';
 import { Timer } from 'src/app/model/timer';
 
 @Component({
@@ -55,7 +55,12 @@ export class PlayerComponent implements OnInit {
   nextKey1: string | null = null;
   nextKey2: string | null = null;
   counter = signal(-1);
+  modes = modes;
+  selectedMode = signal('R');
 
+  private currentKeyIndex = -1;
+  private nextKey1Index = -1;
+  private nextKey2Index = -1;
   private keys = keys;
   private keysSharp = keysSharp;
   private isRunning = false;
@@ -63,12 +68,6 @@ export class PlayerComponent implements OnInit {
     this.counter.update((value) => value + 1);
     this.updateChord();
   });
-
-  private excercises = [
-    { name: 'Imaj7', chord: 'I<sup>maj7</sup>' },
-    { name: 'Im7', chord: 'I<sup>m7</sup>' },
-    { name: 'I7', chord: 'I<sup>7</sup>' },
-  ];
 
   private audioContext!: AudioContext;
 
@@ -136,18 +135,32 @@ export class PlayerComponent implements OnInit {
     }
   }
 
+  setMode(event: Event) {
+    if (event.target && 'value' in event.target) {
+      this.selectedMode.set(<string>event.target.value);
+    }
+  }
+
   private updateChord(): void {
     if (this.counter() % 4 === 0) {
       this.currKey = this.nextKey1 ?? '&nbsp;';
+      this.currentKeyIndex = this.nextKey1Index;
 
       this.nextKey1 = this.nextKey2 ?? '&nbsp;';
+      this.nextKey1Index = this.nextKey2Index;
       while (this.nextKey1 === this.currKey) {
-        this.nextKey1 = this.getNextChord();
+        const nextChord = this.getNextChord(this.currentKeyIndex);
+        this.nextKey1 = nextChord.chord;
+        this.nextKey1Index = nextChord.index;
       }
 
-      this.nextKey2 = this.getNextChord();
+      const nextChord = this.getNextChord(this.nextKey1Index);
+      this.nextKey2 = nextChord.chord;
+      this.nextKey2Index = nextChord.index;
       while (this.nextKey2 === this.nextKey1) {
-        this.nextKey2 = this.getNextChord();
+        const nextChord = this.getNextChord(this.nextKey1Index);
+        this.nextKey2 = nextChord.chord;
+        this.nextKey2Index = nextChord.index;
       }
     }
 
@@ -167,12 +180,22 @@ export class PlayerComponent implements OnInit {
     osc.stop(this.audioContext.currentTime + 0.03);
   }
 
-  private getNextChord(): string {
-    let key = this.currKey;
+  private getNextChord(currentKeyIndex: number): {
+    index: number;
+    chord: string;
+  } {
+    let key = this.keys[currentKeyIndex];
     let keyIndex = 0;
 
-    while (key === this.currKey) {
-      keyIndex = Math.floor(Math.random() * this.keys.length);
+    while (key === this.keys[currentKeyIndex]) {
+      if (this.selectedMode() === 'R') {
+        keyIndex = Math.floor(Math.random() * this.keys.length);
+      } else {
+        //const currentKeyIndex = this.keys.indexOf(currKey);
+        const mode = parseInt(this.selectedMode());
+        keyIndex = (currentKeyIndex + mode) % this.keys.length;
+      }
+
       key = this.keys[keyIndex];
     }
 
@@ -187,6 +210,6 @@ export class PlayerComponent implements OnInit {
     /*return `<span><span class="voicing-type">${voicingType}</span><br/>${
       keys[(keyIndex + 2) % 12]
     }min - ${keys[(keyIndex + 7) % 12]}7 - ${keys[keyIndex]}maj7`;*/
-    return `${keys[keyIndex]}<sup>maj7</sup>`;
+    return { index: keyIndex, chord: `${keys[keyIndex]}<sup>maj7</sup>` };
   }
 }
