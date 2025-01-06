@@ -5,6 +5,8 @@
   font-family: "Segoe UI", sans-serif;
 }
 
+$highlight-color: #72bf44;
+
 h1,
 h2,
 h3 {
@@ -70,20 +72,19 @@ input::-webkit-inner-spin-button {
   line-height: 1em;
   text-align: center;
   justify-content: center;
-
+  font-weight: 500;
   font-size: 30px;
   background-color: #ffffff33;
   padding: 20px;
-  width: 100%;
+  width: calc(100% - 10px);
 }
 
-#prevChord,
-#nextChord {
-  font-weight: 300;
+#nextChord:first-of-type {
+  color: #ffffff66;
 }
 
 #currentChord {
-  font-weight: bold;
+  color: $highlight-color;
 }
 
 #beats {
@@ -101,7 +102,7 @@ input::-webkit-inner-spin-button {
 }
 
 .highlight-beat {
-  background-color: #72bf44;
+  background-color: $highlight-color;
 }
 
 #configuration {
