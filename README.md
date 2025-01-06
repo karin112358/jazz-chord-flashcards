@@ -4,6 +4,8 @@ The Jazz Chord Trainer is a web application designed to help musicians practice 
 
 With a built-in tempo control, users can adjust the speed to match their skill level, making it useable for beginners and advanced players alike.
 
+Open Jazz Chord Flashcards: https://karin112358.github.io/jazz-chord-flashcards/
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
