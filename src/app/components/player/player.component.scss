@@ -16,6 +16,11 @@ h3 {
 
 h1 {
   margin-top: 0;
+
+  .version {
+    font-size: 14px;
+    font-weight: 300;
+  }
 }
 
 h2,
@@ -41,7 +46,7 @@ input::-webkit-inner-spin-button {
 
 #chords {
   display: grid;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
   width: 100%;
   align-items: center;
   justify-items: center;
@@ -65,8 +70,9 @@ input::-webkit-inner-spin-button {
   background-color: #333;
 }
 
-#nextChord,
-#currentChord {
+.next-chord,
+.current-chord {
+  position: relative;
   display: flex;
   align-items: center;
   line-height: 1em;
@@ -77,13 +83,23 @@ input::-webkit-inner-spin-button {
   background-color: #ffffff33;
   padding: 20px;
   width: calc(100% - 10px);
+  height: 40px;
+
+  > div:first-child {
+    position: absolute;
+    top: -5px;
+    left: 5px;
+    font-size: 14px;
+    font-weight: 300;
+    text-transform: uppercase;
+  }
 }
 
-#nextChord:first-of-type {
-  color: #ffffff66;
+.next-chord {
+  color: #ffffff;
 }
 
-#currentChord {
+.current-chord {
   color: $highlight-color;
 }
 

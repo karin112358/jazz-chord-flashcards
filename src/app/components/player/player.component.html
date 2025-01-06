@@ -1,9 +1,16 @@
-<h1>Jazz Chord Trainer</h1>
+<h1>Jazz Chord Trainer<div class="version">Version 0.0.1</div>
+</h1>
 
 <div id="chords">
-  <div id="nextChord" [innerHTML]="nextKey2 ?? '&nbsp;'"></div>
-  <div id="nextChord" [innerHTML]="nextKey1 ?? '&nbsp;'"></div>
-  <div id="currentChord" [innerHTML]="currKey ?? '&nbsp;'">{{ currKey }}</div>
+  <!-- <div id="nextChord" [innerHTML]="nextKey2 ?? '&nbsp;'"></div> -->
+  <div class="next-chord">
+    <div>next</div>
+    <div id="nextChord" [innerHTML]="nextKey1 ?? '&nbsp;'"></div>
+  </div>
+  <div class="current-chord">
+    <div>play</div>
+    <div id="currentChord" [innerHTML]="currKey ?? '&nbsp;'"></div>
+  </div>
 </div>
 
 <div id="beats">
