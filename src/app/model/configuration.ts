@@ -57,8 +57,8 @@ export const keysSharp = [
 
 export const modes = [
   { name: 'Random', key: 'R' },
-  // { name: 'Perfect 4th up', key: '5' },
-  // { name: 'Perfect 4th down', key: '-5' },
+  { name: 'Perfect 4th up', key: '5' },
+  { name: 'Perfect 4th down', key: '-5' },
   // { name: 'Major 3rd up', key: '4' },
   // { name: 'Major 3rd down', key: '-4' },
   // { name: 'Minor 3rd up', key: '3' },
@@ -77,3 +77,10 @@ export const modes = [
     // { key: 'half diminished', name: 'Half-Diminished', symbol: 'ø' },
     // { key: 'augmented', name: 'Augmented', symbol: '+' },
   ];*/
+
+export const changeLog = [
+  {
+    date: '2025-01-08',
+    changes: "Added modes: 'Perfect 4th up' and 'Perfect 4th down'",
+  },
+];

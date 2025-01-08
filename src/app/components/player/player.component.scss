@@ -22,6 +22,11 @@ h1 {
   }
 }
 
+h2,
+h3 {
+  margin-top: 2em;
+}
+
 input,
 select,
 button {
@@ -155,10 +160,6 @@ input::-webkit-inner-spin-button {
   }
 }
 
-#description {
-  margin-top: 60px;
-}
-
 #open-keyboard-shortcuts {
   cursor: pointer;
   text-align: center;
@@ -200,6 +201,13 @@ dialog {
     background-color: #00000044;
     height: 40px;
   }
+}
+
+.changelog {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  font-size: 15px;
 }
 
 @media (max-width: 600px) {

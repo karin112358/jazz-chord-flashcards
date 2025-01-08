@@ -7,6 +7,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import {
+  changeLog,
   configuration,
   keys,
   keysSharp,
@@ -65,6 +66,7 @@ export class PlayerComponent implements OnInit {
   counter = signal(-1);
   modes = modes;
   configuration = configuration;
+  changeLog = changeLog;
   selectedMode = signal('R');
   selectedConfiguration: WritableSignal<{
     name: string;
@@ -103,6 +105,9 @@ export class PlayerComponent implements OnInit {
   stop() {
     this.timer.stop();
 
+    this.currentKeyIndex = -1;
+    this.nextKey1Index = -1;
+    this.nextKey2Index = -1;
     this.currKey.set(null);
     this.nextKey1.set(null);
     this.nextKey2.set(null);
@@ -213,7 +218,15 @@ export class PlayerComponent implements OnInit {
         keyIndex = Math.floor(Math.random() * this.keys.length);
       } else {
         const mode = parseInt(this.selectedMode());
+
+        if (currentKeyIndex === -1) {
+          currentKeyIndex = mode * -1;
+        }
+
         keyIndex = (currentKeyIndex + mode) % this.keys.length;
+        while (keyIndex < 0) {
+          keyIndex += this.keys.length;
+        }
       }
 
       key = this.keys[keyIndex];
