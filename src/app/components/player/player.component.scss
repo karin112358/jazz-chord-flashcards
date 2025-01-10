@@ -12,29 +12,28 @@ h1,
 h2,
 h3 {
   text-align: center;
-  // font-weight: 300;
+  font-weight: 300;
 }
 
 h1 {
+  font-size: 28px;
   .version {
     font-size: 14px;
     font-weight: 300;
   }
 }
 
+h2 {
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 20px;
+}
+
 h2,
 h3 {
   margin-top: 2em;
-}
-
-input,
-select,
-button {
-  padding-left: 10px;
-  padding-right: 10px;
-  font-size: 18px;
-  height: 33px;
-  border: 1px solid #ccc;
 }
 
 input::-webkit-outer-spin-button,
@@ -52,8 +51,26 @@ input::-webkit-inner-spin-button {
   grid-gap: 20px;
 }
 
+#chords .type {
+  font-size: 70%;
+  line-height: 100%;
+  margin-left: 3px;
+}
+
+#chords .type.subscript {
+  align-self: flex-end;
+}
+
+#prevChord,
+#nextChord,
+#currentChord {
+  .voicing-type {
+    font-size: 0.5em;
+  }
+}
+
 #buttons {
-  margin-top: 40px;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -68,12 +85,15 @@ input::-webkit-inner-spin-button {
   text-align: center;
   justify-content: center;
   font-weight: 500;
-  font-size: 30px;
-  background-color: #ffffff33;
+  font-size: 28px;
+  background-color: var(
+    --mdc-filled-text-field-container-color,
+    var(--mat-sys-surface-variant)
+  );
   padding: 20px;
   width: 100%;
   box-sizing: border-box;
-  height: 70px;
+  height: 56px;
 
   > div:first-child {
     position: absolute;
@@ -90,7 +110,8 @@ input::-webkit-inner-spin-button {
 }
 
 .current-chord {
-  color: $highlight-color;
+  // color: var(--mat-sys-primary);
+  background-color: var(--mat-sys-primary-container);
 }
 
 #beats {
@@ -104,29 +125,34 @@ input::-webkit-inner-spin-button {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: #555;
+  background-color: var(
+    --mdc-filled-text-field-container-color,
+    var(--mat-sys-surface-variant)
+  );
 }
 
 .highlight-beat {
-  background-color: $highlight-color;
+  background-color: var(--mat-sys-primary-container);
 }
 
 #configuration {
   margin-top: 40px;
-  text-align: center;
-  // max-width: max(100dvw, 800px);
-  box-sizing: border-box;
-}
-
-.configuration-grid {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 20px;
-  align-items: center;
-  background-color: #ffffff33;
   width: 100%;
-  padding: 30px 20px;
-  box-sizing: border-box;
+
+  button {
+    margin-top: -18px;
+    min-width: 40px;
+    height: 40px;
+    padding: 0;
+  }
+
+  mat-card {
+    padding: 30px 20px;
+  }
+
+  > mat-form-field {
+    width: 100%;
+  }
 }
 
 .configuration-item {
@@ -135,16 +161,8 @@ input::-webkit-inner-spin-button {
   align-items: center;
 
   &.tempo {
-    .button {
-      padding: 5px 8px;
-    }
-
-    input[type="number"] {
-      text-align: right;
-      width: 50px;
-      -webkit-appearance: none;
-      -moz-appearance: textfield;
-      appearance: none;
+    mat-form-field {
+      width: 100%;
     }
   }
 }
@@ -180,23 +198,23 @@ dialog {
       background-color: #ffffff33;
     }
   }
-
-  button {
-    margin-top: 20px;
-    border: solid 1px #00000066;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 0;
-    background-color: #00000044;
-    height: 40px;
-  }
 }
 
 .changelog {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 10px;
-  font-size: 15px;
+  font-size: 14px;
+  border-top: 1px solid
+    var(--mdc-filled-text-field-container-color, var(--mat-sys-surface-variant));
+
+  > div {
+    padding: 10px;
+    border-bottom: 1px solid
+      var(
+        --mdc-filled-text-field-container-color,
+        var(--mat-sys-surface-variant)
+      );
+  }
 }
 
 @media (max-width: 600px) {

@@ -16,11 +16,11 @@ import {
 import { Timer } from 'src/app/model/timer';
 
 @Component({
-    selector: 'app-player',
-    templateUrl: './player.component.html',
-    styleUrls: ['./player.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'app-player',
+  templateUrl: './player.component.html',
+  styleUrls: ['./player.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class PlayerComponent implements OnInit {
   @HostListener('document:keyup', ['$event'])
@@ -152,18 +152,17 @@ export class PlayerComponent implements OnInit {
     }
   }
 
-  setMode(event: Event) {
-    if (event.target && 'value' in event.target) {
-      this.selectedMode.set(<string>event.target.value);
+  setMode(event: string) {
+    if (event) {
+      this.selectedMode.set(event);
     }
   }
 
-  setConfiguration(event: Event) {
-    if (event.target && 'selectedIndex' in event.target) {
+  setConfiguration(event: string) {
+    if (event) {
       this.selectedConfiguration.set(
-        <{ name: string; configuration: string | string[] }>(
-          this.configuration[<number>event.target.selectedIndex]
-        )
+        this.configuration.find((c) => c.name === event) ??
+          this.configuration[0]
       );
     }
   }

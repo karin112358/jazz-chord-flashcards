@@ -1,4 +1,4 @@
-<h1>Jazz Chord Trainer<div class="version">Version 0.0.1</div>
+<h1>Jazz Chord Trainer<div class="version">Version 0.0.2</div>
 </h1>
 
 <div id="chords">
@@ -20,52 +20,49 @@
 </div>
 
 <div id="buttons">
-  <button mat-flat-button id="startButton" (click)="start()">Start</button>
-  <button mat-flat-button id="stopButton" (click)="stop()">Stop</button>
+  <button mat-fab id="startButton" (click)="start()"><mat-icon>play_arrow</mat-icon></button>
+  <button mat-fab id="stopButton" (click)="stop()"><mat-icon>stop</mat-icon></button>
 </div>
 
 <div id="configuration">
-  <div class="configuration-grid">
-    <label for="tempo">Tempo</label>
+  <mat-card appearance="outlined">
     <div class="configuration-item tempo">
-      <button mat-button (click)="changeTempo(-10)" title="CTRL + &larr;">-10</button>
-      <button mat-button (click)="changeTempo(-1)" title="&larr;">-1</button>
+      <button mat-stroked-button (click)="changeTempo(-10)" title="CTRL + &larr;">-10</button>
+      <button mat-stroked-button (click)="changeTempo(-1)" title="&larr;">-1</button>
       <mat-form-field>
+        <mat-label>Tempo</mat-label>
         <input matInput class="tempo-input" type="number" min="minTempo" max="maxTempo" #tempoInput [value]="tempo()"
           (change)="setTempo(tempoInput.value)" />
       </mat-form-field>
-      <button mat-button (click)="changeTempo(1)" title="&rarr;">+1</button>
-      <button mat-button (click)="changeTempo(10)" title="CTRL + &rarr;">+10</button>
+      <button mat-stroked-button (click)="changeTempo(1)" title="&rarr;">+1</button>
+      <button mat-stroked-button (click)="changeTempo(10)" title="CTRL + &rarr;">+10</button>
     </div>
 
-    <label for="mode">Chords</label>
-    <div class="configuration-item chords">
-      <mat-form-field>
-        <select matNativeControl (change)="setConfiguration($event)">
-          <!-- [selected]="configurationItem.name === selectedConfiguration().name" -->
-          <option *ngFor="let configurationItem of configuration" [value]="configurationItem.configuration">{{
-            configurationItem.name }}
-          </option>
-        </select>
-      </mat-form-field>
-    </div>
+    <mat-form-field>
+      <mat-label>Chords</mat-label>
+      <mat-select [value]="selectedConfiguration().name" (valueChange)="setConfiguration($event)">
+        @for (configurationItem of configuration; track configurationItem) {
+        <mat-option [value]="configurationItem.name">{{
+          configurationItem.name }}
+        </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-    <label for="mode">Mode</label>
-    <div class="configuration-item mode">
-      <mat-form-field>
-        <select matNativeControl (change)="setMode($event)">
-          <!-- [selected]="mode.key === selectedMode() -->
-          <option *ngFor="let mode of modes" [value]="mode.key">{{
-            mode.name }}
-          </option>
-        </select>
-      </mat-form-field>
-    </div>
-  </div>
+    <mat-form-field>
+      <mat-label>Mode</mat-label>
+      <mat-select [value]="selectedMode()" (valueChange)="setMode($event)">
+        @for (mode of modes; track mode) {
+        <mat-option [value]="mode.key">{{
+          mode.name }}
+        </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </mat-card>
 </div>
 
-<div id=" open-keyboard-shortcuts" (click)="openShortcuts()">Keyboard shortcuts
-</div>
+<div id="open-keyboard-shortcuts" (click)="openShortcuts()">Keyboard shortcuts</div>
 
 <h2>Description</h2>
 <p>The Jazz Chord Trainer is a web application designed to help musicians practice jazz chords in an interactive and
@@ -113,5 +110,5 @@
     <div>Close keyboard shortcuts</div>
   </div>
 
-  <button id="close-shortcuts" (click)="closeShortcuts()">Close</button>
+  <button mat-fab extended id="close-shortcuts" (click)="closeShortcuts()">Close</button>
 </dialog>

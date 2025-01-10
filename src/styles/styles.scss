@@ -11,23 +11,12 @@ body {
   padding: 0;
 }
 
-#chords .type {
-  font-size: 70%;
-  line-height: 100%;
-  margin-left: 3px;
+html,
+body {
+  height: 100%;
 }
 
-#chords .type.subscript {
-  align-self: flex-end;
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
-
-#prevChord,
-#nextChord,
-#currentChord {
-  .voicing-type {
-    font-size: 0.5em;
-  }
-}
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
