@@ -16,10 +16,11 @@ import {
 import { Timer } from 'src/app/model/timer';
 
 @Component({
-  selector: 'app-player',
-  templateUrl: './player.component.html',
-  styleUrls: ['./player.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-player',
+    templateUrl: './player.component.html',
+    styleUrls: ['./player.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class PlayerComponent implements OnInit {
   @HostListener('document:keyup', ['$event'])

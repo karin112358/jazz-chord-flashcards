@@ -59,17 +59,6 @@ input::-webkit-inner-spin-button {
   gap: 20px;
 }
 
-.button {
-  border: solid 1px #fff;
-  padding: 10px 20px;
-  cursor: pointer;
-  min-width: 30px;
-}
-
-.button:hover {
-  background-color: #333;
-}
-
 .next-chord,
 .current-chord {
   position: relative;
