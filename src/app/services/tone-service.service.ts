@@ -34,9 +34,9 @@ export class ToneServiceService {
           note = root + '1';
         }
 
-        if (this.playRootNote && (beat % 4 === 0 || beat % 4 === 2)) {
-          this.synth.triggerAttackRelease(note, '3n', now);
-        }
+        // if (this.playRootNote && (beat % 4 === 0 || beat % 4 === 2)) {
+        //   this.synth.triggerAttackRelease(note, '3n', now);
+        // }
 
         this.drumStickPlayer.start();
 
