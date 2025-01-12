@@ -312,11 +312,11 @@ export class PlayerComponent implements OnInit {
     this.toneService.playRootNote =
       localStorage.getItem('playRootNote') === 'true';
 
-    this.keysConfiguration = JSON.parse(
-      localStorage.getItem('keysConfiguration') ?? '{ keys: [] }'
-    );
-
-    if (this.keysConfiguration.keys.length === 0) {
+    if (localStorage.getItem('keysConfiguration')) {
+      this.keysConfiguration = JSON.parse(
+        localStorage.getItem('keysConfiguration') ?? '{ keys: [] }'
+      );
+    } else {
       this.keysConfiguration = new KeysConfiguration();
     }
 
