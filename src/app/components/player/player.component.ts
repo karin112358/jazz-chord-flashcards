@@ -313,9 +313,17 @@ export class PlayerComponent implements OnInit {
       localStorage.getItem('playRootNote') === 'true';
 
     if (localStorage.getItem('keysConfiguration')) {
-      this.keysConfiguration = JSON.parse(
-        localStorage.getItem('keysConfiguration') ?? '{ keys: [] }'
-      );
+      try {
+        this.keysConfiguration = JSON.parse(
+          localStorage.getItem('keysConfiguration') ?? '{ keys: [] }'
+        );
+      } catch (error) {
+        this.keysConfiguration = new KeysConfiguration();
+      }
+
+      if (this.keysConfiguration.keys?.length !== this.keys.length) {
+        this.keysConfiguration = new KeysConfiguration();
+      }
     } else {
       this.keysConfiguration = new KeysConfiguration();
     }
