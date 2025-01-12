@@ -20,3 +20,46 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+h1,
+h2,
+h3 {
+  text-align: center;
+  font-weight: 300;
+}
+
+h1 {
+  font-size: 28px;
+  .version {
+    font-size: 14px;
+    font-weight: 300;
+  }
+}
+
+h2 {
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 20px;
+}
+
+h2,
+h3 {
+  margin-top: 2em;
+}
+
+mat-dialog-container .mat-mdc-dialog-surface {
+  mat-dialog-content {
+    padding-top: 0 !important;
+  }
+
+  h2 {
+    margin-top: 36px;
+  }
+}
+
+.mdc-dialog--open .mat-mdc-dialog-surface,
+.mdc-dialog--closing .mat-mdc-dialog-surface {
+  background-color: var(--mat-sys-on-secondary);
+}

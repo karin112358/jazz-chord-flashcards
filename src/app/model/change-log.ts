@@ -1,7 +1,8 @@
 export const changeLog = [
   {
     date: '2025-01-12',
-    changes: 'Add tone.js, save configuration to localStorage',
+    changes:
+      'Add tone.js, save configuration to localStorage, add probability based key selection',
   },
   {
     date: '2025-01-10',

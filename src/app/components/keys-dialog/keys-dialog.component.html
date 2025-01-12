@@ -1,0 +1,28 @@
+<h2>Keys</h2>
+<mat-dialog-content>
+  <p>Rate your familiarity with each key on a scale from 1 to 5. Keys you know well
+    should be rated 5, while unfamiliar keys should be rated 1. Keys with higher ratings will appear less frequently
+    during practice in random mode.</p>
+
+  <div class="outer-key-container">
+    <div class="key-container">
+      @for (key of data.keysConfiguration.keys; track key) {
+      <div>{{ key.key }}</div>
+      <mat-icon (click)="setKeyRating(key.key, 1)" style="{{key.rating >= 1 ? 'color: var(--mat-sys-primary)' : ''}}"
+        aria-hidden="false" aria-label="Example home icon" fontIcon="star"></mat-icon>
+      <mat-icon (click)="setKeyRating(key.key, 2)" style="{{key.rating >= 2 ? 'color: var(--mat-sys-primary)' : ''}}"
+        aria-hidden="false" aria-label="Example home icon" fontIcon="star"></mat-icon>
+      <mat-icon (click)="setKeyRating(key.key, 3)" style="{{key.rating >= 3 ? 'color: var(--mat-sys-primary)' : ''}}"
+        aria-hidden="false" aria-label="Example home icon" fontIcon="star"></mat-icon>
+      <mat-icon (click)="setKeyRating(key.key, 4)" style="{{key.rating >= 4 ? 'color: var(--mat-sys-primary)' : ''}}"
+        aria-hidden="false" aria-label="Example home icon" fontIcon="star"></mat-icon>
+      <mat-icon (click)="setKeyRating(key.key, 5)" style="{{key.rating >= 5 ? 'color: var(--mat-sys-primary)' : ''}}"
+        aria-hidden="false" aria-label="Example home icon" fontIcon="star"></mat-icon>
+      }
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

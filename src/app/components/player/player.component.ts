@@ -8,9 +8,12 @@ import {
   untracked,
   WritableSignal,
 } from '@angular/core';
-import { changeLog } from 'src/app/model/chage-log';
+import { MatDialog } from '@angular/material/dialog';
+import { changeLog } from 'src/app/model/change-log';
 import { exercises, keys, keysSharp, modes } from 'src/app/model/configuration';
 import { ToneServiceService } from 'src/app/services/tone-service.service';
+import { KeysDialogComponent } from '../keys-dialog/keys-dialog.component';
+import { KeysConfiguration } from 'src/app/model/keys-configuration';
 
 @Component({
   selector: 'app-player',
@@ -77,8 +80,14 @@ export class PlayerComponent implements OnInit {
   private keys = keys;
   private keysSharp = keysSharp;
   private initialized = false;
+  private keysConfiguration: KeysConfiguration = new KeysConfiguration();
+  private probabilityMap: { [key: number]: number } = {};
+  private probabilityCount = 0;
 
-  constructor(public toneService: ToneServiceService) {
+  constructor(
+    public toneService: ToneServiceService,
+    private dialog: MatDialog
+  ) {
     effect(() => {
       const beat = this.toneService.beat();
       if (beat % 4 === 0) {
@@ -160,6 +169,16 @@ export class PlayerComponent implements OnInit {
     this.saveConfiguration();
   }
 
+  openKeysDialog(): void {
+    const dialogRef = this.dialog.open(KeysDialogComponent, {
+      data: { keysConfiguration: this.keysConfiguration },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.saveConfiguration();
+    });
+  }
+
   private updateChord(): void {
     this.currKey.set(this.nextKey1() ?? '&nbsp;');
     this.currentKeyIndex = this.nextKey1Index;
@@ -196,7 +215,10 @@ export class PlayerComponent implements OnInit {
 
     while (key === this.keys[currentKeyIndex]) {
       if (this.selectedMode() === 'R') {
-        keyIndex = Math.floor(Math.random() * this.keys.length);
+        const probabilityIndex = Math.floor(
+          Math.random() * this.probabilityCount
+        );
+        keyIndex = this.probabilityMap[probabilityIndex];
       } else {
         const mode = parseInt(this.selectedMode());
 
@@ -249,6 +271,18 @@ export class PlayerComponent implements OnInit {
     dialog.close();
   }
 
+  private updateProbabilityMap() {
+    this.probabilityMap = {};
+    this.probabilityCount = 0;
+
+    this.keysConfiguration.keys.forEach((key, index) => {
+      for (let i = 0; i < 6 - key.rating; i++) {
+        this.probabilityMap[this.probabilityCount] = index;
+        this.probabilityCount++;
+      }
+    });
+  }
+
   private saveConfiguration() {
     if (this.initialized) {
       localStorage.setItem('tempo', this.toneService.tempo().toString());
@@ -258,6 +292,12 @@ export class PlayerComponent implements OnInit {
         'playRootNote',
         this.toneService.playRootNote.toString()
       );
+      localStorage.setItem(
+        'keysConfiguration',
+        JSON.stringify(this.keysConfiguration)
+      );
+
+      this.updateProbabilityMap();
     }
   }
 
@@ -271,5 +311,15 @@ export class PlayerComponent implements OnInit {
     this.setMode(localStorage.getItem('mode') ?? this.modes[0].key);
     this.toneService.playRootNote =
       localStorage.getItem('playRootNote') === 'true';
+
+    this.keysConfiguration = JSON.parse(
+      localStorage.getItem('keysConfiguration') ?? '{ keys: [] }'
+    );
+
+    if (this.keysConfiguration.keys.length === 0) {
+      this.keysConfiguration = new KeysConfiguration();
+    }
+
+    this.updateProbabilityMap();
   }
 }

@@ -1,0 +1,37 @@
+.outer-key-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.key-container {
+  display: grid;
+  grid-template-columns: repeat(6, auto);
+  gap: 8px 16px;
+  align-items: center;
+
+  div:nth-child(6n + 1) {
+    font-size: 1.2em;
+  }
+
+  mat-icon {
+    cursor: pointer;
+    color: var(
+      --mat-fab-disabled-state-container-color,
+      color-mix(in srgb, var(--mat-sys-on-surface) 12%, transparent)
+    );
+
+    .selected {
+      color: var(--mat-sys-primary);
+    }
+  }
+}
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: center;
+}
+
+a {
+  cursor: pointer;
+}

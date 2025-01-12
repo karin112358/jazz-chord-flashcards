@@ -6,36 +6,6 @@
   font-family: "Segoe UI", sans-serif;
 }
 
-$highlight-color: #72bf44;
-
-h1,
-h2,
-h3 {
-  text-align: center;
-  font-weight: 300;
-}
-
-h1 {
-  font-size: 28px;
-  .version {
-    font-size: 14px;
-    font-weight: 300;
-  }
-}
-
-h2 {
-  font-size: 24px;
-}
-
-h3 {
-  font-size: 20px;
-}
-
-h2,
-h3 {
-  margin-top: 2em;
-}
-
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -144,6 +114,13 @@ input::-webkit-inner-spin-button {
   mat-form-field {
     width: 100%;
   }
+
+  button {
+    background-color: var(
+      --mdc-filled-text-field-container-color,
+      var(--mat-sys-surface-variant)
+    );
+  }
 }
 
 .tempo-configuration {
@@ -153,10 +130,6 @@ input::-webkit-inner-spin-button {
 
   button {
     margin-top: -18px;
-    background-color: var(
-      --mdc-filled-text-field-container-color,
-      var(--mat-sys-surface-variant)
-    );
   }
 }
 
