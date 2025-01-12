@@ -155,6 +155,11 @@ export class PlayerComponent implements OnInit {
     }
   }
 
+  setPlayRootNote(value: boolean) {
+    this.toneService.playRootNote = value;
+    this.saveConfiguration();
+  }
+
   private updateChord(): void {
     this.currKey.set(this.nextKey1() ?? '&nbsp;');
     this.currentKeyIndex = this.nextKey1Index;
@@ -249,6 +254,10 @@ export class PlayerComponent implements OnInit {
       localStorage.setItem('tempo', this.toneService.tempo().toString());
       localStorage.setItem('mode', this.selectedMode());
       localStorage.setItem('exercise', this.selectedExercise().name);
+      localStorage.setItem(
+        'playRootNote',
+        this.toneService.playRootNote.toString()
+      );
     }
   }
 
@@ -260,5 +269,7 @@ export class PlayerComponent implements OnInit {
       localStorage.getItem('exercise') ?? this.exercises[0].name
     );
     this.setMode(localStorage.getItem('mode') ?? this.modes[0].key);
+    this.toneService.playRootNote =
+      localStorage.getItem('playRootNote') === 'true';
   }
 }

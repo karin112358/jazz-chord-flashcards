@@ -6,6 +6,7 @@ import * as Tone from 'tone';
 })
 export class ToneServiceService {
   nextBarRoot: string[] = ['C'];
+  playRootNote: boolean = false;
   readonly beat: WritableSignal<number> = signal(-1);
   readonly tempo: WritableSignal<number> = signal(60);
 
@@ -33,8 +34,8 @@ export class ToneServiceService {
           note = root + '1';
         }
 
-        if (beat % 4 === 0 || beat % 4 === 2) {
-          this.synth.triggerAttackRelease(note, '4n', now);
+        if (this.playRootNote && (beat % 4 === 0 || beat % 4 === 2)) {
+          this.synth.triggerAttackRelease(note, '3n', now);
         }
 
         this.drumStickPlayer.start();
@@ -48,12 +49,6 @@ export class ToneServiceService {
     if (!this.synth) {
       await Tone.start();
       this.synth = new Tone.Synth().toDestination();
-      this.synth.oscillator.type = 'sine';
-      // const feedbackDelay = new Tone.FeedbackDelay('8n.', 0.7);
-      // this.synth.connect(feedbackDelay);
-      // feedbackDelay.toDestination();
-      // this.synth.envelope.attack = 0;
-      // this.synth.envelope.decay = 0;
       Tone.getTransport().bpm.value = this.tempo();
     }
 
