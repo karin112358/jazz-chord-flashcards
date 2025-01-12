@@ -1,27 +1,33 @@
-export const configuration = [
+export const exercises = [
   {
     name: 'Major 7',
     configuration: 'I<sup>maj7</sup>',
+    root: ['I'],
   },
   {
     name: 'Minor 7',
     configuration: 'Im<sup>7</sup>',
+    root: ['I'],
   },
   {
     name: 'Dominant 7',
     configuration: 'I<sup>7</sup>',
+    root: ['I'],
   },
   {
     name: 'Maj 7 / Min 7 / Dom 7',
     configuration: ['I<sup>maj7</sup>', 'Im<sup>7</sup>', 'I<sup>7</sup>'],
+    root: ['I'],
   },
   {
     name: 'ii7 - V7 - Imaj7',
     configuration: 'iim<sup>7</sup> - V<sup>7</sup> - I<sup>maj7</sup>',
+    root: ['I'],
   },
   {
     name: 'ii7(b5) - V7 - Im6',
     configuration: 'iim<sup>7(b5)</sup> - V<sup>7</sup> - Im<sup>6</sup>',
+    root: ['I'],
   },
 ];
 
@@ -77,14 +83,3 @@ export const modes = [
     // { key: 'half diminished', name: 'Half-Diminished', symbol: 'ø' },
     // { key: 'augmented', name: 'Augmented', symbol: '+' },
   ];*/
-
-export const changeLog = [
-  {
-    date: '2025-01-08',
-    changes: "Added modes: 'Perfect 4th up' and 'Perfect 4th down'",
-  },
-  {
-    date: '2025-01-10',
-    changes: 'Angular 19 update, added Angular Material Design',
-  },
-];

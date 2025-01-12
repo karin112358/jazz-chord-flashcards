@@ -13,35 +13,35 @@
 </div>
 
 <div id="beats">
-  <div class="beat" [ngClass]="{'highlight-beat': counter() % 4 === 0}"></div>
-  <div class="beat" [ngClass]="{'highlight-beat': counter() % 4 === 1}"></div>
-  <div class="beat" [ngClass]="{'highlight-beat': counter() % 4 === 2}"></div>
-  <div class="beat" [ngClass]="{'highlight-beat': counter() % 4 === 3}"></div>
+  <div class="beat" [ngClass]="{'highlight-beat': toneService.beat() % 4 === 0}"></div>
+  <div class="beat" [ngClass]="{'highlight-beat': toneService.beat() % 4 === 1}"></div>
+  <div class="beat" [ngClass]="{'highlight-beat': toneService.beat() % 4 === 2}"></div>
+  <div class="beat" [ngClass]="{'highlight-beat': toneService.beat() % 4 === 3}"></div>
 </div>
 
 <div id="buttons">
-  <button mat-fab id="startButton" (click)="start()"><mat-icon>play_arrow</mat-icon></button>
-  <button mat-fab id="stopButton" (click)="stop()"><mat-icon>stop</mat-icon></button>
+  <button mat-fab id="startButton" (click)="start()" [disabled]="isRunning()"><mat-icon>play_arrow</mat-icon></button>
+  <button mat-fab id="stopButton" (click)="stop()" [disabled]="!isRunning()"><mat-icon>stop</mat-icon></button>
 </div>
 
 <div id="configuration">
   <mat-card appearance="outlined">
-    <div class="configuration-item tempo">
-      <button mat-stroked-button (click)="changeTempo(-10)" title="CTRL + &larr;">-10</button>
-      <button mat-stroked-button (click)="changeTempo(-1)" title="&larr;">-1</button>
+    <div class="tempo-configuration">
+      <button mat-mini-fab (click)="changeTempo(-10)" title="CTRL + &larr;">-10</button>
+      <button mat-mini-fab (click)="changeTempo(-1)" title="&larr;">-1</button>
       <mat-form-field>
         <mat-label>Tempo</mat-label>
-        <input matInput class="tempo-input" type="number" min="minTempo" max="maxTempo" #tempoInput [value]="tempo()"
-          (change)="setTempo(tempoInput.value)" />
+        <input matInput class="tempo-input" type="number" min="minTempo" max="maxTempo" #tempoInput
+          [value]="toneService.tempo()" (change)="setTempo(tempoInput.value)" />
       </mat-form-field>
-      <button mat-stroked-button (click)="changeTempo(1)" title="&rarr;">+1</button>
-      <button mat-stroked-button (click)="changeTempo(10)" title="CTRL + &rarr;">+10</button>
+      <button mat-mini-fab (click)="changeTempo(1)" title="&rarr;">+1</button>
+      <button mat-mini-fab (click)="changeTempo(10)" title="CTRL + &rarr;">+10</button>
     </div>
 
     <mat-form-field>
       <mat-label>Chords</mat-label>
-      <mat-select [value]="selectedConfiguration().name" (valueChange)="setConfiguration($event)">
-        @for (configurationItem of configuration; track configurationItem) {
+      <mat-select [value]="selectedExercise().name" (valueChange)="setExercise($event)">
+        @for (configurationItem of exercises; track configurationItem) {
         <mat-option [value]="configurationItem.name">{{
           configurationItem.name }}
         </mat-option>

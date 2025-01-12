@@ -1,19 +1,16 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  effect,
   HostListener,
   OnInit,
   signal,
+  untracked,
   WritableSignal,
 } from '@angular/core';
-import {
-  changeLog,
-  configuration,
-  keys,
-  keysSharp,
-  modes,
-} from 'src/app/model/configuration';
-import { Timer } from 'src/app/model/timer';
+import { changeLog } from 'src/app/model/chage-log';
+import { exercises, keys, keysSharp, modes } from 'src/app/model/configuration';
+import { ToneServiceService } from 'src/app/services/tone-service.service';
 
 @Component({
   selector: 'app-player',
@@ -26,7 +23,7 @@ export class PlayerComponent implements OnInit {
   @HostListener('document:keyup', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.key === ' ') {
-      if (this.isRunning) {
+      if (this.isRunning()) {
         this.stop();
       } else {
         this.start();
@@ -34,7 +31,7 @@ export class PlayerComponent implements OnInit {
     } else if (event.key === 'Escape') {
       this.closeShortcuts();
     } else if (event.key === 'ArrowLeft') {
-      let newTempo = this.tempo();
+      let newTempo = this.toneService.tempo();
       if (event.ctrlKey) {
         newTempo -= 10;
       } else if (event.shiftKey) {
@@ -45,7 +42,7 @@ export class PlayerComponent implements OnInit {
 
       this.setTempo(newTempo);
     } else if (event.key === 'ArrowRight') {
-      let newTempo = this.tempo();
+      let newTempo = this.toneService.tempo();
       if (event.ctrlKey) {
         newTempo += 10;
       } else if (event.shiftKey) {
@@ -60,51 +57,50 @@ export class PlayerComponent implements OnInit {
 
   minTempo = 20;
   maxTempo = 300;
-  tempo = signal(60);
-  currKey: WritableSignal<string | null> = signal(null);
-  nextKey1: WritableSignal<string | null> = signal(null);
-  nextKey2: WritableSignal<string | null> = signal(null);
-  counter = signal(-1);
+  readonly currKey: WritableSignal<string | null> = signal(null);
+  readonly nextKey1: WritableSignal<string | null> = signal(null);
+  readonly nextKey2: WritableSignal<string | null> = signal(null);
   modes = modes;
-  configuration = configuration;
+  exercises = exercises;
   changeLog = changeLog;
-  selectedMode = signal('R');
-  selectedConfiguration: WritableSignal<{
+  readonly selectedMode = signal('R');
+  readonly isRunning = signal(false);
+  readonly selectedExercise: WritableSignal<{
     name: string;
     configuration: string | string[];
-  }> = signal(configuration[0]);
+    root: string[];
+  }> = signal(exercises[0]);
 
   private currentKeyIndex = -1;
   private nextKey1Index = -1;
   private nextKey2Index = -1;
   private keys = keys;
   private keysSharp = keysSharp;
-  private isRunning = false;
-  private timer = new Timer((60 / this.tempo()) * 1000, () => {
-    this.counter.update((value) => value + 1);
-    this.updateChord();
-  });
+  private initialized = false;
 
-  private audioContext!: AudioContext;
+  constructor(public toneService: ToneServiceService) {
+    effect(() => {
+      const beat = this.toneService.beat();
+      if (beat % 4 === 0) {
+        untracked(() => {
+          this.updateChord();
+        });
+      }
+    });
 
-  constructor() {
-    this.audioContext = new window.AudioContext();
+    this.loadConfiguration();
+    this.initialized = true;
   }
 
   ngOnInit(): void {}
 
   start() {
-    this.counter.set(-1);
-
-    this.timer.stop();
-    this.timer.setInterval((60 / this.tempo()) * 1000);
-    this.timer.run();
-
-    this.isRunning = true;
+    this.toneService.start();
+    this.isRunning.set(true);
   }
 
   stop() {
-    this.timer.stop();
+    this.toneService.stop();
 
     this.currentKeyIndex = -1;
     this.nextKey1Index = -1;
@@ -112,98 +108,78 @@ export class PlayerComponent implements OnInit {
     this.currKey.set(null);
     this.nextKey1.set(null);
     this.nextKey2.set(null);
-    this.counter.set(-1);
-    this.isRunning = false;
+    this.isRunning.set(false);
   }
 
   changeTempo(change: number) {
     if (change > 0) {
-      if (this.tempo() + change > this.maxTempo) {
-        this.tempo.set(this.maxTempo);
+      if (this.toneService.tempo() + change > this.maxTempo) {
+        this.toneService.setTempo(this.maxTempo);
       } else {
-        this.tempo.update((value) => value + change);
+        this.toneService.setTempo(this.toneService.tempo() + change);
       }
     } else {
-      if (this.tempo() + change < this.minTempo) {
-        this.tempo.set(this.minTempo);
+      if (this.toneService.tempo() + change < this.minTempo) {
+        this.toneService.setTempo(this.minTempo);
       } else {
-        this.tempo.update((value) => value + change);
+        this.toneService.setTempo(this.toneService.tempo() + change);
       }
     }
 
-    if (this.isRunning) {
-      //this.timer.stop();
-      this.timer.setInterval((60 / this.tempo()) * 1000);
-      //this.timer.run();
-    }
+    this.saveConfiguration();
   }
 
   setTempo(newTempo: number | string) {
     if (typeof newTempo === 'string') {
-      this.tempo.set(parseInt(newTempo));
+      this.toneService.setTempo(parseInt(newTempo));
     } else {
-      this.tempo.set(newTempo);
+      this.toneService.setTempo(newTempo);
     }
 
-    if (this.isRunning) {
-      //this.timer.stop();
-      this.timer.setInterval((60 / this.tempo()) * 1000);
-      //this.timer.run();
+    this.saveConfiguration();
+  }
+
+  setMode(key: string) {
+    if (key) {
+      this.selectedMode.set(key);
+      this.saveConfiguration();
     }
   }
 
-  setMode(event: string) {
-    if (event) {
-      this.selectedMode.set(event);
-    }
-  }
-
-  setConfiguration(event: string) {
-    if (event) {
-      this.selectedConfiguration.set(
-        this.configuration.find((c) => c.name === event) ??
-          this.configuration[0]
+  setExercise(name: string) {
+    if (name) {
+      this.selectedExercise.set(
+        this.exercises.find((c) => c.name === name) ?? this.exercises[0]
       );
+      this.saveConfiguration();
     }
   }
 
   private updateChord(): void {
-    if (this.counter() % 4 === 0) {
-      this.currKey.set(this.nextKey1() ?? '&nbsp;');
-      this.currentKeyIndex = this.nextKey1Index;
+    this.currKey.set(this.nextKey1() ?? '&nbsp;');
+    this.currentKeyIndex = this.nextKey1Index;
 
-      this.nextKey1.set(this.nextKey2() ?? '&nbsp;');
-      this.nextKey1Index = this.nextKey2Index;
-      while (this.nextKey1() === this.currKey()) {
-        const nextChord = this.getNextChord(this.currentKeyIndex);
-        this.nextKey1.set(nextChord.chord);
-        this.nextKey1Index = nextChord.index;
-      }
+    let nextKey1 = this.nextKey2() ?? '&nbsp;';
+    let nextKey1Index = this.nextKey2Index;
 
-      const nextChord = this.getNextChord(this.nextKey1Index);
-      this.nextKey2.set(nextChord.chord);
-      this.nextKey2Index = nextChord.index;
-      while (this.nextKey2() === this.nextKey1()) {
-        const nextChord = this.getNextChord(this.nextKey1Index);
-        this.nextKey2.set(nextChord.chord);
-        this.nextKey2Index = nextChord.index;
-      }
+    while (nextKey1 === this.currKey()) {
+      const nextChord = this.getNextChord(this.currentKeyIndex);
+      nextKey1 = nextChord.chord;
+      nextKey1Index = nextChord.index;
     }
 
-    // play sound
-    const osc = this.audioContext.createOscillator();
-    const envelope = this.audioContext.createGain();
+    this.nextKey1.set(nextKey1);
+    this.nextKey1Index = nextKey1Index;
 
-    osc.connect(envelope);
-    envelope.connect(this.audioContext.destination);
+    let nextChord = this.getNextChord(this.nextKey1Index);
+    while (nextChord.chord === nextKey1) {
+      nextChord = this.getNextChord(this.nextKey1Index);
+    }
 
-    osc.frequency.value = this.counter() % 4 == 0 ? 600 : 400;
-    envelope.gain.value = 1;
-    envelope.gain.exponentialRampToValueAtTime(1, 0 + 0.001);
-    envelope.gain.exponentialRampToValueAtTime(0.001, 0 + 0.02);
+    this.nextKey2.set(nextChord.chord);
+    this.nextKey2Index = nextChord.index;
 
-    osc.start(this.audioContext.currentTime);
-    osc.stop(this.audioContext.currentTime + 0.03);
+    this.toneService.nextBarRoot = [this.keys[nextKey1Index]];
   }
 
   private getNextChord(currentKeyIndex: number): {
@@ -237,7 +213,7 @@ export class PlayerComponent implements OnInit {
       keys = this.keysSharp;
     }
 
-    let config = this.selectedConfiguration().configuration;
+    let config = this.selectedExercise().configuration;
     if (Array.isArray(config)) {
       config = config[Math.floor(Math.random() * config.length)];
     }
@@ -266,5 +242,23 @@ export class PlayerComponent implements OnInit {
   closeShortcuts() {
     const dialog = document.querySelector('#shortcuts') as HTMLDialogElement;
     dialog.close();
+  }
+
+  private saveConfiguration() {
+    if (this.initialized) {
+      localStorage.setItem('tempo', this.toneService.tempo().toString());
+      localStorage.setItem('mode', this.selectedMode());
+      localStorage.setItem('exercise', this.selectedExercise().name);
+    }
+  }
+
+  private loadConfiguration() {
+    this.toneService.setTempo(
+      JSON.parse(localStorage.getItem('tempo') ?? '60')
+    );
+    this.setExercise(
+      localStorage.getItem('exercise') ?? this.exercises[0].name
+    );
+    this.setMode(localStorage.getItem('mode') ?? this.modes[0].key);
   }
 }
