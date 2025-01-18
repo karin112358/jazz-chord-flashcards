@@ -1,7 +1,7 @@
 export const changeLog = [
   {
     date: '2025-01-18',
-    changes: 'Fix tone.js not playing audio on iOS',
+    changes: 'Fix tone.js not playing audio on iOS, track usage statistics',
   },
   {
     date: '2025-01-12',
