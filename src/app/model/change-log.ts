@@ -1,5 +1,9 @@
 export const changeLog = [
   {
+    date: '2025-01-18',
+    changes: 'Fix tone.js not playing audio on iOS',
+  },
+  {
     date: '2025-01-12',
     changes:
       'Add tone.js, save configuration to localStorage, add probability based key selection',

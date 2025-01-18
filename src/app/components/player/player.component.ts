@@ -1,11 +1,14 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   effect,
+  ElementRef,
   HostListener,
   OnInit,
   signal,
   untracked,
+  ViewChild,
   WritableSignal,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -22,7 +25,9 @@ import { KeysConfiguration } from 'src/app/model/keys-configuration';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class PlayerComponent implements OnInit {
+export class PlayerComponent implements OnInit, AfterViewInit {
+  @ViewChild('silentAudio') silentAudio!: ElementRef<HTMLAudioElement>;
+
   @HostListener('document:keyup', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.key === ' ') {
@@ -103,12 +108,18 @@ export class PlayerComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  ngAfterViewInit(): void {
+    this.silentAudio.nativeElement.loop = true;
+  }
+
   start() {
+    this.silentAudio.nativeElement.play();
     this.toneService.start();
     this.isRunning.set(true);
   }
 
   stop() {
+    this.silentAudio.nativeElement.pause();
     this.toneService.stop();
 
     this.currentKeyIndex = -1;
