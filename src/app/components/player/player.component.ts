@@ -130,7 +130,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.nextKey1.set(null);
     this.nextKey2.set(null);
     this.isRunning.set(false);
-    (<any>window).sa_event('click_start');
   }
 
   changeTempo(change: number) {
