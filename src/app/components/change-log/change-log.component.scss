@@ -1,0 +1,16 @@
+.changelog {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  font-size: 14px;
+  border-top: 1px solid
+    var(--mdc-filled-text-field-container-color, var(--mat-sys-surface-variant));
+
+  > div {
+    padding: 10px;
+    border-bottom: 1px solid
+      var(
+        --mdc-filled-text-field-container-color,
+        var(--mat-sys-surface-variant)
+      );
+  }
+}

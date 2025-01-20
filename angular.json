@@ -23,7 +23,7 @@
             "outputPath": {
               "base": "dist/jazz-chord-flashcards"
             },
-            "baseHref": "/jazz-chord-flashcards/",
+            "baseHref": "/",
             "index": "src/index.html",
             "polyfills": [
               "src/polyfills.ts"
@@ -48,12 +48,12 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "4mb"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumError": "8kb"
                 }
               ],
               "fileReplacements": [

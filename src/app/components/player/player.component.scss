@@ -2,14 +2,6 @@
   display: inline-block;
   width: 100%;
   max-width: min(calc(100dvw - 40px), 500px);
-  font-size: 18px;
-  font-family: "Segoe UI", sans-serif;
-}
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }
 
 #chords {
@@ -163,23 +155,6 @@ dialog {
       padding: 5px 10px;
       background-color: #ffffff33;
     }
-  }
-}
-
-.changelog {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  font-size: 14px;
-  border-top: 1px solid
-    var(--mdc-filled-text-field-container-color, var(--mat-sys-surface-variant));
-
-  > div {
-    padding: 10px;
-    border-bottom: 1px solid
-      var(
-        --mdc-filled-text-field-container-color,
-        var(--mat-sys-surface-variant)
-      );
   }
 }
 

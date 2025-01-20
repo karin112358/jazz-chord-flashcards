@@ -1,6 +1,6 @@
 {
   "name": "jazz-chord-flashcards",
-  "version": "0.0.0",
+  "version": "0.0.5",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 127.0.0.1",
@@ -21,6 +21,8 @@
     "@angular/platform-browser": "^19.0.6",
     "@angular/platform-browser-dynamic": "^19.0.6",
     "@angular/router": "^19.0.6",
+    "marked": "^15.0.6",
+    "ngx-markdown": "^19.0.0",
     "rxjs": "~7.4.0",
     "tone": "^15.0.4",
     "tslib": "^2.3.0",

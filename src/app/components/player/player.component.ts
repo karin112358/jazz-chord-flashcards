@@ -12,7 +12,6 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { changeLog } from 'src/app/model/change-log';
 import { exercises, keys, keysSharp, modes } from 'src/app/model/configuration';
 import { ToneServiceService } from 'src/app/services/tone-service.service';
 import { KeysDialogComponent } from '../keys-dialog/keys-dialog.component';
@@ -70,7 +69,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   readonly nextKey2: WritableSignal<string | null> = signal(null);
   modes = modes;
   exercises = exercises;
-  changeLog = changeLog;
   readonly selectedMode = signal('R');
   readonly isRunning = signal(false);
   readonly selectedExercise: WritableSignal<{
