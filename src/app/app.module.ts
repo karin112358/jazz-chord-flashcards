@@ -24,6 +24,7 @@ const routes = [
   { path: 'change-log', component: ChangeLogComponent },
   { path: 'documentation', component: DocumentationComponent },
   { path: 'contact', component: ContactComponent },
+  { path: '**', component: PlayerComponent },
 ];
 
 @NgModule({
