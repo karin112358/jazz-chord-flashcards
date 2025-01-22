@@ -1,6 +1,6 @@
 export const changeLog = [
   {
-    date: '2025-01-20',
+    date: '2025-01-22',
     changes: 'Add sitemap and robots.txt',
   },
   {
