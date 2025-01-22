@@ -34,6 +34,8 @@
               "src/favicon.ico",
               "src/google04b49cc9afcdf4d4.html",
               "src/assets",
+              "src/robots.txt",
+              "src/sitemap.xml",
               "src/404.html"
             ],
             "styles": [
@@ -104,7 +106,9 @@
               "src/favicon.ico",
               "src/google04b49cc9afcdf4d4.html",
               "src/assets",
-              "src/404.html",
+              "src/robots.txt",
+              "src/sitemap.xml",
+              "src/404.html"
             ],
             "styles": [
               "@angular/material/prebuilt-themes/magenta-violet.css",

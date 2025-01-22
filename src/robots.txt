@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://practice-jazz-chords.com/sitemap.xml

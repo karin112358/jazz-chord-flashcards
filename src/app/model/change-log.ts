@@ -1,6 +1,10 @@
 export const changeLog = [
   {
     date: '2025-01-20',
+    changes: 'Add sitemap and robots.txt',
+  },
+  {
+    date: '2025-01-20',
     changes:
       "Domain update: the app's domain has been updated to practice-jazz-chords.com, all prior configurations need to be reapplied due to the domain transfer",
   },
