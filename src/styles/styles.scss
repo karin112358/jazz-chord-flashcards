@@ -83,6 +83,10 @@ mat-dialog-container .mat-mdc-dialog-surface {
   }
 }
 
+mat-label {
+  opacity: 0.5;
+}
+
 .mdc-dialog--open .mat-mdc-dialog-surface,
 .mdc-dialog--closing .mat-mdc-dialog-surface {
   background-color: var(--mat-sys-on-secondary);

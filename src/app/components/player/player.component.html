@@ -53,6 +53,12 @@
       </mat-select>
     </mat-form-field>
 
+    <mat-form-field *ngIf="selectedExercise().name === 'Custom'">
+      <mat-label>Configuration</mat-label>
+      <textarea matInput [value]="selectedExercise().configuration" (change)="setCustomExercise($event)"
+        [rows]="3"></textarea>
+    </mat-form-field>
+
     <mat-form-field>
       <mat-label>Mode</mat-label>
       <mat-select [value]="selectedMode()" (valueChange)="setMode($event)">

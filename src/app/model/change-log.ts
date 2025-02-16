@@ -1,5 +1,10 @@
 export const changeLog = [
   {
+    date: '2025-02-16',
+    changes:
+      'Add Imaj7 - vi7 - ii7 - V7 chord progression, allow custom chord progressions',
+  },
+  {
     date: '2025-01-22',
     changes: 'Add sitemap and robots.txt',
   },

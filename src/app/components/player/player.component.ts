@@ -17,6 +17,11 @@ import { ToneServiceService } from 'src/app/services/tone-service.service';
 import { KeysDialogComponent } from '../keys-dialog/keys-dialog.component';
 import { KeysConfiguration } from 'src/app/model/keys-configuration';
 
+type Chord = {
+  index: number;
+  chord: string;
+};
+
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
@@ -29,6 +34,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   @HostListener('document:keyup', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
+    if (
+      event.target &&
+      'localName' in event.target &&
+      event.target.localName === 'textarea'
+    ) {
+      return;
+    }
+
     if (event.key === ' ') {
       if (this.isRunning()) {
         this.stop();
@@ -66,7 +79,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   maxTempo = 300;
   readonly currKey: WritableSignal<string | null> = signal(null);
   readonly nextKey1: WritableSignal<string | null> = signal(null);
-  readonly nextKey2: WritableSignal<string | null> = signal(null);
   modes = modes;
   exercises = exercises;
   readonly selectedMode = signal('R');
@@ -79,13 +91,13 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   private currentKeyIndex = -1;
   private nextKey1Index = -1;
-  private nextKey2Index = -1;
   private keys = keys;
   private keysSharp = keysSharp;
   private initialized = false;
   private keysConfiguration: KeysConfiguration = new KeysConfiguration();
   private probabilityMap: { [key: number]: number } = {};
   private probabilityCount = 0;
+  private nextChordTasks: Chord[] = [];
 
   constructor(
     public toneService: ToneServiceService,
@@ -123,10 +135,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
     this.currentKeyIndex = -1;
     this.nextKey1Index = -1;
-    this.nextKey2Index = -1;
     this.currKey.set(null);
     this.nextKey1.set(null);
-    this.nextKey2.set(null);
     this.isRunning.set(false);
   }
 
@@ -174,6 +184,15 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
+  setCustomExercise(config: Event) {
+    const custom = this.exercises.find((e) => e.name === 'Custom');
+    if (custom) {
+      const customExercise = (<HTMLTextAreaElement>config.target).value;
+      custom.configuration = customExercise;
+      localStorage.setItem('customExercise', customExercise);
+    }
+  }
+
   setPlayRootNote(value: boolean) {
     this.toneService.playRootNote = value;
     this.saveConfiguration();
@@ -190,36 +209,41 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   private updateChord(): void {
-    this.currKey.set(this.nextKey1() ?? '&nbsp;');
+    this.currKey.set(this.nextKey1() ?? '');
     this.currentKeyIndex = this.nextKey1Index;
 
-    let nextKey1 = this.nextKey2() ?? '&nbsp;';
-    let nextKey1Index = this.nextKey2Index;
+    let nextChords: Chord[];
+    let nextKey1: string = '';
 
-    while (nextKey1 === this.currKey()) {
-      const nextChord = this.getNextChord(this.currentKeyIndex);
-      nextKey1 = nextChord.chord;
-      nextKey1Index = nextChord.index;
+    if (this.nextChordTasks.length) {
+      nextChords = this.nextChordTasks;
+      nextKey1 = nextChords[0].chord;
+    } else {
+      nextChords = this.getNextChords(this.currentKeyIndex);
+      nextKey1 = nextChords[0].chord;
+
+      while (nextKey1 === this.currKey()) {
+        nextChords = this.getNextChords(this.currentKeyIndex);
+        nextKey1 = nextChords[0].chord;
+      }
     }
+
+    let nextKey1Index = nextChords[0].index;
+    nextKey1 = nextKey1.replace(/(\*)([0-9a-z\#]+)(\*)/g, '<sup>$2</sup>');
 
     this.nextKey1.set(nextKey1);
     this.nextKey1Index = nextKey1Index;
 
-    let nextChord = this.getNextChord(this.nextKey1Index);
-    while (nextChord.chord === nextKey1) {
-      nextChord = this.getNextChord(this.nextKey1Index);
+    if (nextChords.length > 1) {
+      this.nextChordTasks = nextChords.slice(1);
+    } else {
+      this.nextChordTasks = [];
     }
-
-    this.nextKey2.set(nextChord.chord);
-    this.nextKey2Index = nextChord.index;
 
     this.toneService.nextBarRoot = [this.keys[nextKey1Index]];
   }
 
-  private getNextChord(currentKeyIndex: number): {
-    index: number;
-    chord: string;
-  } {
+  private getNextChords(currentKeyIndex: number): Chord[] {
     let key = this.keys[currentKeyIndex];
     let keyIndex = 0;
 
@@ -251,6 +275,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
 
     let config = this.selectedExercise().configuration;
+    if (!Array.isArray(config)) {
+      config = config.split('||');
+    }
+
     if (Array.isArray(config)) {
       config = config[Math.floor(Math.random() * config.length)];
     }
@@ -268,7 +296,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     config = config.replace(/Vb|vb/g, keys[(keyIndex + 6) % 12]);
     config = config.replace(/V|v/g, keys[(keyIndex + 7) % 12]);
 
-    return { index: keyIndex, chord: config };
+    return config
+      .split('|')
+      .map((config) => ({ index: keyIndex, chord: config }));
   }
 
   openShortcuts() {
@@ -336,6 +366,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       }
     } else {
       this.keysConfiguration = new KeysConfiguration();
+    }
+
+    const customExercise = localStorage.getItem('customExercise');
+    if (customExercise) {
+      const custom = this.exercises.find((e) => e.name === 'Custom');
+      if (custom) {
+        custom.configuration = customExercise;
+      }
     }
 
     this.updateProbabilityMap();

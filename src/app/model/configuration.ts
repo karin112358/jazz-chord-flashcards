@@ -1,32 +1,42 @@
 export const exercises = [
   {
     name: 'Major 7',
-    configuration: 'I<sup>maj7</sup>',
+    configuration: 'I*maj7*',
     root: ['I'],
   },
   {
     name: 'Minor 7',
-    configuration: 'Im<sup>7</sup>',
+    configuration: 'Im*7*',
     root: ['I'],
   },
   {
     name: 'Dominant 7',
-    configuration: 'I<sup>7</sup>',
+    configuration: 'I*7*',
     root: ['I'],
   },
   {
     name: 'Maj 7 / Min 7 / Dom 7',
-    configuration: ['I<sup>maj7</sup>', 'Im<sup>7</sup>', 'I<sup>7</sup>'],
+    configuration: ['I*maj7*', 'Im*7*', 'I*7*'],
     root: ['I'],
   },
   {
     name: 'ii7 - V7 - Imaj7',
-    configuration: 'iim<sup>7</sup> - V<sup>7</sup> - I<sup>maj7</sup>',
+    configuration: 'iim*7* - V*7* | I*maj7*',
     root: ['I'],
   },
   {
     name: 'ii7(b5) - V7 - Im6',
-    configuration: 'iim<sup>7(b5)</sup> - V<sup>7</sup> - Im<sup>6</sup>',
+    configuration: 'iim*7(b5)* - V*7* | im*6*',
+    root: ['I'],
+  },
+  {
+    name: 'Imaj7 - vi7 - ii7 - V7',
+    configuration: 'I*maj7* - vim*7* | iim*7* - V*7*',
+    root: ['I'],
+  },
+  {
+    name: 'Custom',
+    configuration: 'iim*7* - V*7* | I*maj7*',
     root: ['I'],
   },
 ];
