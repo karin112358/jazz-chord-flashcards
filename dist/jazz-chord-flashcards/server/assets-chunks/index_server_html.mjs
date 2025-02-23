@@ -19,6 +19,6 @@ export default `<!doctype html>
 
   <!-- 100% privacy-first analytics -->
   <script async="" src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-<link rel="modulepreload" href="chunk-DIJBM2IN.js"><script src="polyfills-EONH2QZO.js" type="module"></script><script src="main-NRFS53ED.js" type="module"></script></body>
+<link rel="modulepreload" href="chunk-DIJBM2IN.js"><script src="polyfills-EONH2QZO.js" type="module"></script><script src="main-I775B3NJ.js" type="module"></script></body>
 
 </html>`;
