@@ -229,7 +229,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
 
     let nextKey1Index = nextChords[0].index;
-    nextKey1 = nextKey1.replace(/(\*)([0-9a-z\#]+)(\*)/g, '<sup>$2</sup>');
+    nextKey1 = nextKey1.replace(/(\*)([0-9a-z()\#]+)(\*)/g, '<sup>$2</sup>');
 
     this.nextKey1.set(nextKey1);
     this.nextKey1Index = nextKey1Index;

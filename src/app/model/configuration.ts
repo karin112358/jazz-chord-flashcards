@@ -20,17 +20,32 @@ export const exercises = [
     root: ['I'],
   },
   {
-    name: 'ii7 - V7 - Imaj7',
+    name: 'ii7 - V7 - Imaj7 (one bar)',
+    configuration: 'iim*7* - V*7* - I*maj7*',
+    root: ['I'],
+  },
+  {
+    name: 'ii7 - V7 - Imaj7 (two bars)',
     configuration: 'iim*7* - V*7* | I*maj7*',
     root: ['I'],
   },
   {
-    name: 'ii7(b5) - V7 - Im6',
+    name: 'ii7(b5) - V7 - Im6 (one bar)',
+    configuration: 'iim*7(b5)* - V*7* - im*6*',
+    root: ['I'],
+  },
+  {
+    name: 'ii7(b5) - V7 - Im6 (two bars)',
     configuration: 'iim*7(b5)* - V*7* | im*6*',
     root: ['I'],
   },
   {
-    name: 'Imaj7 - vi7 - ii7 - V7',
+    name: 'Imaj7 - vi7 - ii7 - V7 (one bar)',
+    configuration: 'I*maj7* - vim*7* - iim*7* - V*7*',
+    root: ['I'],
+  },
+  {
+    name: 'Imaj7 - vi7 - ii7 - V7 (two bars)',
     configuration: 'I*maj7* - vim*7* | iim*7* - V*7*',
     root: ['I'],
   },
