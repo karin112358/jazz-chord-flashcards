@@ -19,9 +19,14 @@ body {
   height: 100%;
 }
 
+main #app {
+  padding-bottom: 40px;
+}
+
 h1,
 h2,
-h3 {
+h3,
+h4 {
   text-align: center;
   font-weight: 300;
   text-transform: uppercase;
@@ -37,13 +42,22 @@ h1 {
 }
 
 h2 {
-  font-size: 20px;
+  font-size: 24px;
+
+  .documentation & {
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    background-color: var(
+      --mdc-filled-text-field-container-color,
+      var(--mat-sys-surface-variant)
+    );
+  }
 }
 
 h3 {
-  font-size: 18px;
+  font-size: 20px;
   text-align: left;
-  color: var(--mat-sys-primary);
+  text-align: center;
 }
 
 h2,
@@ -57,7 +71,9 @@ p {
 
 strong {
   font-weight: normal;
-  color: var(--mat-sys-primary);
+  background-color: var(--mat-sys-primary-container);
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 a {
@@ -90,4 +106,29 @@ mat-label {
 .mdc-dialog--open .mat-mdc-dialog-surface,
 .mdc-dialog--closing .mat-mdc-dialog-surface {
   background-color: var(--mat-sys-on-secondary);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  padding: 3px 12px;
+  border-color: var(
+    --mdc-filled-text-field-container-color,
+    var(--mat-sys-surface-variant)
+  );
+  border-width: 1px;
+  border-style: solid;
+}
+
+th {
+  font-weight: normal;
+  text-align: left;
+  background-color: var(
+    --mdc-filled-text-field-container-color,
+    var(--mat-sys-surface-variant)
+  );
 }

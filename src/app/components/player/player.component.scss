@@ -149,12 +149,14 @@
   }
 }
 
-#open-keyboard-shortcuts {
+#open-keyboard-shortcuts,
+#docs {
   cursor: pointer;
   text-align: center;
   margin-top: 20px;
   font-size: 14px;
   text-decoration: underline;
+  color: var(--mat-sys-primary);
 }
 
 dialog {
