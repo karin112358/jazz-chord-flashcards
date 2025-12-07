@@ -81,7 +81,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   readonly nextKey1: WritableSignal<string | null> = signal(null);
   modes = modes;
   exercises = exercises;
-  readonly selectedMode = signal('R');
+  readonly selectedMode = signal<'R' | 'WC' | number>('R');
   readonly isRunning = signal(false);
   readonly selectedExercise: WritableSignal<{
     name: string;
@@ -97,11 +97,13 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   private keysConfiguration: KeysConfiguration = new KeysConfiguration();
   private probabilityMap: { [key: number]: number } = {};
   private probabilityCount = 0;
+  private cycle = 0;
+  private cycleKeys: string[] = [];
   private nextChordTasks: Chord[] = [];
 
   constructor(
     public toneService: ToneServiceService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
     effect(() => {
       const beat = this.toneService.beat();
@@ -126,6 +128,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.silentAudio.nativeElement.play();
     this.toneService.start();
     this.isRunning.set(true);
+    this.cycle = 0;
+    this.cycleKeys = [];
     (<any>window).sa_event('click_start');
   }
 
@@ -168,7 +172,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.saveConfiguration();
   }
 
-  setMode(key: string) {
+  setMode(key: 'R' | 'WC' | number) {
     if (key) {
       this.selectedMode.set(key);
       this.saveConfiguration();
@@ -178,7 +182,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   setExercise(name: string) {
     if (name) {
       this.selectedExercise.set(
-        this.exercises.find((c) => c.name === name) ?? this.exercises[0]
+        this.exercises.find((c) => c.name === name) ?? this.exercises[0],
       );
       this.saveConfiguration();
     }
@@ -249,12 +253,32 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
     while (key === this.keys[currentKeyIndex]) {
       if (this.selectedMode() === 'R') {
+        // Random mode
         const probabilityIndex = Math.floor(
-          Math.random() * this.probabilityCount
+          Math.random() * this.probabilityCount,
         );
         keyIndex = this.probabilityMap[probabilityIndex];
+      } else if (this.selectedMode() === 'WC') {
+        // Weighted Cycle mode
+        while (this.cycleKeys.length === 0) {
+          this.cycle++;
+          this.cycleKeys = this.keysConfiguration.keys
+            .filter((key) => this.cycle % key.rating === 0)
+            .map((key) => key.key);
+        }
+
+        console.log('cycle', this.cycle, 'keys', this.cycleKeys);
+
+        const key =
+          this.cycleKeys[Math.floor(Math.random() * this.cycleKeys.length)];
+        if (key) {
+          keyIndex = this.keys.indexOf(key);
+          this.cycleKeys = this.cycleKeys.filter((k) => k !== key);
+        }
+        // TODO
       } else {
-        const mode = parseInt(this.selectedMode());
+        // Other modes
+        const mode = this.selectedMode() as number;
 
         if (currentKeyIndex === -1) {
           currentKeyIndex = mode * -1;
@@ -326,15 +350,15 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   private saveConfiguration() {
     if (this.initialized) {
       localStorage.setItem('tempo', this.toneService.tempo().toString());
-      localStorage.setItem('mode', this.selectedMode());
+      localStorage.setItem('mode', this.selectedMode().toString());
       localStorage.setItem('exercise', this.selectedExercise().name);
       localStorage.setItem(
         'playRootNote',
-        this.toneService.playRootNote.toString()
+        this.toneService.playRootNote.toString(),
       );
       localStorage.setItem(
         'keysConfiguration',
-        JSON.stringify(this.keysConfiguration)
+        JSON.stringify(this.keysConfiguration),
       );
 
       this.updateProbabilityMap();
@@ -343,19 +367,22 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   private loadConfiguration() {
     this.toneService.setTempo(
-      JSON.parse(localStorage.getItem('tempo') ?? '60')
+      JSON.parse(localStorage.getItem('tempo') ?? '60'),
     );
     this.setExercise(
-      localStorage.getItem('exercise') ?? this.exercises[0].name
+      localStorage.getItem('exercise') ?? this.exercises[0].name,
     );
-    this.setMode(localStorage.getItem('mode') ?? this.modes[0].key);
+    this.setMode(
+      (localStorage.getItem('mode') as 'R' | 'WC' | number) ??
+        this.modes[0].key,
+    );
     this.toneService.playRootNote =
       localStorage.getItem('playRootNote') === 'true';
 
     if (localStorage.getItem('keysConfiguration')) {
       try {
         this.keysConfiguration = JSON.parse(
-          localStorage.getItem('keysConfiguration') ?? '{ keys: [] }'
+          localStorage.getItem('keysConfiguration') ?? '{ keys: [] }',
         );
       } catch (error) {
         this.keysConfiguration = new KeysConfiguration();

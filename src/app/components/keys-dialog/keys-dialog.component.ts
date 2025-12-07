@@ -19,7 +19,7 @@ import { KeysConfiguration } from 'src/app/model/keys-configuration';
 export class KeysDialogComponent {
   readonly dialogRef = inject(MatDialogRef<KeysDialogComponent>);
   readonly data = inject<{ keysConfiguration: KeysConfiguration }>(
-    MAT_DIALOG_DATA
+    MAT_DIALOG_DATA,
   );
 
   close(): void {

@@ -57,6 +57,7 @@ Here are same samples for configurations:
 Choose how chords are presented during practice:
 
 - **Random:** Chords appear in a completely random order.
+- **Weighted Cycle:** Chords appear in cycles; ratings determine in how many cycles a key appears (1* - key appears in every cycle, 5* - key appears in every 5th cycle).
 - **Perfect 4th Up:** Chords progress by ascending perfect fourths.
 - **Perfect 4th Down:** Chords progress by descending perfect fourths.
 

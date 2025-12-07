@@ -87,9 +87,27 @@ export const keysSharp = [
 ];
 
 export const modes = [
-  { name: 'Random', key: 'R' },
-  { name: 'Perfect 4th up', key: '5' },
-  { name: 'Perfect 4th down', key: '-5' },
+  {
+    name: 'Random',
+    key: 'R',
+    description: 'Keys appear in a completely random order.',
+  },
+  {
+    name: 'Weighted Cycle',
+    key: 'WC',
+    description:
+      'Keys appear in cycles; ratings determine how often a key occurs per cycle.',
+  },
+  {
+    name: 'Perfect 4th up',
+    key: '5',
+    description: 'Keys progress by ascending perfect fourths.',
+  },
+  {
+    name: 'Perfect 4th down',
+    key: '-5',
+    description: 'Keys progress by descending perfect fourths.',
+  },
   // { name: 'Major 3rd up', key: '4' },
   // { name: 'Major 3rd down', key: '-4' },
   // { name: 'Minor 3rd up', key: '3' },
