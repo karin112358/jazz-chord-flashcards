@@ -37,41 +37,43 @@
         <mat-label>Tempo</mat-label>
         <input matInput class="tempo-input" type="number" min="minTempo" max="maxTempo" #tempoInput
           [value]="toneService.tempo()" (change)="setTempo(tempoInput.value)" />
+        </mat-form-field>
+        <button mat-mini-fab (click)="changeTempo(1)" title="&rarr;">+1</button>
+        <button mat-mini-fab (click)="changeTempo(10)" title="CTRL + &rarr;">+10</button>
+      </div>
+
+      <mat-form-field>
+        <mat-label>Chords</mat-label>
+        <mat-select [value]="selectedExercise().name" (valueChange)="setExercise($event)">
+          @for (configurationItem of exercises; track configurationItem) {
+            <mat-option [value]="configurationItem.name">{{
+              configurationItem.name }}
+            </mat-option>
+          }
+        </mat-select>
       </mat-form-field>
-      <button mat-mini-fab (click)="changeTempo(1)" title="&rarr;">+1</button>
-      <button mat-mini-fab (click)="changeTempo(10)" title="CTRL + &rarr;">+10</button>
-    </div>
 
-    <mat-form-field>
-      <mat-label>Chords</mat-label>
-      <mat-select [value]="selectedExercise().name" (valueChange)="setExercise($event)">
-        @for (configurationItem of exercises; track configurationItem) {
-        <mat-option [value]="configurationItem.name">{{
-          configurationItem.name }}
-        </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+      @if (selectedExercise().name === 'Custom') {
+        <mat-form-field>
+          <mat-label>Configuration</mat-label>
+          <textarea matInput [value]="selectedExercise().configuration" (change)="setCustomExercise($event)"
+          [rows]="3"></textarea>
+        </mat-form-field>
+      }
 
-    <mat-form-field *ngIf="selectedExercise().name === 'Custom'">
-      <mat-label>Configuration</mat-label>
-      <textarea matInput [value]="selectedExercise().configuration" (change)="setCustomExercise($event)"
-        [rows]="3"></textarea>
-    </mat-form-field>
+      <mat-form-field>
+        <mat-label>Mode</mat-label>
+        <mat-select [value]="selectedMode()" (valueChange)="setMode($event)">
+          @for (mode of modes; track mode) {
+            <mat-option [value]="mode.key">{{
+              mode.name }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Mode</mat-label>
-      <mat-select [value]="selectedMode()" (valueChange)="setMode($event)">
-        @for (mode of modes; track mode) {
-        <mat-option [value]="mode.key">{{
-          mode.name }}
-        </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
-    <!-- <mat-checkbox [checked]="toneService.playRootNote" (change)="setPlayRootNote($event.checked)">Play Root
-      Note</mat-checkbox> -->
+      <!-- <mat-checkbox [checked]="toneService.playRootNote" (change)="setPlayRootNote($event.checked)">Play Root
+    Note</mat-checkbox> -->
 
     <button mat-fab extended (click)="openKeysDialog()">Configure Keys</button>
   </mat-card>
@@ -83,7 +85,7 @@
 <p>The Jazz Chord Trainer is a web application designed to help musicians practice jazz chords in an interactive and
   structured way. The app displays random chord flashcards (e.g., C<sup>maj7</sup>, G<sup>7</sup>, Dm<sup>7</sup>)
   on
-  the screen, challenging users to play them in time with the specified tempo.</p>
+the screen, challenging users to play them in time with the specified tempo.</p>
 
 <p id="docs"><a href="/documentation">Read the Docs</a></p>
 

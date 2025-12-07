@@ -203,7 +203,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       data: { keysConfiguration: this.keysConfiguration },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe((result: any) => {
       this.saveConfiguration();
     });
   }
