@@ -89,7 +89,7 @@
 
 .next-chord {
   background-color: var(
-    --mdc-filled-text-field-container-color,
+    --mat-form-field-filled-container-color,
     var(--mat-sys-surface-variant)
   );
 }
@@ -110,7 +110,7 @@
   height: 20px;
   border-radius: 50%;
   background-color: var(
-    --mdc-filled-text-field-container-color,
+    --mat-form-field-filled-container-color,
     var(--mat-sys-surface-variant)
   );
 }
@@ -133,7 +133,7 @@
 
   button {
     background-color: var(
-      --mdc-filled-text-field-container-color,
+      --mat-form-field-filled-container-color,
       var(--mat-sys-surface-variant)
     );
   }

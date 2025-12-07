@@ -48,7 +48,7 @@ h2 {
     padding-top: 0.25em;
     padding-bottom: 0.25em;
     background-color: var(
-      --mdc-filled-text-field-container-color,
+      --mat-form-field-filled-container-color,
       var(--mat-sys-surface-variant)
     );
   }
@@ -117,7 +117,7 @@ th,
 td {
   padding: 3px 12px;
   border-color: var(
-    --mdc-filled-text-field-container-color,
+    --mat-form-field-filled-container-color,
     var(--mat-sys-surface-variant)
   );
   border-width: 1px;
@@ -128,7 +128,7 @@ th {
   font-weight: normal;
   text-align: left;
   background-color: var(
-    --mdc-filled-text-field-container-color,
+    --mat-form-field-filled-container-color,
     var(--mat-sys-surface-variant)
   );
 }

@@ -3,14 +3,14 @@
   grid-template-columns: auto 1fr;
   font-size: 14px;
   border-top: 1px solid
-    var(--mdc-filled-text-field-container-color, var(--mat-sys-surface-variant));
+    var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant));
   max-width: min(calc(100dvw - 40px), 800px);
 
   > div {
     padding: 10px;
     border-bottom: 1px solid
       var(
-        --mdc-filled-text-field-container-color,
+        --mat-form-field-filled-container-color,
         var(--mat-sys-surface-variant)
       );
   }
