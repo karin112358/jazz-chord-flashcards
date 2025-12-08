@@ -1,5 +1,9 @@
 export const changeLog = [
   {
+    date: '2025-12-08',
+    changes: 'Play root note of current chord',
+  },
+  {
     date: '2025-12-07',
     changes: 'Add "Weighted Cycle" mode',
   },

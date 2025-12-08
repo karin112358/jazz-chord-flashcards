@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { exercises, keys, keysSharp, modes } from 'src/app/model/configuration';
-import { ToneServiceService } from 'src/app/services/tone-service.service';
+import { ToneService } from 'src/app/services/tone.service';
 import { KeysDialogComponent } from '../keys-dialog/keys-dialog.component';
 import { KeysConfiguration } from 'src/app/model/keys-configuration';
 
@@ -100,9 +100,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   private cycle = 0;
   private cycleKeys: string[] = [];
   private nextChordTasks: Chord[] = [];
+  private readonly keyRegex = new RegExp(/^[A-H]+#?b?/);
 
   constructor(
-    public toneService: ToneServiceService,
+    public toneService: ToneService,
     private dialog: MatDialog,
   ) {
     effect(() => {
@@ -244,7 +245,33 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.nextChordTasks = [];
     }
 
-    this.toneService.nextBarRoot = [this.keys[nextKey1Index]];
+    const chords = nextKey1.split('-').map((chord) => chord.trim());
+
+    if (chords.length === 1) {
+      const key = chords[0].match(this.keyRegex)?.[0] ?? '';
+      this.toneService.nextBarRoot = [key, key, key, key];
+      this.toneService.walking = false;
+    } else if (chords.length === 2) {
+      const key0 = chords[0].match(this.keyRegex)?.[0] ?? '';
+      const key1 = chords[1].match(this.keyRegex)?.[0] ?? '';
+      this.toneService.nextBarRoot = [key0, key0, key1, key1];
+      this.toneService.walking = false;
+    } else if (chords.length === 3) {
+      const key0 = chords[0].match(this.keyRegex)?.[0] ?? '';
+      const key1 = chords[1].match(this.keyRegex)?.[0] ?? '';
+      const key2 = chords[2].match(this.keyRegex)?.[0] ?? '';
+      this.toneService.nextBarRoot = [key0, key1, key2, key2];
+      this.toneService.walking = true;
+    } else if (chords.length === 4) {
+      const key0 = chords[0].match(this.keyRegex)?.[0] ?? '';
+      const key1 = chords[1].match(this.keyRegex)?.[0] ?? '';
+      const key2 = chords[2].match(this.keyRegex)?.[0] ?? '';
+      const key3 = chords[3].match(this.keyRegex)?.[0] ?? '';
+      this.toneService.nextBarRoot = [key0, key1, key2, key3];
+      this.toneService.walking = true;
+    } else {
+      this.toneService.nextBarRoot = ['empty', 'empty', 'empty', 'empty'];
+    }
   }
 
   private getNextChords(currentKeyIndex: number): Chord[] {
