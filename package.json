@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 127.0.0.1",
-    "build": "ng build",
+    "build": "ng build && npm run rename",
+    "rename": "node -e \"require('fs').rename('dist/jazz-chord-flashcards/browser/index.csr.html', 'dist/jazz-chord-flashcards/browser/index.html', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\"",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:jazz-chord-flashcards": "node dist/jazz-chord-flashcards/server/server.mjs"
