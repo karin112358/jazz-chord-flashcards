@@ -1,19 +1,19 @@
 <nav aria-label="Top toolbar">
   @if (isMobile()) {
-  <button mat-button routerLink="/">Practice</button>
-  <button mat-button routerLink="/documentation">Documentation</button>
+  <a mat-button href="/">Practice</a>
+  <a mat-button href="/documentation">Documentation</a>
   <button mat-button [matMenuTriggerFor]="menu">
     <mat-icon aria-hidden="false" aria-label="Menu" fontIcon="menu"></mat-icon>
   </button>
   <mat-menu #menu="matMenu">
-    <button mat-menu-item routerLink="/change-log">Change Log</button>
-    <button mat-menu-item routerLink="/contact">Contact</button>
+    <a mat-menu-item href="/change-log">Change Log</a>
+    <a mat-menu-item href="/contact">Contact</a>
   </mat-menu>
   } @else {
-  <button mat-button routerLink="/">Practice</button>
-  <button mat-button routerLink="/documentation">Documentation</button>
-  <button mat-button routerLink="/change-log">Change Log</button>
-  <button mat-button routerLink="/contact">Contact</button>
+  <a mat-button href="/">Practice</a>
+  <a mat-button href="/documentation">Documentation</a>
+  <a mat-button href="/change-log">Change Log</a>
+  <a mat-button href="/contact">Contact</a>
   }
 </nav>
 

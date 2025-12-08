@@ -24,22 +24,24 @@
 </div>
 
 <div id="buttons">
-  <button mat-fab id="startButton" (click)="start()" [disabled]="isRunning()"><mat-icon>play_arrow</mat-icon></button>
-  <button mat-fab id="stopButton" (click)="stop()" [disabled]="!isRunning()"><mat-icon>stop</mat-icon></button>
+  <button mat-fab id="startButton" (click)="start()" [disabled]="isRunning()"
+    aria-label="Start"><mat-icon>play_arrow</mat-icon></button>
+  <button mat-fab id="stopButton" (click)="stop()" [disabled]="!isRunning()"
+    aria-label="Stop"><mat-icon>stop</mat-icon></button>
 </div>
 
 <div id="configuration">
   <mat-card appearance="outlined">
     <div class="tempo-configuration">
-      <button mat-mini-fab (click)="changeTempo(-10)" title="CTRL + &larr;">-10</button>
-      <button mat-mini-fab (click)="changeTempo(-1)" title="&larr;">-1</button>
+      <button mat-mini-fab (click)="changeTempo(-10)" title="CTRL + &larr;" aria-label="Tempo - 10">-10</button>
+      <button mat-mini-fab (click)="changeTempo(-1)" title="&larr;" aria-label="Tempo - 1">-1</button>
       <mat-form-field>
         <mat-label>Tempo</mat-label>
         <input matInput class="tempo-input" type="number" min="minTempo" max="maxTempo" #tempoInput
           [value]="toneService.tempo()" (change)="setTempo(tempoInput.value)" />
       </mat-form-field>
-      <button mat-mini-fab (click)="changeTempo(1)" title="&rarr;">+1</button>
-      <button mat-mini-fab (click)="changeTempo(10)" title="CTRL + &rarr;">+10</button>
+      <button mat-mini-fab (click)="changeTempo(1)" title="&rarr;" aria-label="Tempo + 1">+1</button>
+      <button mat-mini-fab (click)="changeTempo(10)" title="CTRL + &rarr;" aria-label="Tempo + 10">+10</button>
     </div>
 
     <mat-form-field>

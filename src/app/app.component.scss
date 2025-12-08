@@ -15,7 +15,8 @@ nav {
   text-align: right;
   text-transform: uppercase;
 
-  button {
+  button,
+  a.mat-mdc-button {
     color: white;
     font-weight: 300;
   }

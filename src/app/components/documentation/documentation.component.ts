@@ -61,6 +61,12 @@ Choose how chords are presented during practice:
 - **Perfect 4th Up:** Chords progress by ascending perfect fourths.
 - **Perfect 4th Down:** Chords progress by descending perfect fourths.
 
+### Play Root Note
+
+If you enable the **Play Root Note** option, the app will play the root note of the current chord on the 1st and 3rd beat of each bar. If more than two chords occur within a single bar, the root note will be played on every beat.
+
+Please note that the current sound is not great. A better and more realistic sound will be added in an upcoming update.
+
 ### Key Configuration
 
 Use the "Configure Keys" button to customize your practice based on your proficiency with different keys:

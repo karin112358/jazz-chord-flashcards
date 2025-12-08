@@ -18,6 +18,6 @@ export default `<!doctype html>
 
   <!-- 100% privacy-first analytics -->
   <script async="" src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-<link rel="modulepreload" href="chunk-YPWQMLVZ.js"><script src="polyfills-6ISPNSXF.js" type="module"></script><script src="main-BGYNCNLH.js" type="module"></script></body>
+<link rel="modulepreload" href="chunk-RRLH7J3H.js"><script src="polyfills-6ISPNSXF.js" type="module"></script><script src="main-WOPOBVO6.js" type="module"></script></body>
 
 </html>`;
