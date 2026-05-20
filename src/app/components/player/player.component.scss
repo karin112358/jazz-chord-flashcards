@@ -53,7 +53,7 @@
   box-sizing: border-box;
   height: 56px;
 
-  > div:first-child {
+  >div:first-child {
     position: absolute;
     top: -5px;
     left: 5px;
@@ -63,12 +63,13 @@
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 599.98px) {
+
   .next-chord,
   .current-chord {
     font-size: 24px;
 
-    > div:first-child {
+    >div:first-child {
       margin-top: 2px;
       font-size: 12px;
     }
@@ -76,22 +77,39 @@
 }
 
 @media (max-width: 400px) {
+
   .next-chord,
   .current-chord {
     font-size: 20px;
 
-    > div:first-child {
+    >div:first-child {
       margin-top: 2px;
       font-size: 10px;
     }
   }
 }
 
+@media (max-width: 599.98px) {
+  h1 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+  }
+
+  #chords {
+    margin-top: 20px;
+  }
+}
+
 .next-chord {
-  background-color: var(
-    --mat-form-field-filled-container-color,
-    var(--mat-sys-surface-variant)
-  );
+  background-color: var(--mat-form-field-filled-container-color,
+      var(--mat-sys-surface-variant));
 }
 
 .current-chord {
@@ -109,10 +127,8 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: var(
-    --mat-form-field-filled-container-color,
-    var(--mat-sys-surface-variant)
-  );
+  background-color: var(--mat-form-field-filled-container-color,
+      var(--mat-sys-surface-variant));
 }
 
 .highlight-beat {
@@ -120,11 +136,12 @@
 }
 
 #configuration {
-  margin-top: 40px;
-  width: 100%;
+  position: relative;
+  margin: 40px -30px 0;
 
   mat-card {
-    padding: 30px 20px;
+    background-color: #ffffff11;
+    padding: 30px 30px;
   }
 
   mat-form-field {
@@ -132,10 +149,24 @@
   }
 
   button {
-    background-color: var(
-      --mat-form-field-filled-container-color,
-      var(--mat-sys-surface-variant)
-    );
+    background-color: var(--mat-form-field-filled-container-color,
+        var(--mat-sys-surface-variant));
+  }
+}
+
+.stella {
+  position: absolute;
+  right: 40px;
+  bottom: calc(100% - 2px);
+  width: 120px;
+  height: auto;
+  pointer-events: none;
+}
+
+@media (max-width: 599.98px) {
+  .stella {
+    width: 80px;
+    right: 25px;
   }
 }
 
@@ -184,13 +215,3 @@ dialog {
   }
 }
 
-@media (max-width: 600px) {
-  .configuration-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .configuration-item {
-    justify-content: center;
-  }
-}

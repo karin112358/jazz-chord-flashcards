@@ -1,11 +1,12 @@
 <nav aria-label="Top toolbar">
   @if (isMobile()) {
-  <a mat-button href="/">Practice</a>
-  <a mat-button href="/documentation">Documentation</a>
+  <a class="brand" href="/">Practice Jazz Chords</a>
   <button mat-button [matMenuTriggerFor]="menu">
     <mat-icon aria-hidden="false" aria-label="Menu" fontIcon="menu"></mat-icon>
   </button>
   <mat-menu #menu="matMenu">
+    <a mat-menu-item href="/">Practice</a>
+    <a mat-menu-item href="/documentation">Documentation</a>
     <a mat-menu-item href="/change-log">Change Log</a>
     <a mat-menu-item href="/contact">Contact</a>
   </mat-menu>

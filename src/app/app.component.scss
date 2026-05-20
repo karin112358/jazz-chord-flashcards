@@ -7,13 +7,22 @@
 }
 
 nav {
-  background-color: var(
-    --mat-form-field-filled-container-color,
-    var(--mat-sys-surface-variant)
-  );
+  background-color: var(--mat-form-field-filled-container-color,
+      var(--mat-sys-surface-variant));
   padding: 5px;
-  text-align: right;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .brand {
+    margin-right: auto;
+    padding-left: 16px;
+    color: white;
+    font-weight: 400;
+    font-size: 14px;
+    text-decoration: none;
+  }
 
   button,
   a.mat-mdc-button {
@@ -36,4 +45,16 @@ main {
   align-items: center;
   gap: 20px;
   overflow: auto;
+}
+
+@media (max-width: 599.98px) {
+  nav {
+    padding: 2px 5px;
+
+    button.mat-mdc-button,
+    a.mat-mdc-button {
+      min-height: 32px;
+      height: 32px;
+    }
+  }
 }
