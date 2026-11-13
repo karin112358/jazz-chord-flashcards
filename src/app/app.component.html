@@ -1,5 +1,16 @@
 <nav aria-label="Top toolbar">
-  <a class="brand" href="/">Practice Jazz Chords</a>
+  <a class="brand" href="/">
+    <!-- Logo "Swing-Karte C7": a card swinging in with C7; colors follow the theme -->
+    <svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <g transform="rotate(-10 34 33)">
+        <rect class="logo-card" x="16" y="8" width="38" height="50" rx="10" />
+        <path class="logo-glyph" d="M38.1 28.1A8 8 0 1 0 38.1 38.3" stroke-width="5.8" />
+        <path class="logo-glyph" d="M41.4 19.4H48.6L43.8 28.8" stroke-width="3.2" />
+      </g>
+      <path class="logo-motion" d="M4 25h7M2 33h9M5 41h6" stroke-width="3.6" />
+    </svg>
+    <span>Practice Jazz Chords</span>
+  </a>
   @if (isMobile()) {
   <button mat-button [matMenuTriggerFor]="menu">
     <mat-icon aria-hidden="false" aria-label="Menu" fontIcon="menu"></mat-icon>
@@ -10,6 +21,11 @@
     <a mat-menu-item href="/change-log">Change Log</a>
     <a mat-menu-item href="/contact">Contact</a>
     <mat-divider></mat-divider>
+    <button mat-menu-item (click)="shortcuts.showModal()">
+      <mat-icon fontIcon="keyboard"></mat-icon>
+      <span>Keyboard shortcuts</span>
+    </button>
+    <mat-divider></mat-divider>
     <ng-container *ngTemplateOutlet="themeItems"></ng-container>
   </mat-menu>
   } @else {
@@ -17,6 +33,10 @@
   <a mat-button href="/documentation">Documentation</a>
   <a mat-button href="/change-log">Change Log</a>
   <a mat-button href="/contact">Contact</a>
+  <button mat-icon-button class="nav-icon-button" (click)="shortcuts.showModal()" aria-label="Keyboard shortcuts"
+    title="Keyboard shortcuts">
+    <mat-icon fontIcon="keyboard"></mat-icon>
+  </button>
   <button mat-icon-button class="theme-button" [matMenuTriggerFor]="themeMenu" aria-label="Appearance">
     <mat-icon [fontIcon]="currentTheme().icon"></mat-icon>
   </button>
@@ -42,3 +62,56 @@
   </div>
 </main>
 
+<!-- Closes on ESC (native) and on a click on the backdrop, which targets the dialog itself -->
+<dialog #shortcuts id="shortcuts" aria-labelledby="shortcuts-title"
+  (click)="$event.target === shortcuts && shortcuts.close()">
+  <div class="shortcuts-panel">
+    <h2 id="shortcuts-title">Keyboard shortcuts</h2>
+
+    <h3>Playback</h3>
+    <dl class="shortcut-list">
+      <div>
+        <dt><kbd>Space</kbd></dt>
+        <dd>Start or stop practice</dd>
+      </div>
+    </dl>
+
+    <h3 id="tempo-shortcuts">Tempo</h3>
+    <table class="tempo-shortcuts" aria-labelledby="tempo-shortcuts">
+      <thead>
+        <tr>
+          <th scope="col">Step</th>
+          <th scope="col">Slower</th>
+          <th scope="col">Faster</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1 BPM</th>
+          <td><kbd><span aria-hidden="true">&larr;</span><span class="sr-only">Left arrow</span></kbd></td>
+          <td><kbd><span aria-hidden="true">&rarr;</span><span class="sr-only">Right arrow</span></kbd></td>
+        </tr>
+        <tr>
+          <th scope="row">5 BPM</th>
+          <td><kbd>Shift</kbd> <span aria-hidden="true">+</span> <kbd><span aria-hidden="true">&larr;</span><span class="sr-only">Left arrow</span></kbd></td>
+          <td><kbd>Shift</kbd> <span aria-hidden="true">+</span> <kbd><span aria-hidden="true">&rarr;</span><span class="sr-only">Right arrow</span></kbd></td>
+        </tr>
+        <tr>
+          <th scope="row">10 BPM</th>
+          <td><kbd>Ctrl</kbd> <span aria-hidden="true">+</span> <kbd><span aria-hidden="true">&larr;</span><span class="sr-only">Left arrow</span></kbd></td>
+          <td><kbd>Ctrl</kbd> <span aria-hidden="true">+</span> <kbd><span aria-hidden="true">&rarr;</span><span class="sr-only">Right arrow</span></kbd></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>This window</h3>
+    <dl class="shortcut-list">
+      <div>
+        <dt><kbd>Esc</kbd></dt>
+        <dd>Close</dd>
+      </div>
+    </dl>
+
+    <button mat-fab extended class="shortcuts-close" (click)="shortcuts.close()">Close</button>
+  </div>
+</dialog>

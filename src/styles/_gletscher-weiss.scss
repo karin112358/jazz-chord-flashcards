@@ -1,0 +1,105 @@
+// Gletscher Weiß – the app's color palette.
+// Base #1A77A3 (oklch 53.9% 0.106 235), accent #AB4A9C (oklch 56.3% 0.161 334).
+// Light: white canvas, cool blue-grey on hue 232–238. Dark: bluish anthracite.
+// All text/surface and control pairs checked against WCAG AA (text ≥ 4.5:1, UI ≥ 3:1).
+// light-dark() follows color-scheme, which theme.scss sets on html and html[data-theme].
+//
+// Included by theme.scss right after mat.theme(), so these values replace the
+// Material system colors that mat.theme() generates.
+@mixin colors {
+  // Surfaces
+  --color-canvas: light-dark(#FFFFFF, #0B0F11);
+  --color-surface-lowest: light-dark(#FFFFFF, #06090B);
+  --color-surface-0: light-dark(#F7FAFB, #0F1316);
+  --color-surface-2: light-dark(#F0F4F7, #1C2327);
+  --color-surface-2-5: light-dark(#E9EFF3, #20282C);
+  --color-surface-3: light-dark(#E3EBEF, #252E34);
+
+  // Text and lines
+  --color-text: light-dark(#1C2327, #E1E5E8);
+  --color-muted: light-dark(#545C62, #9CA6AC);
+  --color-hairline: light-dark(#DBE1E4, #2D3438);
+  --color-border-strong: light-dark(#778288, #6E7981);
+
+  // Primary
+  --color-primary: light-dark(#1A77A3, #57AFE0);
+  --color-on-primary: light-dark(#FFFFFF, #021624);
+  --color-primary-container: light-dark(#CBEAFB, #0D425D);
+  --color-on-primary-container: light-dark(#003753, #D5ECF9);
+  --color-selection: light-dark(#B7DEF3, #0D4E6D);
+  --color-inverse-primary: light-dark(#77C2EB, #00638F);
+
+  // Secondary
+  --color-secondary: light-dark(#4B5E69, #A5BBC8);
+  --color-on-secondary: light-dark(#FFFFFF, #111C23);
+  --color-secondary-container: light-dark(#DEEAF0, #29353C);
+  --color-on-secondary-container: light-dark(#223039, #DDE6EB);
+
+  // Accent (Material tertiary)
+  --color-accent: light-dark(#AB4A9C, #DC8ACD);
+  --color-on-accent: light-dark(#FFFFFF, #220D1E);
+  --color-accent-container: light-dark(#FBE3F5, #582950);
+  --color-on-accent-container: light-dark(#66245C, #FDE2F6);
+
+  // Error
+  --color-error-fg: light-dark(#B02B27, #FE8B83);
+  --color-error-bg: light-dark(#FFEBE9, #401D1C);
+  --color-on-error-container: light-dark(#7F211D, #FFDFDC);
+
+  // Inverse (snackbar, tooltip, dark pills)
+  --color-inverse-surface: light-dark(#282F33, #E4E9EB);
+  --color-inverse-on-surface: light-dark(#EFF2F5, #1C2327);
+
+  // Angular Material system colors → palette roles
+  --mat-sys-primary: var(--color-primary);
+  --mat-sys-on-primary: var(--color-on-primary);
+  --mat-sys-primary-container: var(--color-primary-container);
+  --mat-sys-on-primary-container: var(--color-on-primary-container);
+  --mat-sys-primary-fixed: var(--color-primary-container);
+  --mat-sys-primary-fixed-dim: var(--color-selection);
+  --mat-sys-on-primary-fixed: var(--color-on-primary-container);
+  --mat-sys-on-primary-fixed-variant: var(--color-on-primary-container);
+  --mat-sys-inverse-primary: var(--color-inverse-primary);
+  --mat-sys-surface-tint: var(--color-primary);
+  --mat-sys-secondary: var(--color-secondary);
+  --mat-sys-on-secondary: var(--color-on-secondary);
+  --mat-sys-secondary-container: var(--color-secondary-container);
+  --mat-sys-on-secondary-container: var(--color-on-secondary-container);
+  --mat-sys-secondary-fixed: var(--color-secondary-container);
+  --mat-sys-secondary-fixed-dim: var(--color-secondary-container);
+  --mat-sys-on-secondary-fixed: var(--color-on-secondary-container);
+  --mat-sys-on-secondary-fixed-variant: var(--color-on-secondary-container);
+  --mat-sys-tertiary: var(--color-accent);
+  --mat-sys-on-tertiary: var(--color-on-accent);
+  --mat-sys-tertiary-container: var(--color-accent-container);
+  --mat-sys-on-tertiary-container: var(--color-on-accent-container);
+  --mat-sys-tertiary-fixed: var(--color-accent-container);
+  --mat-sys-tertiary-fixed-dim: var(--color-accent-container);
+  --mat-sys-on-tertiary-fixed: var(--color-on-accent-container);
+  --mat-sys-on-tertiary-fixed-variant: var(--color-on-accent-container);
+  --mat-sys-error: var(--color-error-fg);
+  --mat-sys-on-error: var(--color-canvas);
+  --mat-sys-error-container: var(--color-error-bg);
+  --mat-sys-on-error-container: var(--color-on-error-container);
+  --mat-sys-background: var(--color-canvas);
+  --mat-sys-on-background: var(--color-text);
+  --mat-sys-surface: var(--color-canvas);
+  --mat-sys-on-surface: var(--color-text);
+  --mat-sys-surface-variant: var(--color-surface-2);
+  --mat-sys-on-surface-variant: var(--color-muted);
+  --mat-sys-surface-dim: var(--color-surface-3);
+  --mat-sys-surface-bright: var(--color-canvas);
+  --mat-sys-surface-container-lowest: var(--color-surface-lowest);
+  --mat-sys-surface-container-low: var(--color-surface-0);
+  --mat-sys-surface-container: var(--color-surface-2);
+  --mat-sys-surface-container-high: var(--color-surface-2-5);
+  --mat-sys-surface-container-highest: var(--color-surface-3);
+  --mat-sys-inverse-surface: var(--color-inverse-surface);
+  --mat-sys-inverse-on-surface: var(--color-inverse-on-surface);
+  --mat-sys-outline: var(--color-border-strong);
+  --mat-sys-outline-variant: var(--color-hairline);
+  --mat-sys-neutral10: var(--color-text);
+  --mat-sys-neutral-variant20: var(--color-text);
+  --mat-sys-shadow: #000000;
+  --mat-sys-scrim: #000000;
+}

@@ -6,7 +6,7 @@
 </audio>
 
 <div id="chords">
-  <div class="next-chord">
+  <div class="next-chord" [attr.data-chords]="nextChordCount()">
     <div>next</div>
     <div id="nextChord" [innerHTML]="nextKey1() ?? '&nbsp;'"></div>
   </div>
@@ -30,25 +30,30 @@
 </div>
 
 <div id="buttons">
-  <button mat-fab id="startButton" (click)="start()" [disabled]="isRunning()"
-    aria-label="Start"><mat-icon>play_arrow</mat-icon></button>
-  <button mat-fab id="stopButton" (click)="stop()" [disabled]="!isRunning()"
-    aria-label="Stop"><mat-icon>stop</mat-icon></button>
+  <button mat-fab id="startButton" (click)="start()" [disabled]="isRunning()" aria-label="Start practice"
+    title="Start practice (Space)"><mat-icon>play_arrow</mat-icon></button>
+  <button mat-fab id="stopButton" (click)="stop()" [disabled]="!isRunning()" aria-label="Stop practice"
+    title="Stop practice (Space)"><mat-icon>stop</mat-icon></button>
 </div>
 
 <div id="configuration">
   <mat-card appearance="outlined">
     <div class="tempo-configuration">
-      <button mat-mini-fab (click)="changeTempo(-10)" title="CTRL + &larr;" aria-label="Tempo - 10">-10</button>
-      <button mat-mini-fab (click)="changeTempo(-1)" title="&larr;" aria-label="Tempo - 1">-1</button>
+      <button mat-mini-fab (click)="changeTempo(-10)" title="Slower by 10 BPM (Ctrl + &larr;)"
+        aria-label="Slower by 10 BPM">-10</button>
+      <button mat-mini-fab (click)="changeTempo(-1)" title="Slower by 1 BPM (&larr;)"
+        aria-label="Slower by 1 BPM">-1</button>
       <mat-form-field>
-        <mat-label>Tempo</mat-label>
-        <input matInput class="tempo-input" type="number" min="minTempo" max="maxTempo" #tempoInput
-          [value]="toneService.tempo()" (change)="setTempo(tempoInput.value)"
-          (focus)="onTempoFocus(tempoInput)" (click)="onTempoClick(tempoInput)" />
+        <mat-label>Tempo (BPM)</mat-label>
+        <input matInput class="tempo-input" type="number" [min]="minTempo" [max]="maxTempo" #tempoInput
+          [value]="toneService.tempo()" (change)="setTempo(tempoInput)"
+          (pointerdown)="onTempoPointerDown(tempoInput)" (focus)="onTempoFocus(tempoInput)"
+          (click)="onTempoClick(tempoInput)" />
       </mat-form-field>
-      <button mat-mini-fab (click)="changeTempo(1)" title="&rarr;" aria-label="Tempo + 1">+1</button>
-      <button mat-mini-fab (click)="changeTempo(10)" title="CTRL + &rarr;" aria-label="Tempo + 10">+10</button>
+      <button mat-mini-fab (click)="changeTempo(1)" title="Faster by 1 BPM (&rarr;)"
+        aria-label="Faster by 1 BPM">+1</button>
+      <button mat-mini-fab (click)="changeTempo(10)" title="Faster by 10 BPM (Ctrl + &rarr;)"
+        aria-label="Faster by 10 BPM">+10</button>
     </div>
 
     <mat-form-field>
@@ -63,15 +68,19 @@
     </mat-form-field>
 
     @if (selectedExercise().name === 'Custom') {
-    <mat-form-field>
-      <mat-label>Configuration</mat-label>
+    <mat-form-field class="custom-progression">
+      <mat-label>Custom progression</mat-label>
       <textarea matInput [value]="selectedExercise().configuration" (change)="setCustomExercise($event)"
-        [rows]="3"></textarea>
+        [rows]="3" aria-describedby="custom-progression-help"></textarea>
     </mat-form-field>
+    <p id="custom-progression-help" class="field-help">
+      Roman numerals, <code>|</code> between bars, chord types between asterisks, e.g.
+      <code>iim*7* - V*7* | I*maj7*</code>. <a href="/documentation#custom">How to write a progression</a>
+    </p>
     }
 
     <mat-form-field>
-      <mat-label>Mode</mat-label>
+      <mat-label>Key order</mat-label>
       <mat-select [value]="selectedMode()" (valueChange)="setMode($event)">
         @for (mode of modes; track mode) {
         <mat-option [value]="mode.key">{{
@@ -81,50 +90,42 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-checkbox [checked]="toneService.playRootNote" (change)="setPlayRootNote($event.checked)">Play Root
-      Note (experimental)</mat-checkbox>
+    <mat-checkbox [checked]="toneService.playRootNote" (change)="setPlayRootNote($event.checked)">Play root note
+      (experimental)</mat-checkbox>
 
-    <button mat-fab extended (click)="openKeysDialog()">Configure Keys</button>
+    <mat-checkbox class="weight-keys" [checked]="weightKeys()" (change)="setWeightKeys($event.checked)">Practice
+      unfamiliar keys more often</mat-checkbox>
+
+    <button type="button" class="configure-keys" [class.unweighted]="!weightKeys()" (click)="openKeysDialog()"
+      aria-describedby="key-ratings-legend">
+      <span class="ck-header">
+        <span class="ck-label">Rate your keys</span>
+        <mat-icon class="ck-chevron" aria-hidden="true" fontIcon="chevron_right"></mat-icon>
+      </span>
+      <!-- One octave; each key shows its familiarity rating from the keys dialog -->
+      <span class="ck-piano" aria-hidden="true">
+        @for (k of pianoKeys(); track k.key) {
+        <span class="ck-pkey" [class.black]="k.black" [style.--familiarity]="k.rating / 5" [style.--pos]="k.pos">
+          @if (!k.black) {
+          <span class="ck-name">{{ k.key }}</span>
+          }
+        </span>
+        }
+      </span>
+      <span id="key-ratings-legend" class="ck-legend">
+        @if (weightKeys()) {
+        White and black: keys you know well. Blue: keys that need practice.
+        } @else {
+        Ratings are off: all keys come up equally often.
+        }
+      </span>
+    </button>
   </mat-card>
 </div>
 
-<div id="open-keyboard-shortcuts" (click)="openShortcuts()">Keyboard shortcuts</div>
+<h2>How it works</h2>
+<p>Practice Jazz Chords is a jazz chord trainer. Every bar it shows a chord symbol, such as C<sup>maj7</sup>,
+  G<sup>7</sup> or Dm<sup>7</sup>, in a new key. Play it in time with the click and glance at the next chord to get
+  ready. Rate the keys you know, and the ones you still need to practice come up more often.</p>
 
-<h2>Description</h2>
-<p>The Jazz Chord Trainer is a web application designed to help musicians practice jazz chords in an interactive and
-  structured way. The app displays random chord flashcards (e.g., C<sup>maj7</sup>, G<sup>7</sup>, Dm<sup>7</sup>)
-  on
-  the screen, challenging users to play them in time with the specified tempo.</p>
-
-<p id="docs"><a href="/documentation">Read the Docs</a></p>
-
-<dialog id="shortcuts">
-  <h2>Keyboard Shortcuts</h2>
-  <div class="keyboard-shortcuts">
-    <div>SPACE</div>
-    <div>Start / Stop</div>
-
-    <div>&larr;</div>
-    <div>Tempo - 1</div>
-
-    <div>SHIFT + &larr;</div>
-    <div>Tempo - 5</div>
-
-    <div>CTLR + &larr;</div>
-    <div>Tempo - 10</div>
-
-    <div>&rarr;</div>
-    <div>Tempo + 1</div>
-
-    <div>SHIFT + &rarr;</div>
-    <div>Tempo + 5</div>
-
-    <div>CTRL + &rarr;</div>
-    <div>Tempo + 10</div>
-
-    <div>ESC</div>
-    <div>Close keyboard shortcuts</div>
-  </div>
-
-  <button mat-fab extended id="close-shortcuts" (click)="closeShortcuts()">Close</button>
-</dialog>
+<p id="docs"><a href="/documentation">Read the documentation</a></p>

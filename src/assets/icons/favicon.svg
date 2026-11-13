@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Practice Jazz Chords">
+  <title>Practice Jazz Chords</title>
+  <style>
+    .c{fill:#1A77A3}.g{stroke:#FFFFFF}.l{stroke:#AB4A9C}
+    @media (prefers-color-scheme: dark){.c{fill:#57AFE0}.g{stroke:#021624}.l{stroke:#DC8ACD}}
+  </style>
+  <g transform="rotate(-10 34 33)">
+    <rect x="16" y="8" width="38" height="50" rx="10" class="c"/>
+    <path d="M38.1 28.1A8 8 0 1 0 38.1 38.3" fill="none" class="g" stroke-width="5.8" stroke-linecap="round"/>
+    <path d="M41.4 19.4H48.6L43.8 28.8" fill="none" class="g" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <path d="M4 25h7M2 33h9M5 41h6" fill="none" class="l" stroke-width="3.6" stroke-linecap="round"/>
+</svg>

@@ -1,14 +1,15 @@
 :host {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  overflow: hidden;
+  display: block;
 }
 
+// The nav shares the practice page's color band and stays at the top while the page scrolls
 nav {
-  background-color: var(--mat-sys-surface);
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-sizing: border-box;
+  height: var(--app-bar-height);
+  background-color: var(--mat-sys-primary-container);
   padding: 5px;
   text-transform: uppercase;
   display: flex;
@@ -16,9 +17,13 @@ nav {
   justify-content: flex-end;
 
   .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin-right: auto;
-    padding-left: 16px;
-    color: var(--mat-sys-on-surface);
+    // With the nav's 5px padding the logo sits on the 16px page gutter
+    padding-left: 11px;
+    color: var(--mat-sys-on-primary-container);
     font-weight: 500;
     font-size: 14px;
     letter-spacing: 0.04em;
@@ -27,7 +32,7 @@ nav {
 
   button,
   a.mat-mdc-button {
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--mat-sys-on-primary-container);
     font-weight: 300;
   }
 }
@@ -42,15 +47,13 @@ nav {
   color: var(--mat-sys-primary);
 }
 
+// Pages size themselves in cqi: the width of <main>, without the window's scrollbar (dvw includes it)
 main {
-  width: 100%;
-  height: 100%;
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
-  // justify-content: center;
   align-items: center;
   gap: 20px;
-  overflow: auto;
 }
 
 @media (max-width: 599.98px) {
@@ -63,4 +66,181 @@ main {
       height: 32px;
     }
   }
+}
+
+// Logo mark beside the name, in the theme's colors
+.logo-mark {
+  flex: none;
+  width: 30px;
+  height: 30px;
+
+  @media (max-width: 599.98px) {
+    width: 28px;
+    height: 28px;
+  }
+
+  .logo-card {
+    fill: var(--mat-sys-primary);
+  }
+
+  .logo-glyph,
+  .logo-motion {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .logo-glyph {
+    stroke: var(--mat-sys-on-primary);
+  }
+
+  .logo-motion {
+    stroke: var(--mat-sys-tertiary);
+  }
+}
+
+// Keyboard shortcuts, opened from the nav; ESC or a backdrop click closes it
+dialog {
+  width: min(420px, calc(100dvw - 32px));
+  max-height: calc(100dvh - 48px);
+  padding: 0;
+  border: none;
+  border-radius: 28px;
+  background-color: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface);
+  box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.5);
+  overflow: auto;
+
+  &::backdrop {
+    background-color: rgb(0 0 0 / 0.4);
+  }
+
+  &[open] {
+    animation: shortcuts-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &[open] {
+      animation: none;
+    }
+  }
+}
+
+@keyframes shortcuts-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+.shortcuts-panel {
+  padding: 28px 28px 24px;
+
+  h2 {
+    margin: 0 0 8px;
+  }
+
+  h3 {
+    margin: 24px 0 10px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-align: left;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+// Key caps: the bottom edge gives them a pressable feel
+kbd {
+  display: inline-block;
+  min-width: 30px;
+  padding: 4px 8px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-bottom-width: 3px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background-color: var(--mat-sys-surface-container-lowest);
+  color: var(--mat-sys-on-surface);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.shortcut-list {
+  margin: 0;
+
+  > div {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  dt {
+    flex: 0 0 auto;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.tempo-shortcuts {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 6px 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  thead th {
+    padding-top: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  tbody th {
+    width: 1%;
+    padding-right: 20px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  tbody tr + tr th,
+  tbody tr + tr td {
+    border-top: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  // The "+" between key caps
+  td > span {
+    margin: 0 2px;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.shortcuts-close {
+  display: flex;
+  width: 100%;
+  margin-top: 28px;
+}
+
+// Text for screen readers only (e.g. the names of the arrow key caps)
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  margin: -1px;
+  padding: 0;
+  border: 0;
 }

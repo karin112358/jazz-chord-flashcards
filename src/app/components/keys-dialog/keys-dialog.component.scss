@@ -15,13 +15,14 @@
   }
 
   mat-icon {
+    border-radius: 4px;
     cursor: pointer;
     color: var(
       --mat-fab-disabled-state-container-color,
       color-mix(in srgb, var(--mat-sys-on-surface) 12%, transparent)
     );
 
-    .selected {
+    &.selected {
       color: var(--mat-sys-primary);
     }
   }

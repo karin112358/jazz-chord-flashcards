@@ -18,7 +18,6 @@ import { ChangeLogComponent } from './components/change-log/change-log.component
 import { DocumentationComponent } from './components/documentation/documentation.component';
 import { provideRouter } from '@angular/router';
 import { ContactComponent } from './components/contact/contact.component';
-import { MarkdownModule } from 'ngx-markdown';
 
 const routes = [
   { path: '', component: PlayerComponent },
@@ -34,7 +33,6 @@ const routes = [
     BrowserModule,
     AppRoutingModule,
     LayoutModule,
-    MarkdownModule.forRoot(),
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,

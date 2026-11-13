@@ -23,6 +23,9 @@ type Chord = {
   chord: string;
 };
 
+/** Half steps from the root for each scale degree of a major scale. */
+const degreeSteps: Record<string, number> = { I: 0, II: 2, III: 4, IV: 5, V: 7, VI: 9, VII: 11 };
+
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
@@ -35,11 +38,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   @HostListener('document:keyup', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (
-      event.target &&
-      'localName' in event.target &&
-      event.target.localName === 'textarea'
-    ) {
+    if (this.isHandledByFocusedControl(event)) {
       return;
     }
 
@@ -49,31 +48,39 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       } else {
         this.start();
       }
-    } else if (event.key === 'Escape') {
-      this.closeShortcuts();
-    } else if (event.key === 'ArrowLeft') {
-      let newTempo = this.toneService.tempo();
-      if (event.ctrlKey) {
-        newTempo -= 10;
-      } else if (event.shiftKey) {
-        newTempo -= 5;
-      } else {
-        newTempo--;
-      }
-
-      this.setTempo(newTempo);
-    } else if (event.key === 'ArrowRight') {
-      let newTempo = this.toneService.tempo();
-      if (event.ctrlKey) {
-        newTempo += 10;
-      } else if (event.shiftKey) {
-        newTempo += 5;
-      } else {
-        newTempo++;
-      }
-
-      this.setTempo(newTempo);
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      // Ctrl: 10 BPM, Shift: 5 BPM, otherwise 1 BPM; changeTempo keeps 20–300 BPM
+      const step = event.ctrlKey ? 10 : event.shiftKey ? 5 : 1;
+      this.changeTempo(event.key === 'ArrowLeft' ? -step : step);
     }
+  }
+
+  /**
+   * True when the key already does something for the focused element or an open dialog,
+   * so the global shortcut must not fire as well (e.g. Space on a checkbox, arrows in an input).
+   */
+  private isHandledByFocusedControl(event: KeyboardEvent): boolean {
+    if (document.querySelector('dialog[open], .mat-mdc-dialog-container')) {
+      return true;
+    }
+
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target) {
+      return false;
+    }
+
+    // Arrows move the caret or the selection in these elements; Space types or toggles them
+    if (
+      target.closest(
+        'input, textarea, select, [contenteditable="true"], [role="combobox"], [role="listbox"], [role="option"], [role^="menuitem"]',
+      )
+    ) {
+      return true;
+    }
+
+    // Space activates a focused button on its own; a disabled one (Start while playing) does nothing
+    const button = target.closest('button');
+    return event.key === ' ' && !!button && !button.disabled;
   }
 
   minTempo = 20;
@@ -84,12 +91,15 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   exercises = exercises;
   readonly selectedMode = signal<'R' | 'WC' | number>('R');
   readonly isRunning = signal(false);
-  /** Number of chords in the current bar, used to size the stage text. */
-  readonly chordCount = computed(() => this.currKey()?.split('-').length ?? 1);
-  /** 4-3-2-1 during the first bar after start, while no chord is shown yet. */
+  /** Number of chords in the current and the next bar (set in updateChord), used to size the text. */
+  readonly chordCount = signal(1);
+  readonly nextChordCount = signal(1);
+  /** True during the count-in bar after start, before the first chord is shown. */
+  private readonly countingIn = signal(false);
+  /** 4-3-2-1 during the count-in bar. */
   readonly countdown = computed(() => {
     const beat = this.toneService.beat();
-    if (!this.isRunning() || beat < 0 || this.currKey() !== '') {
+    if (!this.isRunning() || beat < 0 || !this.countingIn()) {
       return null;
     }
     return 4 - (beat % 4);
@@ -105,7 +115,19 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   private keys = keys;
   private keysSharp = keysSharp;
   private initialized = false;
-  private keysConfiguration: KeysConfiguration = new KeysConfiguration();
+  /** Key ratings; replaced with a new object whenever they change so the piano updates. */
+  private readonly keysConfiguration = signal<KeysConfiguration>(new KeysConfiguration());
+  /** When false, all keys come up equally often and the ratings are ignored. */
+  readonly weightKeys = signal(true);
+  /** The ratings laid out as one piano octave: black keys sit on the boundary after white key `pos`. */
+  readonly pianoKeys = computed(() => {
+    const blackPos: Record<string, number> = { Db: 1, Eb: 2, Gb: 4, Ab: 5, Bb: 6 };
+    return this.keysConfiguration().keys.map((k) => ({
+      ...k,
+      black: k.key in blackPos,
+      pos: blackPos[k.key] ?? 0,
+    }));
+  });
   private probabilityMap: { [key: number]: number } = {};
   private probabilityCount = 0;
   private cycle = 0;
@@ -153,6 +175,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.nextKey1Index = -1;
     this.currKey.set(null);
     this.nextKey1.set(null);
+    this.chordCount.set(1);
+    this.nextChordCount.set(1);
+    this.countingIn.set(false);
     this.isRunning.set(false);
   }
 
@@ -174,13 +199,17 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.saveConfiguration();
   }
 
-  // Select the tempo on entry so typing replaces it. The first click needs a second
-  // select() because the browser places the caret on mouseup after focusing.
+  // Select the tempo on entry so typing replaces it. A click that focuses the field needs a
+  // second select() because the browser places the caret on mouseup; later clicks place
+  // the caret normally.
   private selectTempoOnClick = false;
+
+  onTempoPointerDown(input: HTMLInputElement) {
+    this.selectTempoOnClick = document.activeElement !== input;
+  }
 
   onTempoFocus(input: HTMLInputElement) {
     input.select();
-    this.selectTempoOnClick = true;
   }
 
   onTempoClick(input: HTMLInputElement) {
@@ -190,14 +219,16 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setTempo(newTempo: number | string) {
-    if (typeof newTempo === 'string') {
-      this.toneService.setTempo(parseInt(newTempo));
-    } else {
-      this.toneService.setTempo(newTempo);
+  /** Applies a typed tempo, kept within 20–300 BPM; an empty or invalid entry restores the current tempo. */
+  setTempo(input: HTMLInputElement) {
+    const typed = Math.round(Number(input.value));
+    if (input.value.trim() !== '' && Number.isFinite(typed)) {
+      this.toneService.setTempo(Math.min(this.maxTempo, Math.max(this.minTempo, typed)));
+      this.saveConfiguration();
     }
 
-    this.saveConfiguration();
+    // The field shows what is actually used, also when the value was clamped or rejected
+    input.value = String(this.toneService.tempo());
   }
 
   setMode(key: 'R' | 'WC' | number) {
@@ -230,17 +261,29 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.saveConfiguration();
   }
 
+  setWeightKeys(value: boolean) {
+    this.weightKeys.set(value);
+    this.cycleKeys = [];
+    this.saveConfiguration();
+  }
+
   openKeysDialog(): void {
+    // The dialog edits the ratings in place on its own copy
+    const keysConfiguration = structuredClone(this.keysConfiguration());
     const dialogRef = this.dialog.open(KeysDialogComponent, {
-      data: { keysConfiguration: this.keysConfiguration },
+      data: { keysConfiguration },
     });
 
-    dialogRef.afterClosed().subscribe((result: any) => {
+    dialogRef.afterClosed().subscribe(() => {
+      this.keysConfiguration.set(keysConfiguration);
       this.saveConfiguration();
     });
   }
 
   private updateChord(): void {
+    // No next chord yet means this is the count-in bar right after start
+    this.countingIn.set(this.nextKey1() === null);
+    this.chordCount.set(this.nextChordCount());
     this.currKey.set(this.nextKey1() ?? '');
     this.currentKeyIndex = this.nextKey1Index;
 
@@ -273,6 +316,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
 
     const chords = nextKey1.split('-').map((chord) => chord.trim());
+    this.nextChordCount.set(chords.length);
 
     if (chords.length === 1) {
       const key = chords[0].match(this.keyRegex)?.[0] ?? '';
@@ -316,8 +360,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         // Weighted Cycle mode
         while (this.cycleKeys.length === 0) {
           this.cycle++;
-          this.cycleKeys = this.keysConfiguration.keys
-            .filter((key) => this.cycle % key.rating === 0)
+          this.cycleKeys = this.keysConfiguration().keys
+            .filter((key) => this.cycle % this.keyWeight(key.rating) === 0)
             .map((key) => key.key);
         }
 
@@ -363,40 +407,46 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       config = config[Math.floor(Math.random() * config.length)];
     }
 
-    config = config.replace(/IIIb|iiib/g, keys[(keyIndex + 3) % 12]);
-    config = config.replace(/III|iii/g, keys[(keyIndex + 4) % 12]);
-    config = config.replace(/IIb|iib/g, keys[(keyIndex + 1) % 12]);
-    config = config.replace(/II|ii/g, keys[(keyIndex + 2) % 12]);
-    config = config.replace(/IV|iv/g, keys[(keyIndex + 5) % 12]);
-    config = config.replace(/VIIb|viib/g, keys[(keyIndex + 10) % 12]);
-    config = config.replace(/VII|vii/g, keys[(keyIndex + 11) % 12]);
-    config = config.replace(/VIb|vib/g, keys[(keyIndex + 8) % 12]);
-    config = config.replace(/VI|vi/g, keys[(keyIndex + 9) % 12]);
-    config = config.replace(/I|i/g, keys[keyIndex]);
-    config = config.replace(/Vb|vb/g, keys[(keyIndex + 6) % 12]);
-    config = config.replace(/V|v/g, keys[(keyIndex + 7) % 12]);
+    config = this.resolveNumerals(config, keyIndex, keys);
 
     return config
       .split('|')
       .map((config) => ({ index: keyIndex, chord: config }));
   }
 
-  openShortcuts() {
-    const dialog = document.querySelector('#shortcuts') as HTMLDialogElement;
-    dialog.showModal();
+
+  /**
+   * Replaces the Roman numerals (I–VII, a trailing b lowers them a half step) with the note names
+   * of the key. Chord types between asterisks are kept as written, so 'dim' or 'sus' stay intact.
+   */
+  private resolveNumerals(config: string, keyIndex: number, keys: string[]): string {
+    return config
+      .split(/(\*[^*]*\*)/)
+      .map((part) =>
+        part.startsWith('*')
+          ? part
+          : // Longest numerals first, so VII is not read as V + II
+            part.replace(/(VII|VI|V|IV|III|II|I)(b?)/gi, (_, numeral: string, flat: string) => {
+              const step = degreeSteps[numeral.toUpperCase()] - (flat ? 1 : 0);
+              return keys[(keyIndex + step + 12) % 12];
+            }),
+      )
+      .join('');
   }
 
-  closeShortcuts() {
-    const dialog = document.querySelector('#shortcuts') as HTMLDialogElement;
-    dialog.close();
+  /** Weighted cycle: a key with rating r appears every r-th cycle; unweighted: every cycle. */
+  private keyWeight(rating: number): number {
+    return this.weightKeys() ? rating : 1;
   }
 
   private updateProbabilityMap() {
     this.probabilityMap = {};
     this.probabilityCount = 0;
 
-    this.keysConfiguration.keys.forEach((key, index) => {
-      for (let i = 0; i < 6 - key.rating; i++) {
+    this.keysConfiguration().keys.forEach((key, index) => {
+      // Rating 1 (unfamiliar) gets 5 tickets, rating 5 gets 1; unweighted: 1 each
+      const tickets = this.weightKeys() ? 6 - key.rating : 1;
+      for (let i = 0; i < tickets; i++) {
         this.probabilityMap[this.probabilityCount] = index;
         this.probabilityCount++;
       }
@@ -412,9 +462,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         'playRootNote',
         this.toneService.playRootNote.toString(),
       );
+      localStorage.setItem('weightKeys', this.weightKeys().toString());
       localStorage.setItem(
         'keysConfiguration',
-        JSON.stringify(this.keysConfiguration),
+        JSON.stringify(this.keysConfiguration()),
       );
 
       this.updateProbabilityMap();
@@ -435,22 +486,21 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     );
     this.toneService.playRootNote =
       localStorage.getItem('playRootNote') === 'true';
+    this.weightKeys.set(localStorage.getItem('weightKeys') !== 'false');
 
-    if (localStorage.getItem('keysConfiguration')) {
+    let keysConfiguration = new KeysConfiguration();
+    const storedKeys = localStorage.getItem('keysConfiguration');
+    if (storedKeys) {
       try {
-        this.keysConfiguration = JSON.parse(
-          localStorage.getItem('keysConfiguration') ?? '{ keys: [] }',
-        );
+        const parsed: KeysConfiguration = JSON.parse(storedKeys);
+        if (parsed.keys?.length === this.keys.length) {
+          keysConfiguration = parsed;
+        }
       } catch (error) {
-        this.keysConfiguration = new KeysConfiguration();
+        // keep the default configuration
       }
-
-      if (this.keysConfiguration.keys?.length !== this.keys.length) {
-        this.keysConfiguration = new KeysConfiguration();
-      }
-    } else {
-      this.keysConfiguration = new KeysConfiguration();
     }
+    this.keysConfiguration.set(keysConfiguration);
 
     const customExercise = localStorage.getItem('customExercise');
     if (customExercise) {

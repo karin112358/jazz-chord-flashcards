@@ -5,18 +5,24 @@ body {
     Lucida Grande, sans-serif;
   background-color: var(--mat-sys-background);
   color: var(--mat-sys-on-surface);
-  width: 100vw;
-  height: 100vh;
-  overflow-x: hidden;
+  min-height: 100dvh;
+  // Full-bleed color bands reach past the content; clip instead of hidden keeps the page
+  // itself the scroll container, so the scrollbar spans the whole window
+  overflow-x: clip;
   margin: 0;
   padding: 0;
   font-size: 16px;
   line-height: 28px;
 }
 
-html,
-body {
-  height: 100%;
+// The menu stays at the top while the page scrolls; anchors and scrollIntoView stop below it
+html {
+  --app-bar-height: 50px;
+  scroll-padding-top: var(--app-bar-height);
+
+  @media (max-width: 599.98px) {
+    --app-bar-height: 40px;
+  }
 }
 
 main #app {
@@ -43,15 +49,6 @@ h1 {
 
 h2 {
   font-size: 24px;
-
-  .documentation & {
-    padding-top: 0.25em;
-    padding-bottom: 0.25em;
-    background-color: var(
-      --mat-form-field-filled-container-color,
-      var(--mat-sys-surface-variant)
-    );
-  }
 }
 
 h3 {
