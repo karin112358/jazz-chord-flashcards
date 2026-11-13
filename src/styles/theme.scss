@@ -1,0 +1,25 @@
+@use '@angular/material' as mat;
+
+// Material 3 theme that follows the OS light/dark preference (light-dark() tokens).
+html {
+  color-scheme: light dark;
+
+  @include mat.theme((
+    color: (
+      primary: mat.$magenta-palette,
+      tertiary: mat.$violet-palette,
+      theme-type: color-scheme,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+// Set by the theme menu; without it the OS preference applies.
+html[data-theme='light'] {
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}

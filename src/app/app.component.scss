@@ -7,8 +7,8 @@
 }
 
 nav {
-  background-color: var(--mat-form-field-filled-container-color,
-      var(--mat-sys-surface-variant));
+  background-color: var(--mat-sys-surface);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
   padding: 5px;
   text-transform: uppercase;
   display: flex;
@@ -18,15 +18,16 @@ nav {
   .brand {
     margin-right: auto;
     padding-left: 16px;
-    color: white;
-    font-weight: 400;
+    color: var(--mat-sys-on-surface);
+    font-weight: 500;
     font-size: 14px;
+    letter-spacing: 0.04em;
     text-decoration: none;
   }
 
   button,
   a.mat-mdc-button {
-    color: white;
+    color: var(--mat-sys-on-surface-variant);
     font-weight: 300;
   }
 }
@@ -34,6 +35,11 @@ nav {
 .mat-mdc-menu-item {
   padding-left: 24px;
   padding-right: 24px;
+}
+
+.selected-theme,
+.selected-theme mat-icon {
+  color: var(--mat-sys-primary);
 }
 
 main {

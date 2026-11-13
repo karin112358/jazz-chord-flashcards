@@ -132,3 +132,98 @@ th {
     var(--mat-sys-surface-variant)
   );
 }
+
+/* Browser surfaces follow the palette in light and dark */
+::selection {
+  background-color: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+html {
+  accent-color: var(--mat-sys-primary);
+  caret-color: var(--mat-sys-primary);
+  scrollbar-color: var(--mat-sys-outline-variant) transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+a {
+  text-underline-offset: 0.2em;
+}
+
+/* Material controls: chunky pills, bold values, press feedback */
+html {
+  --mat-form-field-filled-container-color: var(--mat-sys-surface-container-highest);
+  --mat-form-field-container-height: 60px;
+  --mat-fab-container-shape: 9999px;
+  --mat-fab-small-container-shape: 9999px;
+  --mat-fab-small-container-elevation-shadow: none;
+  --mat-fab-small-hover-container-elevation-shadow: none;
+  --mat-fab-small-pressed-container-elevation-shadow: none;
+  --mat-fab-small-focus-container-elevation-shadow: none;
+  --mat-fab-extended-container-shape: 9999px;
+  --mat-fab-extended-container-height: 56px;
+  --mat-fab-extended-container-elevation-shadow: none;
+  --mat-fab-extended-hover-container-elevation-shadow: none;
+  --mat-fab-extended-pressed-container-elevation-shadow: none;
+  --mat-fab-extended-focus-container-elevation-shadow: none;
+  --mat-menu-container-shape: 20px;
+}
+
+// Material injects its component styles after this file, so these rules sit under
+// "html body" to outrank them without !important.
+html body {
+  // No helper-text row under fields; spacing is set by the layout
+  .mat-mdc-form-field-subscript-wrapper,
+  .mdc-line-ripple {
+    display: none;
+  }
+
+  .mat-mdc-form-field .mat-mdc-text-field-wrapper {
+    border-radius: 9999px;
+    padding-inline: 24px;
+  }
+
+  .mat-mdc-form-field .mdc-text-field--focused {
+    box-shadow: 0 0 0 2px var(--mat-sys-primary);
+  }
+
+  .mat-mdc-select-value,
+  .mat-mdc-input-element {
+    font-weight: 500;
+  }
+
+  .cdk-overlay-pane div.mat-mdc-select-panel.mdc-menu-surface {
+    border-radius: 20px;
+    padding: 6px;
+    box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.45);
+  }
+
+  .mat-mdc-select-panel .mat-mdc-option {
+    border-radius: 14px;
+  }
+
+  .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__background {
+    border-radius: 7px;
+  }
+
+  // Press feedback on every FAB
+  button.mat-mdc-fab-base {
+    transition:
+      box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
+      transform 140ms cubic-bezier(0.16, 1, 0.3, 1);
+
+    &:active:not([disabled]) {
+      transform: scale(0.94);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    button.mat-mdc-fab-base:active:not([disabled]) {
+      transform: none;
+    }
+  }
+}

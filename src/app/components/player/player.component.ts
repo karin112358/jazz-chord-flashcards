@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   ElementRef,
   HostListener,
@@ -83,6 +84,16 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   exercises = exercises;
   readonly selectedMode = signal<'R' | 'WC' | number>('R');
   readonly isRunning = signal(false);
+  /** Number of chords in the current bar, used to size the stage text. */
+  readonly chordCount = computed(() => this.currKey()?.split('-').length ?? 1);
+  /** 4-3-2-1 during the first bar after start, while no chord is shown yet. */
+  readonly countdown = computed(() => {
+    const beat = this.toneService.beat();
+    if (!this.isRunning() || beat < 0 || this.currKey() !== '') {
+      return null;
+    }
+    return 4 - (beat % 4);
+  });
   readonly selectedExercise: WritableSignal<{
     name: string;
     configuration: string | string[];
@@ -161,6 +172,22 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
 
     this.saveConfiguration();
+  }
+
+  // Select the tempo on entry so typing replaces it. The first click needs a second
+  // select() because the browser places the caret on mouseup after focusing.
+  private selectTempoOnClick = false;
+
+  onTempoFocus(input: HTMLInputElement) {
+    input.select();
+    this.selectTempoOnClick = true;
+  }
+
+  onTempoClick(input: HTMLInputElement) {
+    if (this.selectTempoOnClick) {
+      input.select();
+      this.selectTempoOnClick = false;
+    }
   }
 
   setTempo(newTempo: number | string) {

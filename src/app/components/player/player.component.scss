@@ -6,11 +6,12 @@
 
 #chords {
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: auto auto;
   width: 100%;
+  margin-top: 32px;
   align-items: center;
   justify-items: center;
-  grid-gap: 20px;
+  grid-gap: 12px;
 }
 
 #chords .type {
@@ -32,10 +33,51 @@
 }
 
 #buttons {
-  margin-top: 20px;
+  margin-top: 28px;
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 24px;
+
+  button {
+    width: 80px;
+    height: 80px;
+  }
+
+  mat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 36px;
+  }
+}
+
+#startButton {
+  --mat-fab-container-color: var(--mat-sys-primary);
+  --mat-fab-foreground-color: var(--mat-sys-on-primary);
+
+  &:not([disabled]) {
+    --mat-fab-container-elevation-shadow: 0 12px 24px -12px var(--mat-sys-primary);
+    --mat-fab-hover-container-elevation-shadow: 0 14px 28px -12px var(--mat-sys-primary);
+  }
+}
+
+#stopButton {
+  --mat-fab-container-color: var(--mat-sys-surface-container-highest);
+  --mat-fab-foreground-color: var(--mat-sys-on-surface);
+  --mat-fab-container-elevation-shadow: none;
+  --mat-fab-hover-container-elevation-shadow: none;
+}
+
+// The nav brand names the page, so the h1 is kept for screen readers and search only.
+h1 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  margin: -1px;
+  padding: 0;
+  border: 0;
 }
 
 .next-chord,
@@ -43,140 +85,180 @@
   position: relative;
   display: flex;
   align-items: center;
-  line-height: 1em;
-  text-align: center;
   justify-content: center;
-  font-weight: 500;
-  font-size: 28px;
-  padding: 20px;
   width: 100%;
   box-sizing: border-box;
-  height: 56px;
+  line-height: 1em;
+  text-align: center;
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
 
-  >div:first-child {
-    position: absolute;
-    top: -5px;
-    left: 5px;
-    font-size: 14px;
-    font-weight: 300;
+  > div:first-child {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 }
 
-@media (max-width: 599.98px) {
-
-  .next-chord,
-  .current-chord {
-    font-size: 24px;
-
-    >div:first-child {
-      margin-top: 2px;
-      font-size: 12px;
-    }
-  }
-}
-
-@media (max-width: 400px) {
-
-  .next-chord,
-  .current-chord {
-    font-size: 20px;
-
-    >div:first-child {
-      margin-top: 2px;
-      font-size: 10px;
-    }
-  }
-}
-
-@media (max-width: 599.98px) {
-  h1 {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    margin: -1px;
-    padding: 0;
-    border: 0;
-  }
-
-  #chords {
-    margin-top: 20px;
-  }
-}
-
+// Next chord: a quiet caption above the stage.
+// Tertiary marks what is coming (next chord, count-in); primary marks what to play now.
 .next-chord {
-  background-color: var(--mat-form-field-filled-container-color,
-      var(--mat-sys-surface-variant));
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--mat-sys-on-surface-variant);
+
+  > div:first-child {
+    color: var(--mat-sys-tertiary);
+  }
 }
 
+// Current chord: the stage
 .current-chord {
+  height: clamp(180px, 32vh, 260px);
+  padding: 20px;
+  border-radius: 28px;
   background-color: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  container-type: inline-size;
+  font-size: clamp(56px, 20cqi, 104px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+
+  // Bars with several chords get smaller type so they stay on one line
+  &[data-chords='2'] {
+    font-size: clamp(36px, 11cqi, 64px);
+  }
+
+  &[data-chords='3'],
+  &[data-chords='4'] {
+    font-size: clamp(26px, 8cqi, 48px);
+  }
+
+  > div:first-child {
+    position: absolute;
+    top: 18px;
+    left: 22px;
+    line-height: 1;
+    letter-spacing: 0.12em;
+  }
+}
+
+// Count-in during the first bar: the stage switches to the "coming up" color
+.current-chord:has(.countdown) {
+  background-color: var(--mat-sys-tertiary-container);
+  color: var(--mat-sys-on-tertiary-container);
+}
+
+// Each number pops in on its beat
+.countdown {
+  font-weight: 300;
+  opacity: 0.75;
+  animation: count-in 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes count-in {
+  from {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .countdown {
+    animation: none;
+  }
 }
 
 #beats {
-  margin-top: 20px;
+  margin-top: 14px;
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 8px;
 }
 
 .beat {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: var(--mat-form-field-filled-container-color,
-      var(--mat-sys-surface-variant));
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background-color: var(--mat-sys-surface-container-highest);
 }
 
 .highlight-beat {
-  background-color: var(--mat-sys-primary-container);
+  background-color: var(--mat-sys-primary);
 }
 
 #configuration {
-  position: relative;
-  margin: 40px -30px 0;
+  margin-top: 56px;
+  padding-top: 32px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
 
   mat-card {
-    background-color: #ffffff11;
-    padding: 30px 30px;
+    --mat-card-outlined-outline-color: transparent;
+    --mat-card-outlined-container-color: transparent;
+    background: none;
+    padding: 0;
   }
 
   mat-form-field {
     width: 100%;
+    margin-bottom: 12px;
   }
 
-  button {
-    background-color: var(--mat-form-field-filled-container-color,
-        var(--mat-sys-surface-variant));
-  }
-}
-
-.stella {
-  position: absolute;
-  right: 40px;
-  bottom: calc(100% - 2px);
-  width: 120px;
-  height: auto;
-  pointer-events: none;
-}
-
-@media (max-width: 599.98px) {
-  .stella {
-    width: 80px;
-    right: 25px;
+  // Configure Keys: a full-width dark pill
+  .mat-mdc-extended-fab {
+    width: 100%;
+    margin-top: 8px;
+    background-color: var(--mat-sys-inverse-surface);
+    color: var(--mat-sys-inverse-on-surface);
+    font-size: 15px;
+    font-weight: 700;
   }
 }
 
+h2 {
+  margin-top: 64px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// Tempo: round steppers around a big bold number
 .tempo-configuration {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
+  margin-bottom: 12px;
+
+  // The row carries the spacing so the field and the steppers share one center line
+  // (#configuration prefix outranks the generic field margin in #configuration)
+  #configuration & mat-form-field {
+    margin-bottom: 0;
+  }
 
   button {
-    margin-top: -18px;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    background-color: var(--mat-sys-surface-container-highest);
+    color: var(--mat-sys-on-surface);
+    font-weight: 700;
+  }
+
+  input {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    appearance: textfield;
+    -moz-appearance: textfield;
+
+    // The ± buttons replace the browser's spinner arrows
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+      margin: 0;
+    }
   }
 }
 
@@ -194,6 +276,8 @@ dialog {
   border: none;
   border-radius: 8px;
   padding: 20px 40px;
+  background-color: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface);
   text-align: center;
 
   .keyboard-shortcuts {
@@ -204,13 +288,13 @@ dialog {
     margin-bottom: 20px;
 
     div:nth-child(odd) {
-      border: 1px solid #000;
+      border: 1px solid var(--mat-sys-outline);
       width: auto;
       display: inline-block;
       border-radius: 8px;
       justify-self: center;
       padding: 5px 10px;
-      background-color: #ffffff33;
+      background-color: var(--mat-sys-surface-container-highest);
     }
   }
 }

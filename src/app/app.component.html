@@ -1,6 +1,6 @@
 <nav aria-label="Top toolbar">
-  @if (isMobile()) {
   <a class="brand" href="/">Practice Jazz Chords</a>
+  @if (isMobile()) {
   <button mat-button [matMenuTriggerFor]="menu">
     <mat-icon aria-hidden="false" aria-label="Menu" fontIcon="menu"></mat-icon>
   </button>
@@ -9,17 +9,36 @@
     <a mat-menu-item href="/documentation">Documentation</a>
     <a mat-menu-item href="/change-log">Change Log</a>
     <a mat-menu-item href="/contact">Contact</a>
+    <mat-divider></mat-divider>
+    <ng-container *ngTemplateOutlet="themeItems"></ng-container>
   </mat-menu>
   } @else {
   <a mat-button href="/">Practice</a>
   <a mat-button href="/documentation">Documentation</a>
   <a mat-button href="/change-log">Change Log</a>
   <a mat-button href="/contact">Contact</a>
+  <button mat-icon-button class="theme-button" [matMenuTriggerFor]="themeMenu" aria-label="Appearance">
+    <mat-icon [fontIcon]="currentTheme().icon"></mat-icon>
+  </button>
+  <mat-menu #themeMenu="matMenu">
+    <ng-container *ngTemplateOutlet="themeItems"></ng-container>
+  </mat-menu>
   }
 </nav>
+
+<ng-template #themeItems>
+  @for (option of themeOptions; track option.id) {
+  <button mat-menu-item role="menuitemradio" [attr.aria-checked]="theme() === option.id"
+    [class.selected-theme]="theme() === option.id" (click)="setTheme(option.id)">
+    <mat-icon [fontIcon]="option.icon"></mat-icon>
+    <span>{{ option.label }}</span>
+  </button>
+  }
+</ng-template>
 
 <main>
   <div id="app">
     <router-outlet></router-outlet>
   </div>
 </main>
+
