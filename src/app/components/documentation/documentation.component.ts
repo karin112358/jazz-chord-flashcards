@@ -48,10 +48,21 @@ export class DocumentationComponent {
   /** After a click on a link the scroll position follows that link, so the spy keeps it active. */
   private spyPausedUntil = 0;
 
+  /** The section elements and the menu bar, looked up once after the first render. */
+  private sectionElements: { id: string; element: Element }[] = [];
+  private menu: Element | null = null;
+
   constructor() {
     const destroyRef = inject(DestroyRef);
 
     afterNextRender(() => {
+      const host: HTMLElement = this.host.nativeElement;
+      this.sectionElements = this.sections.flatMap((s) => {
+        const element = host.querySelector(`#${s.id}`);
+        return element ? [{ id: s.id, element }] : [];
+      });
+      this.menu = document.querySelector('nav');
+
       let frame = 0;
       const onScroll = () => {
         cancelAnimationFrame(frame);
@@ -97,14 +108,14 @@ export class DocumentationComponent {
       return;
     }
 
-    const menuBottom = document.querySelector('nav')?.getBoundingClientRect().bottom ?? 0;
+    const menuBottom = this.menu?.getBoundingClientRect().bottom ?? 0;
     const line = menuBottom + (window.innerHeight - menuBottom) * 0.2;
     let active = this.sections[0].id;
-    for (const section of this.sections) {
-      const element = this.host.nativeElement.querySelector(`#${section.id}`);
-      if (element && element.getBoundingClientRect().top <= line) {
-        active = section.id;
+    for (const { id, element } of this.sectionElements) {
+      if (element.getBoundingClientRect().top > line) {
+        break;
       }
+      active = id;
     }
     this.activeId.set(active);
   }

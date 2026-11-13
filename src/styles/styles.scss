@@ -16,6 +16,11 @@ body {
 }
 
 // The menu stays at the top while the page scrolls; anchors and scrollIntoView stop below it
+// Set by index.html for returning visitors until the player has applied their stored settings
+html.restoring-settings app-player {
+  visibility: hidden;
+}
+
 html {
   --app-bar-height: 50px;
   scroll-padding-top: var(--app-bar-height);

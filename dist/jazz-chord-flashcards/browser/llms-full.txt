@@ -4,6 +4,7 @@
 
 Website: https://practice-jazz-chords.com/
 This file is the documentation from https://practice-jazz-chords.com/documentation/ as plain Markdown.
+Source code: https://github.com/karin112358/jazz-chord-flashcards
 
 ## Getting started
 
@@ -11,25 +12,25 @@ Practice Jazz Chords shows one bar of chords at a time, in tempo, in a new key e
 
 1. Pick what to practice under **Chords**, for example *Major 7* or a ii–V–I.
 2. Set a **Tempo** you can play cleanly. 60 BPM is a good start.
-3. Press **Start** or **Space**. The app counts in 4 3 2 1 over one bar of clicks.
+3. Press **Start** or Space. The app counts in *4 3 2 1* over one bar of clicks.
 4. Play the chord under **play** and glance at **next** to get ready for the coming bar.
 
-Press **Stop** or **Space** to end the session. Your settings are saved for next time.
+Press **Stop** or Space to end the session. Your settings are saved for next time.
 
 ## The practice screen
 
-- **play**: the bar to play now. A bar holds up to four chords, which share its four beats evenly.
-- **next**: the bar after it, so you can find the chord before you need it.
-- **Beat markers**: four short lines below the chords. The highlighted one is the current beat; a click sounds on every beat.
-- **Start and Stop**: start or end a session. Every session begins with a one-bar count-in.
+- **play**: The bar to play now. A bar holds up to four chords, which share its four beats evenly.
+- **next**: The bar after it, so you can find the chord before you need it.
+- **Beat markers**: Four short lines below the chords. The highlighted one is the current beat; a click sounds on every beat.
+- **Start and Stop**: Start or end a session. Every session begins with a one-bar count-in.
 
 ## Tempo
 
-**Tempo (BPM)** sets the beats per minute; every bar has four beats. Change it with the buttons beside the field (−10, −1, +1, +10), type a number, or use the arrow keys. The tempo stays between 20 and 300 BPM, and you can change it while a session is running.
+**Tempo (BPM)** sets the beats per minute; every bar has four beats. Change it with the buttons beside the field (**−10**, **−1**, **+1**, **+10**), type a number, or use the arrow keys. The tempo stays between 20 and 300 BPM, and you can change it while a session is running.
 
 ## Chords
 
-The **Chords** list sets what each bar asks you to play. Every exercise runs through all twelve keys; the examples are in C.
+The **Chords** list sets what each bar asks you to play. Every exercise runs through all twelve keys; the examples below are in C.
 
 | Exercise | Example in C |
 | --- | --- |
@@ -49,7 +50,7 @@ Chords are spelled as they are usually read: in the keys of G, D, A, E and B wit
 
 Choose **Custom** in the Chords list and a **Custom progression** field appears. Write the progression in Roman numerals; the app turns them into chords in a new key every time. Your progression is saved when you leave the field.
 
-Building blocks:
+#### Building blocks
 
 | Write | Meaning |
 | --- | --- |
@@ -61,33 +62,33 @@ Building blocks:
 | `\|` | Next bar |
 | `\|\|` | Alternatives: one of them is picked at random each time |
 
-Scale degrees in C:
+#### Scale degrees in C
 
 | I | IIb | II | IIIb | III | IV | Vb | V | VIb | VI | VIIb | VII |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | C | Db | D | Eb | E | F | Gb | G | Ab | A | Bb | B |
 
-Examples:
+#### Examples
 
 | You write | Result in C |
 | --- | --- |
 | `I*maj7*` | Cmaj7 |
 | `iim*7* - V*7*` | Dm7 – G7 |
-| `iim*7* - V*7* \| I*maj7*` | Bar 1: Dm7 – G7, bar 2: Cmaj7 |
+| `iim*7* - V*7* \| I*maj7*` | Bar 1: Dm7 – G7, Bar 2: Cmaj7 |
 | `I*maj7* \|\| Im*7* \|\| I*7*` | One of Cmaj7, Cm7, C7 |
-| `viim*7(b5)* - III*7* \| vim*7*` | Bar 1: Bm7(b5) – E7, bar 2: Am7 |
-| `IV*7* - VIIb*7* \| I*maj7*` | Bar 1: F7 – Bb7, bar 2: Cmaj7 |
+| `viim*7(b5)* - III*7* \| vim*7*` | Bar 1: Bm7(b5) – E7, Bar 2: Am7 |
+| `IV*7* - VIIb*7* \| I*maj7*` | Bar 1: F7 – Bb7, Bar 2: Cmaj7 |
 
-Note: outside the asterisks, every *i* and *v* is read as a numeral. Write `m` for minor, as in `iim*7*`, and put everything else between asterisks, such as `vii*dim7*`.
+Note: Outside the asterisks, every *i* and *v* is read as a numeral. Write `m` for minor, as in `iim*7*`, and put everything else between asterisks, such as `vii*dim7*`.
 
 ## Key order
 
 **Key order** decides which key comes next. The same key never comes twice in a row.
 
-- **Random**: any key can come next. Keys with fewer stars come up more often (see Key ratings).
-- **Weighted Cycle**: goes through the keys in rounds, in random order within each round. A key with one star is in every round, a key with two stars in every second round, up to every fifth round for five stars.
-- **Perfect 4th up**: moves up a fourth each time, around the circle of fifths: C F Bb Eb Ab Db Gb B E A D G
-- **Perfect 4th down**: moves down a fourth each time: C G D A E B Gb Db Ab Eb Bb F
+- **Random**: Any key can come next. Keys with fewer stars come up more often (see [Key ratings](https://practice-jazz-chords.com/documentation/#key-ratings)).
+- **Weighted Cycle**: Goes through the keys in rounds, in random order within each round. A key with one star is in every round, a key with two stars in every second round, up to every fifth round for five stars.
+- **Perfect 4th up**: Moves up a fourth each time, around the circle of fifths: C F Bb Eb Ab Db Gb B E A D G
+- **Perfect 4th down**: Moves down a fourth each time: C G D A E B Gb Db Ab Eb Bb F
 
 Both fourths orders always start in C and ignore the key ratings.
 
@@ -119,9 +120,9 @@ The shortcuts work on the practice page while no field or list is selected. The 
 
 ## Settings and appearance
 
-Tempo, chords, key order, root note, key ratings, the choice to practice unfamiliar keys more often and your custom progression are saved in the browser. There is no account, so another browser or device starts with the default settings.
+Tempo, chords, key order, root note, key ratings, the choice to practice unfamiliar keys more often and your custom progression are saved in this browser. There is no account, so another browser or device starts with the default settings.
 
-The app follows the light or dark mode of your device. To choose one yourself, open the appearance menu (the icon at the right end of the menu bar, or the menu on small screens) and pick Light, Dark or System.
+The app follows the light or dark mode of your device. To choose one yourself, open the appearance menu (the icon at the right end of the menu bar, or the menu on small screens) and pick **Light**, **Dark** or **System**.
 
 ## Practice tips
 
@@ -132,4 +133,4 @@ The app follows the light or dark mode of your device. To choose one yourself, o
 
 ## Feedback
 
-For suggestions or problems, write to charlie@practice-jazz-chords.com. Recent changes are listed at https://practice-jazz-chords.com/change-log/. Source code: https://github.com/karin112358/jazz-chord-flashcards
+Practice Jazz Chords keeps growing with the ideas of the people who use it. For suggestions or problems, write to charlie@practice-jazz-chords.com. Recent changes are listed in the [Change Log](https://practice-jazz-chords.com/change-log/).

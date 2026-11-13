@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 127.0.0.1",
-    "build": "ng build",
+    "build": "ng build && node scripts/build-llms-full.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:jazz-chord-flashcards": "node dist/jazz-chord-flashcards/server/server.mjs"
@@ -46,6 +46,8 @@
     "karma-jasmine": "^5.1.0",
     "karma-jasmine-html-reporter": "^2.1.0",
     "prettier": "^3.7.4",
+    "turndown": "^7.2.5",
+    "turndown-plugin-gfm": "^1.0.2",
     "typescript": "^5.9.3"
   }
 }

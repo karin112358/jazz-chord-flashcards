@@ -1,11 +1,9 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { PlayerComponent } from './components/player/player.component';
+import { RouterModule } from '@angular/router';
 
-const routes: Routes = [{ path: '', component: PlayerComponent }];
-
+// The routes are registered with provideRouter in app.module.ts; this module only makes
+// routerLink and router-outlet available to the templates.
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

@@ -233,6 +233,12 @@ h1 {
   line-height: 1.4;
 }
 
+.stage-idle-error {
+  max-width: 32ch;
+  text-align: center;
+  text-wrap: balance;
+}
+
 .next-idle {
   // Up to two lines, so "(one bar)" / "(two bars)" stays visible on phones
   display: -webkit-box;

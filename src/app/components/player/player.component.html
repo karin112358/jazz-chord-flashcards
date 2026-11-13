@@ -26,7 +26,12 @@
     <div class="stage-idle">
       <p class="stage-idle-title">Press <span class="play-glyph"><mat-icon fontIcon="play_arrow"
             aria-hidden="true"></mat-icon></span><span class="sr-only">Start</span> to begin</p>
+      @if (audioFailed()) {
+      <p class="stage-idle-detail stage-idle-error" role="alert">The sound could not load. Check your
+        connection and press Start again.</p>
+      } @else {
       <p class="stage-idle-detail">or Space &middot; one bar count-in at {{ toneService.tempo() }} BPM</p>
+      }
     </div>
     } @else if (countdown(); as count) {
     @for (n of [count]; track n) {
