@@ -36,31 +36,63 @@ const degreeSteps: Record<string, number> = { I: 0, II: 2, III: 4, IV: 5, V: 7, 
 export class PlayerComponent implements OnInit, AfterViewInit {
   @ViewChild('silentAudio') silentAudio!: ElementRef<HTMLAudioElement>;
 
-  @HostListener('document:keyup', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    if (this.isHandledByFocusedControl(event)) {
+  /**
+   * Space starts and stops practice. It acts on keydown and cancels the browser default, which
+   * would otherwise scroll the page or press the button that still has focus from a mouse click.
+   */
+  @HostListener('document:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Tab') {
+      this.focusFromPointer = false;
+    }
+    if (event.key !== ' ' || this.isHandledByFocusedControl(event)) {
       return;
     }
 
-    if (event.key === ' ') {
-      if (this.isRunning()) {
-        this.stop();
-      } else {
-        this.start();
-      }
-    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-      // Ctrl: 10 BPM, Shift: 5 BPM, otherwise 1 BPM; changeTempo keeps 20–300 BPM
+    event.preventDefault();
+    if (event.repeat) {
+      return;
+    }
+
+    if (this.isRunning()) {
+      this.stop();
+    } else {
+      this.start();
+    }
+  }
+
+  /**
+   * Whether the focused control got its focus from a mouse or touch press rather than from Tab.
+   * (:focus-visible cannot tell: Chrome turns it on as soon as a key is pressed.)
+   */
+  private focusFromPointer = false;
+
+  @HostListener('document:pointerdown')
+  handlePointerDown() {
+    this.focusFromPointer = true;
+  }
+
+  /** Arrow keys change the tempo: Ctrl 10 BPM, Shift 5 BPM, otherwise 1 BPM. */
+  @HostListener('document:keyup', ['$event'])
+  handleKeyUp(event: KeyboardEvent) {
+    if (event.key === ' ' && !this.isHandledByFocusedControl(event)) {
+      // Keydown already toggled; a button would otherwise fire its click on keyup
+      event.preventDefault();
+      return;
+    }
+
+    if ((event.key === 'ArrowLeft' || event.key === 'ArrowRight') && !this.isHandledByFocusedControl(event)) {
       const step = event.ctrlKey ? 10 : event.shiftKey ? 5 : 1;
       this.changeTempo(event.key === 'ArrowLeft' ? -step : step);
     }
   }
 
   /**
-   * True when the key already does something for the focused element or an open dialog,
-   * so the global shortcut must not fire as well (e.g. Space on a checkbox, arrows in an input).
+   * True when the key belongs to the focused element or an open dialog or list, so the global
+   * shortcut must not fire as well (e.g. Space in a text field, arrows in an input).
    */
   private isHandledByFocusedControl(event: KeyboardEvent): boolean {
-    if (document.querySelector('dialog[open], .mat-mdc-dialog-container')) {
+    if (document.querySelector('dialog[open], .mat-mdc-dialog-container, .mat-mdc-select-panel, .mat-mdc-menu-panel')) {
       return true;
     }
 
@@ -69,18 +101,20 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       return false;
     }
 
-    // Arrows move the caret or the selection in these elements; Space types or toggles them
-    if (
-      target.closest(
-        'input, textarea, select, [contenteditable="true"], [role="combobox"], [role="listbox"], [role="option"], [role^="menuitem"]',
-      )
-    ) {
+    // Text entry (Space types, arrows move the caret) and checkboxes (Space toggles them)
+    if (target.closest('input, textarea, select, [contenteditable="true"]')) {
       return true;
     }
 
-    // Space activates a focused button on its own; a disabled one (Start while playing) does nothing
-    const button = target.closest('button');
-    return event.key === ' ' && !!button && !button.disabled;
+    // Arrows move the selection in these widgets
+    if (event.key !== ' ') {
+      return !!target.closest('[role="combobox"], [role="listbox"], [role="option"], [role^="menuitem"]');
+    }
+
+    // Space on a button reached with Tab presses that button. A button that only kept focus
+    // after a mouse click would be pressed again, so then Space is the shortcut instead.
+    const control = target.closest('button, [role="combobox"], [role="option"], [role^="menuitem"], [tabindex]');
+    return !!control && !(control as HTMLButtonElement).disabled && !this.focusFromPointer;
   }
 
   minTempo = 20;
@@ -103,6 +137,16 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       return null;
     }
     return 4 - (beat % 4);
+  });
+  /** Shown in the next card before Start: the exercise the session will practice. */
+  readonly exerciseLabel = computed(() => {
+    const name = this.selectedExercise().name;
+    if (name === 'Custom') {
+      return { text: 'Custom progression', chords: 'Custom progression', note: '' };
+    }
+    // The chords stay on one line; only a note like "(two bars)" may wrap below them
+    const [, chords, note] = name.match(/^(.*?)(?:\s+(\([^()]*\)))?$/) ?? [name, name, ''];
+    return { text: name, chords, note: note ?? '' };
   });
   readonly selectedExercise: WritableSignal<{
     name: string;

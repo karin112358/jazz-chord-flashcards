@@ -13,31 +13,10 @@ $narrow: 839.98px;
   --measure: 68ch;
 }
 
-// Header on the color band that continues the nav (Farbfläche).
-// Inline padding puts the title on the same line as the text of the contents links.
+// The shared .page-header; inline padding puts the title on the same line as the text of the
+// contents links
 .docs-header {
-  padding: 40px 16px 48px;
-  background-color: var(--mat-sys-primary-container);
-  box-shadow: 0 0 0 100vmax var(--mat-sys-primary-container);
-  clip-path: inset(0 -100vmax);
-  color: var(--mat-sys-on-primary-container);
-
-  h1 {
-    margin: 0;
-    font-size: 40px;
-    line-height: 1.1;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    text-align: left;
-    text-transform: none;
-  }
-
-  .lede {
-    max-width: 60ch;
-    margin: 12px 0 0;
-    font-size: 18px;
-    line-height: 1.55;
-  }
+  padding-inline: 16px;
 }
 
 // Contents beside one long page
@@ -517,17 +496,9 @@ sup {
 // ---------- Small screens ----------
 
 @media (max-width: $narrow) {
-  // Phones: a shorter band; title and lede share the page gutter with the logo and the text
+  // One column: title and lede share the page gutter with the logo and the text
   .docs-header {
-    padding: 28px 0 32px;
-
-    h1 {
-      font-size: 32px;
-    }
-
-    .lede {
-      font-size: 17px;
-    }
+    padding-inline: 0;
   }
 
   .docs-body {

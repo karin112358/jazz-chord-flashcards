@@ -8,11 +8,27 @@
 <div id="chords">
   <div class="next-chord" [attr.data-chords]="nextChordCount()">
     <div>next</div>
+    @if (isRunning()) {
     <div id="nextChord" [innerHTML]="nextKey1() ?? '&nbsp;'"></div>
+    } @else {
+    <!-- Before Start: what the session will practice -->
+    <div class="next-idle" [title]="exerciseLabel().text"><span class="nowrap">{{ exerciseLabel().chords }}</span>
+      @if (exerciseLabel().note) {
+      <!-- &ngsp; keeps a breakable space, which Angular would otherwise strip between the spans -->
+      &ngsp;<span class="nowrap">{{ exerciseLabel().note }}</span>
+      }
+    </div>
+    }
   </div>
-  <div class="current-chord" [attr.data-chords]="chordCount()">
+  <div class="current-chord" [class.idle]="!isRunning()" [attr.data-chords]="chordCount()">
     <div>play</div>
-    @if (countdown(); as count) {
+    @if (!isRunning()) {
+    <div class="stage-idle">
+      <p class="stage-idle-title">Press <span class="play-glyph"><mat-icon fontIcon="play_arrow"
+            aria-hidden="true"></mat-icon></span><span class="sr-only">Start</span> to begin</p>
+      <p class="stage-idle-detail">or Space &middot; one bar count-in at {{ toneService.tempo() }} BPM</p>
+    </div>
+    } @else if (countdown(); as count) {
     @for (n of [count]; track n) {
     <div id="currentChord" class="countdown" aria-hidden="true">{{ n }}</div>
     }

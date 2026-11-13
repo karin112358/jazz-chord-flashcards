@@ -184,6 +184,81 @@ h1 {
   }
 }
 
+// Before Start: the stage explains how to begin, the next card names the exercise
+.current-chord.idle > div:first-child {
+  visibility: hidden;
+}
+
+.stage-idle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: 0;
+
+  p {
+    margin: 0;
+  }
+}
+
+.stage-idle-title {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: clamp(22px, 6.5cqi, 32px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+// The same play symbol as the Start button below, in a small disc
+.play-glyph {
+  display: inline-grid;
+  place-items: center;
+  width: 1.3em;
+  height: 1.3em;
+  border-radius: 50%;
+  background-color: var(--mat-sys-on-primary);
+  color: var(--mat-sys-primary);
+
+  mat-icon {
+    width: 0.95em;
+    height: 0.95em;
+    font-size: 0.95em;
+  }
+}
+
+.stage-idle-detail {
+  font-size: clamp(14px, 3.6cqi, 16px);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.next-idle {
+  // Up to two lines, so "(one bar)" / "(two bars)" stays visible on phones
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 // Count-in during the first bar: each number pops in on its beat
 .countdown {
   font-weight: 300;
