@@ -331,17 +331,19 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         }
         // TODO
       } else {
-        // Other modes
-        const mode = this.selectedMode() as number;
-
-        if (currentKeyIndex === -1) {
-          currentKeyIndex = mode * -1;
+        // Interval modes: the mode key is the step in semitones, stored as a
+        // string ('5', '-5'), so convert it before doing arithmetic with it.
+        const mode = Number(this.selectedMode());
+        if (!Number.isInteger(mode) || mode % this.keys.length === 0) {
+          // An unusable step would never reach a new key; fall back to random.
+          this.selectedMode.set('R');
+          continue;
         }
 
-        keyIndex = (currentKeyIndex + mode) % this.keys.length;
-        while (keyIndex < 0) {
-          keyIndex += this.keys.length;
-        }
+        // Start on C: the first step lands on index 0.
+        const fromIndex = currentKeyIndex === -1 ? -mode : currentKeyIndex;
+        const length = this.keys.length;
+        keyIndex = (((fromIndex + mode) % length) + length) % length;
       }
 
       key = this.keys[keyIndex];
@@ -426,9 +428,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.setExercise(
       localStorage.getItem('exercise') ?? this.exercises[0].name,
     );
+    const storedMode = localStorage.getItem('mode');
     this.setMode(
-      (localStorage.getItem('mode') as 'R' | 'WC' | number) ??
-        this.modes[0].key,
+      (this.modes.find((m) => m.key === storedMode)?.key ??
+        this.modes[0].key) as 'R' | 'WC' | number,
     );
     this.toneService.playRootNote =
       localStorage.getItem('playRootNote') === 'true';
