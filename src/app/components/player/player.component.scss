@@ -1,16 +1,26 @@
 :host {
   display: inline-block;
   width: 100%;
-  max-width: min(calc(100dvw - 40px), 500px);
+  max-width: min(calc(100cqi - 40px), 500px);
+}
+
+// The practice area (chords, beats, transport) sits on one full-bleed color band.
+// box-shadow + clip-path extend each block's background to the viewport edges.
+#chords,
+#beats,
+#buttons {
+  background-color: var(--mat-sys-primary-container);
+  box-shadow: 0 0 0 100vmax var(--mat-sys-primary-container);
+  clip-path: inset(0 -100vmax);
 }
 
 #chords {
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: auto auto;
   width: 100%;
+  padding-top: 28px;
   align-items: center;
   justify-items: center;
-  grid-gap: 20px;
 }
 
 #chords .type {
@@ -32,10 +42,51 @@
 }
 
 #buttons {
-  margin-top: 20px;
+  padding: 28px 0 40px;
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 24px;
+
+  button {
+    width: 80px;
+    height: 80px;
+  }
+
+  mat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 36px;
+  }
+}
+
+#startButton {
+  --mat-fab-container-color: var(--mat-sys-primary);
+  --mat-fab-foreground-color: var(--mat-sys-on-primary);
+
+  &:not([disabled]) {
+    --mat-fab-container-elevation-shadow: 0 12px 24px -12px var(--mat-sys-primary);
+    --mat-fab-hover-container-elevation-shadow: 0 14px 28px -12px var(--mat-sys-primary);
+  }
+}
+
+#stopButton {
+  --mat-fab-container-color: var(--mat-sys-surface);
+  --mat-fab-foreground-color: var(--mat-sys-on-surface);
+  --mat-fab-container-elevation-shadow: none;
+  --mat-fab-hover-container-elevation-shadow: none;
+}
+
+// The nav brand names the page, so the h1 is kept for screen readers and search only.
+h1 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  margin: -1px;
+  padding: 0;
+  border: 0;
 }
 
 .next-chord,
@@ -43,175 +94,432 @@
   position: relative;
   display: flex;
   align-items: center;
-  line-height: 1em;
-  text-align: center;
   justify-content: center;
-  font-weight: 500;
-  font-size: 28px;
-  padding: 20px;
   width: 100%;
   box-sizing: border-box;
-  height: 56px;
+  line-height: 1em;
+  text-align: center;
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
 
-  >div:first-child {
-    position: absolute;
-    top: -5px;
-    left: 5px;
-    font-size: 14px;
-    font-weight: 300;
+  > div:first-child {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 }
 
-@media (max-width: 599.98px) {
-
-  .next-chord,
-  .current-chord {
-    font-size: 24px;
-
-    >div:first-child {
-      margin-top: 2px;
-      font-size: 12px;
-    }
-  }
-}
-
-@media (max-width: 400px) {
-
-  .next-chord,
-  .current-chord {
-    font-size: 20px;
-
-    >div:first-child {
-      margin-top: 2px;
-      font-size: 10px;
-    }
-  }
-}
-
-@media (max-width: 599.98px) {
-  h1 {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    margin: -1px;
-    padding: 0;
-    border: 0;
-  }
-
-  #chords {
-    margin-top: 20px;
-  }
-}
-
+// Next chord: the next card in the stack, peeking out from behind the stage.
+// Fixed height and one line: superscript chord types would otherwise grow the card
+// when the first chord appears and push the stage down.
 .next-chord {
-  background-color: var(--mat-form-field-filled-container-color,
-      var(--mat-sys-surface-variant));
+  width: 88%;
+  height: 80px;
+  margin-bottom: -22px;
+  padding: 0 20px 22px 76px;
+  border-radius: 22px 22px 0 0;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  container-type: inline-size;
+  font-size: clamp(24px, 11cqi, 32px);
+  font-weight: 500;
+  box-shadow: 0 -6px 18px -12px rgb(0 0 0 / 0.35);
+
+  // Bars with several chords get smaller type so they stay on one line
+  &[data-chords='2'] {
+    font-size: clamp(22px, 8.5cqi, 30px);
+  }
+
+  &[data-chords='3'],
+  &[data-chords='4'] {
+    font-size: clamp(18px, 7cqi, 28px);
+  }
+
+  // Label centered in the visible part above the stage
+  > div:first-child {
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    translate: 0 calc(-50% - 11px);
+    color: var(--mat-sys-on-surface-variant);
+    line-height: 1;
+  }
+
+  #nextChord {
+    line-height: 1;
+    white-space: nowrap;
+  }
 }
 
+// Current chord: the stage, the strongest color on the band, in front of the next card
 .current-chord {
-  background-color: var(--mat-sys-primary-container);
+  z-index: 1;
+  height: clamp(180px, 32vh, 260px);
+  padding: 20px;
+  border-radius: 28px;
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+  box-shadow: 0 18px 40px -24px rgb(0 0 0 / 0.5);
+  container-type: inline-size;
+  font-size: clamp(56px, 20cqi, 104px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+
+  // Bars with several chords get smaller type so they stay on one line
+  &[data-chords='2'] {
+    font-size: clamp(36px, 11cqi, 64px);
+  }
+
+  &[data-chords='3'],
+  &[data-chords='4'] {
+    font-size: clamp(26px, 8cqi, 48px);
+  }
+
+  > div:first-child {
+    position: absolute;
+    top: 18px;
+    left: 22px;
+    line-height: 1;
+    letter-spacing: 0.12em;
+  }
+}
+
+// Before Start: the stage explains how to begin, the next card names the exercise
+.current-chord.idle > div:first-child {
+  visibility: hidden;
+}
+
+.stage-idle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: 0;
+
+  p {
+    margin: 0;
+  }
+}
+
+.stage-idle-title {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: clamp(22px, 6.5cqi, 32px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+// The same play symbol as the Start button below, in a small disc
+.play-glyph {
+  display: inline-grid;
+  place-items: center;
+  width: 1.3em;
+  height: 1.3em;
+  border-radius: 50%;
+  background-color: var(--mat-sys-on-primary);
+  color: var(--mat-sys-primary);
+
+  mat-icon {
+    width: 0.95em;
+    height: 0.95em;
+    font-size: 0.95em;
+  }
+}
+
+.stage-idle-detail {
+  font-size: clamp(14px, 3.6cqi, 16px);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.next-idle {
+  // Up to two lines, so "(one bar)" / "(two bars)" stays visible on phones
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// Count-in during the first bar: each number pops in on its beat
+.countdown {
+  font-weight: 300;
+  opacity: 0.75;
+  animation: count-in 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes count-in {
+  from {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .countdown {
+    animation: none;
+  }
 }
 
 #beats {
-  margin-top: 20px;
+  padding-top: 16px;
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 8px;
 }
 
 .beat {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: var(--mat-form-field-filled-container-color,
-      var(--mat-sys-surface-variant));
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background-color: color-mix(in srgb, var(--mat-sys-on-primary-container) 18%, transparent);
 }
 
 .highlight-beat {
-  background-color: var(--mat-sys-primary-container);
+  background-color: var(--mat-sys-primary);
 }
 
 #configuration {
-  position: relative;
-  margin: 40px -30px 0;
+  margin-top: 48px;
 
   mat-card {
-    background-color: #ffffff11;
-    padding: 30px 30px;
+    --mat-card-outlined-outline-color: transparent;
+    --mat-card-outlined-container-color: transparent;
+    background: none;
+    padding: 0;
   }
 
   mat-form-field {
     width: 100%;
+    margin-bottom: 12px;
   }
 
-  button {
-    background-color: var(--mat-form-field-filled-container-color,
-        var(--mat-sys-surface-variant));
-  }
 }
 
-.stella {
-  position: absolute;
-  right: 40px;
-  bottom: calc(100% - 2px);
-  width: 120px;
-  height: auto;
-  pointer-events: none;
-}
+// Configure Keys: a card-like button with one piano octave showing each key's rating
+.configure-keys {
+  // Real key colors in both themes (palette values)
+  --ivory: light-dark(#ffffff, #e4e9eb);
+  --ebony: light-dark(#151c1f, #0b0f11);
 
-@media (max-width: 599.98px) {
-  .stella {
-    width: 80px;
-    right: 25px;
-  }
-}
-
-.tempo-configuration {
   display: flex;
-  gap: 10px;
-  align-items: center;
-
-  button {
-    margin-top: -18px;
-  }
-}
-
-#open-keyboard-shortcuts,
-#docs {
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 16px 14px 18px 20px;
+  border: 0;
+  border-radius: 24px;
+  background-color: var(--mat-sys-surface-container-highest);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: left;
   cursor: pointer;
-  text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
-  text-decoration: underline;
-  color: var(--mat-sys-primary);
-}
+  transition:
+    background-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 140ms cubic-bezier(0.16, 1, 0.3, 1);
 
-dialog {
-  border: none;
-  border-radius: 8px;
-  padding: 20px 40px;
-  text-align: center;
+  &:hover {
+    background-color: color-mix(in srgb, var(--mat-sys-on-surface) 6%, var(--mat-sys-surface-container-highest));
+  }
 
-  .keyboard-shortcuts {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 30px;
-    margin-bottom: 20px;
+  &:active {
+    transform: scale(0.98);
+  }
 
-    div:nth-child(odd) {
-      border: 1px solid #000;
-      width: auto;
-      display: inline-block;
-      border-radius: 8px;
-      justify-self: center;
-      padding: 5px 10px;
-      background-color: #ffffff33;
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:active {
+      transform: none;
     }
   }
 }
 
+.ck-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ck-chevron {
+  width: 26px;
+  height: 26px;
+  font-size: 26px;
+}
+
+.ck-piano {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  width: 100%;
+  height: 76px;
+  container-type: size;
+}
+
+// Rating: the natural key color fills from the bottom up to the rating,
+// the bluish part above is what is not reached yet
+.ck-pkey {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 6px;
+  border-radius: 0 0 8px 8px;
+  background-color: color-mix(in srgb, var(--mat-sys-primary) 30%, var(--ivory));
+  color: #151c1f;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--ebony) 14%, transparent),
+    inset 0 calc(-100cqh * var(--familiarity, 0.2)) 0 var(--ivory);
+
+  // Black keys sit on the boundary after white key --pos
+  &.black {
+    position: absolute;
+    top: 0;
+    left: calc(var(--pos) * (100% + 2px) / 7 - 1px - 4.25%);
+    z-index: 1;
+    width: 8.5%;
+    height: 60%;
+    padding: 0;
+    border-radius: 0 0 6px 6px;
+    background-color: color-mix(in srgb, var(--mat-sys-primary) 55%, var(--ebony));
+    box-shadow:
+      0 2px 3px rgb(0 0 0 / 0.35),
+      inset 0 calc(-60cqh * var(--familiarity, 0.2)) 0 var(--ebony);
+  }
+}
+
+// Equal weighting: the ratings are ignored, so the keys show their plain colors
+.configure-keys.unweighted .ck-pkey {
+  background-color: var(--ivory);
+
+  &.black {
+    background-color: var(--ebony);
+  }
+}
+
+.ck-name {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+// What the colors of the octave mean
+.ck-legend {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+// Syntax hint under the custom progression field
+#configuration .custom-progression {
+  margin-bottom: 4px;
+}
+
+.field-help {
+  margin: 0 0 16px;
+  padding: 0 20px;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 13px;
+  line-height: 1.5;
+
+  code {
+    padding: 0 4px;
+    border-radius: 4px;
+    background-color: var(--mat-sys-surface-container-high);
+    color: var(--mat-sys-on-surface);
+    font-family: ui-monospace, 'Cascadia Mono', Consolas, Menlo, monospace;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  a {
+    color: var(--mat-sys-primary);
+    text-underline-offset: 3px;
+  }
+}
+
+h2 {
+  margin-top: 64px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// Tempo: round steppers around a big bold number
+.tempo-configuration {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+
+  // The row carries the spacing so the field and the steppers share one center line
+  // (#configuration prefix outranks the generic field margin in #configuration)
+  #configuration & mat-form-field {
+    margin-bottom: 0;
+  }
+
+  button {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    background-color: var(--mat-sys-surface-container-highest);
+    color: var(--mat-sys-on-surface);
+    font-weight: 700;
+  }
+
+  input {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    appearance: textfield;
+    -moz-appearance: textfield;
+
+    // The ± buttons replace the browser's spinner arrows
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+// Links into the documentation below "How it works"
+.docs-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 20px;
+  margin-top: 20px;
+  font-size: 14px;
+
+  a {
+    color: var(--mat-sys-primary);
+    text-underline-offset: 3px;
+  }
+}

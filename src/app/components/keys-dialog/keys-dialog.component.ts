@@ -22,6 +22,8 @@ export class KeysDialogComponent {
     MAT_DIALOG_DATA,
   );
 
+  readonly stars = [1, 2, 3, 4, 5] as const;
+
   close(): void {
     this.dialogRef.close();
   }

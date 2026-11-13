@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
@@ -17,7 +18,6 @@ import { ChangeLogComponent } from './components/change-log/change-log.component
 import { DocumentationComponent } from './components/documentation/documentation.component';
 import { provideRouter } from '@angular/router';
 import { ContactComponent } from './components/contact/contact.component';
-import { MarkdownModule } from 'ngx-markdown';
 
 const routes = [
   { path: '', component: PlayerComponent },
@@ -33,11 +33,11 @@ const routes = [
     BrowserModule,
     AppRoutingModule,
     LayoutModule,
-    MarkdownModule.forRoot(),
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
     MatDialogModule,
+    MatDividerModule,
     MatIconModule,
     MatInputModule,
     MatMenuModule,

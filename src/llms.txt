@@ -1,0 +1,26 @@
+# Practice Jazz Chords
+
+> Free jazz chord flashcards in the browser: the app shows one bar of chords at a time, in tempo, in all 12 keys, to practice jazz chords and progressions in every key.
+
+Practice Jazz Chords (https://practice-jazz-chords.com/) is a practice tool for jazz musicians on any instrument. It needs no account and no installation; settings are stored in the browser.
+
+- Exercises: Major 7, Minor 7, Dominant 7, a random mix of the three, ii7–V7–Imaj7, ii7(b5)–V7–Im6 and Imaj7–vi7–ii7–V7 (each progression in one bar or spread over two bars), and custom progressions written in Roman numerals.
+- Key order: Random, Weighted Cycle, Perfect 4th up and Perfect 4th down.
+- Key ratings (1–5 stars per key) make unfamiliar keys come up more often; this can be turned off.
+- A one-bar count-in, a click on every beat, an optional bass root note, tempo from 20 to 300 BPM and keyboard shortcuts.
+
+## Docs
+
+- [Documentation](https://practice-jazz-chords.com/documentation/): how every part of the app works
+- [Getting started](https://practice-jazz-chords.com/documentation/#getting-started): a practice session in four steps
+- [Custom progressions](https://practice-jazz-chords.com/documentation/#custom): syntax for writing your own progressions in Roman numerals, with examples
+- [Key order](https://practice-jazz-chords.com/documentation/#key-order): how the next key is chosen
+- [Key ratings](https://practice-jazz-chords.com/documentation/#key-ratings): how ratings change how often a key comes up
+- [Keyboard shortcuts](https://practice-jazz-chords.com/documentation/#shortcuts)
+- [Full documentation as Markdown](https://practice-jazz-chords.com/llms-full.txt)
+
+## Optional
+
+- [Change Log](https://practice-jazz-chords.com/change-log/): what changed, newest first
+- [Contact](https://practice-jazz-chords.com/contact/): email and GitHub
+- [Source code](https://github.com/karin112358/jazz-chord-flashcards)

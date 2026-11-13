@@ -19,6 +19,15 @@ Run `ng generate component component-name` to generate a new component. You can 
 ## Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+All routes are prerendered, so each page is complete HTML for search engines and AI crawlers.
+
+## Search and AI metadata
+
+- Titles, descriptions, canonical URLs, share tags and structured data per page: `src/app/services/seo.service.ts`
+- `src/llms.txt` (summary for AI tools) and `src/llms-full.txt` (the documentation as Markdown).
+  When the documentation in `src/app/components/documentation/documentation.component.html` changes,
+  update `llms-full.txt` as well.
+- `src/robots.txt` and `src/sitemap.xml` (update `lastmod` when a page changes)
 
 ## Running unit tests
 

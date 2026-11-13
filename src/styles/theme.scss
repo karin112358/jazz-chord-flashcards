@@ -1,0 +1,30 @@
+@use '@angular/material' as mat;
+@use 'gletscher-weiss' as palette;
+
+// Material 3 theme that follows the OS light/dark preference (light-dark() tokens).
+html {
+  color-scheme: light dark;
+
+  // mat.theme() also derives elevation (shadow) and the other non-color system tokens
+  // from this color config, so it stays; its colors are replaced right below.
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      theme-type: color-scheme,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+
+  // The app's palette replaces Material's generated system colors
+  @include palette.colors;
+}
+
+// Set by the theme menu; without it the OS preference applies.
+html[data-theme='light'] {
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}

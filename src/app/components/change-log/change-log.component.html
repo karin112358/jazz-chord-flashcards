@@ -1,7 +1,13 @@
-<h1>Changelog</h1>
-<div class="changelog">
+<header class="page-header">
+  <h1>Change Log</h1>
+  <p class="lede">What changed in Practice Jazz Chords, newest first.</p>
+</header>
+
+<ol class="changes">
   @for (change of changeLog; track change.date) {
-  <div>{{ change.date }}</div>
-  <div>{{ change.changes }}</div>
+  <li>
+    <time [attr.datetime]="change.date">{{ change.date | date: 'd MMM y' }}</time>
+    <p>{{ change.changes }}</p>
+  </li>
   }
-</div>
+</ol>

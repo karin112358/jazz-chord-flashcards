@@ -1,17 +1,48 @@
-.changelog {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  font-size: 14px;
-  border-top: 1px solid
-    var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant));
-  max-width: min(calc(100dvw - 40px), 800px);
+:host {
+  display: block;
+  width: min(calc(100cqi - 32px), 720px);
+}
 
-  > div {
-    padding: 10px;
-    border-bottom: 1px solid
-      var(
-        --mat-form-field-filled-container-color,
-        var(--mat-sys-surface-variant)
-      );
+// One entry per release: date, then what changed; hairlines between entries
+.changes {
+  margin: 40px 0 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 24px;
+    align-items: baseline;
+    padding: 16px 0;
+
+    & + li {
+      border-top: 1px solid var(--mat-sys-outline-variant);
+    }
+  }
+
+  time {
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  p {
+    max-width: 62ch;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  // Phones: the date sits above its entry
+  @media (max-width: 599.98px) {
+    margin-top: 24px;
+
+    li {
+      grid-template-columns: 1fr;
+      gap: 2px;
+      padding: 14px 0;
+    }
   }
 }

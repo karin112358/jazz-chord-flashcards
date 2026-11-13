@@ -36,10 +36,12 @@
               "src/assets",
               "src/robots.txt",
               "src/sitemap.xml",
+              "src/llms.txt",
+              "src/llms-full.txt",
               "src/404.html"
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/magenta-violet.css",
+              "src/styles/theme.scss",
               "src/styles/styles.scss"
             ],
             "scripts": [],
@@ -113,10 +115,12 @@
               "src/assets",
               "src/robots.txt",
               "src/sitemap.xml",
+              "src/llms.txt",
+              "src/llms-full.txt",
               "src/404.html"
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/magenta-violet.css",
+              "src/styles/theme.scss",
               "src/styles/styles.scss"
             ],
             "scripts": []

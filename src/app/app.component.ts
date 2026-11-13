@@ -1,6 +1,12 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component, DestroyRef, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, DestroyRef, afterNextRender, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
+import { SeoService } from './services/seo.service';
+
+type Theme = 'system' | 'light' | 'dark';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +18,16 @@ export class AppComponent {
   title = 'jazz-chord-flashcards';
 
   isMobile = signal(false);
+
+  readonly themeOptions: { id: Theme; label: string; icon: string }[] = [
+    { id: 'system', label: 'System', icon: 'brightness_auto' },
+    { id: 'light', label: 'Light', icon: 'light_mode' },
+    { id: 'dark', label: 'Dark', icon: 'dark_mode' },
+  ];
+  theme = signal<Theme>('system');
+  currentTheme = computed(() => this.themeOptions.find((o) => o.id === this.theme())!);
+
+  private readonly root = inject(DOCUMENT).documentElement;
 
   constructor(
     private breakpointObserver: BreakpointObserver,
@@ -27,5 +43,38 @@ export class AppComponent {
           this.isMobile.set(false);
         }
       });
+
+    // Title, description, canonical and structured data per page (also written into the prerendered HTML)
+    const seo = inject(SeoService);
+    inject(Router)
+      .events.pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((event) => seo.update(event.urlAfterRedirects));
+
+    // index.html applies the stored theme before first paint; sync the menu state with it.
+    afterNextRender(() => {
+      const stored = this.root.getAttribute('data-theme');
+      if (stored === 'light' || stored === 'dark') {
+        this.theme.set(stored);
+      }
+    });
+  }
+
+  setTheme(theme: Theme) {
+    this.theme.set(theme);
+    if (theme === 'system') {
+      this.root.removeAttribute('data-theme');
+    } else {
+      this.root.setAttribute('data-theme', theme);
+    }
+    try {
+      if (theme === 'system') {
+        localStorage.removeItem('theme');
+      } else {
+        localStorage.setItem('theme', theme);
+      }
+    } catch {}
   }
 }

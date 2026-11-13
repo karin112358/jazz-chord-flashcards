@@ -1,4 +1,377 @@
-<div class="documentation">
-  <markdown [data]="documentation">
-  </markdown>
+<div class="docs">
+  <header class="page-header docs-header">
+    <h1>Documentation</h1>
+    <p class="lede">
+      How a practice session runs, what every setting does, and how to write your own chord progressions.
+    </p>
+  </header>
+
+  <div class="docs-body">
+    <nav class="docs-nav" aria-label="Documentation contents" [class.open]="navOpen()">
+      <button type="button" class="nav-toggle" [attr.aria-expanded]="navOpen()" aria-controls="docs-toc"
+        (click)="navOpen.set(!navOpen())">
+        <span class="nav-toggle-label">Contents</span>
+        <span class="nav-toggle-current">{{ activeTitle() }}</span>
+        <mat-icon aria-hidden="true" fontIcon="expand_more"></mat-icon>
+      </button>
+
+      <ul id="docs-toc" class="toc">
+        @for (s of sections; track s.id) {
+        <li [class.sub]="s.parent">
+          <a [href]="'/documentation/#' + s.id" [class.active]="activeId() === s.id"
+            [attr.aria-current]="activeId() === s.id ? 'location' : null" (click)="go(s.id, $event)">{{ s.title }}</a>
+        </li>
+        }
+      </ul>
+    </nav>
+
+    <article class="docs-content">
+      <!-- Getting started -->
+      <section id="getting-started" class="docs-section">
+        <h2>Getting started</h2>
+        <p>
+          Practice Jazz Chords shows one bar of chords at a time, in tempo, in a new key each bar. Play what it shows
+          before the bar ends. A session takes four steps:
+        </p>
+        <ol class="steps">
+          <li><span>Pick what to practice under <b>Chords</b>, for example <i>Major 7</i> or a ii–V–I.</span></li>
+          <li><span>Set a <b>Tempo</b> you can play cleanly. 60 BPM is a good start.</span></li>
+          <li><span>Press <b>Start</b> or <kbd>Space</kbd>. The app counts in <i>4 3 2 1</i> over one bar of
+              clicks.</span></li>
+          <li><span>Play the chord under <b>play</b> and glance at <b>next</b> to get ready for the coming bar.</span>
+          </li>
+        </ol>
+        <p>Press <b>Stop</b> or <kbd>Space</kbd> to end the session. Your settings are saved for next time.</p>
+      </section>
+
+      <!-- The practice screen -->
+      <section id="practice-screen" class="docs-section">
+        <h2>The practice screen</h2>
+        <figure class="screen-figure">
+          <div class="mini-stage" aria-hidden="true">
+            <div class="mini-next"><span>next</span><span class="chord">G<sup>7</sup></span></div>
+            <div class="mini-play"><span>play</span><span class="chord">Dm<sup>7</sup></span></div>
+            <div class="mini-beats"><span class="on"></span><span></span><span></span><span></span></div>
+          </div>
+          <figcaption class="sr-only">The practice screen shows the next chord above the chord to play, followed by
+            four beat markers.</figcaption>
+        </figure>
+        <dl class="terms">
+          <dt>play</dt>
+          <dd>The bar to play now. A bar holds up to four chords, which share its four beats evenly.</dd>
+          <dt>next</dt>
+          <dd>The bar after it, so you can find the chord before you need it.</dd>
+          <dt>Beat markers</dt>
+          <dd>Four short lines below the chords. The highlighted one is the current beat; a click sounds on every
+            beat.</dd>
+          <dt>Start and Stop</dt>
+          <dd>Start or end a session. Every session begins with a one-bar count-in.</dd>
+        </dl>
+      </section>
+
+      <!-- Tempo -->
+      <section id="tempo" class="docs-section">
+        <h2>Tempo</h2>
+        <p>
+          <b>Tempo (BPM)</b> sets the beats per minute; every bar has four beats. Change it with the buttons beside the
+          field (<b>−10</b>, <b>−1</b>, <b>+1</b>, <b>+10</b>), type a number, or use the arrow keys. The tempo stays
+          between 20 and 300 BPM, and you can change it while a session is running.
+        </p>
+      </section>
+
+      <!-- Chords -->
+      <section id="chords" class="docs-section">
+        <h2>Chords</h2>
+        <p>
+          The <b>Chords</b> list sets what each bar asks you to play. Every exercise runs through all twelve keys; the
+          examples below are in C.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Exercise</th>
+                <th scope="col">Example in C</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Major 7</td>
+                <td class="chord">C<sup>maj7</sup></td>
+              </tr>
+              <tr>
+                <td>Minor 7</td>
+                <td class="chord">Cm<sup>7</sup></td>
+              </tr>
+              <tr>
+                <td>Dominant 7</td>
+                <td class="chord">C<sup>7</sup></td>
+              </tr>
+              <tr>
+                <td>Maj 7 / Min 7 / Dom 7</td>
+                <td>One of <span class="chord">C<sup>maj7</sup></span>, <span class="chord">Cm<sup>7</sup></span>,
+                  <span class="chord">C<sup>7</sup></span>, chosen at random</td>
+              </tr>
+              <tr>
+                <td>ii7 - V7 - Imaj7</td>
+                <td class="chord">Dm<sup>7</sup> – G<sup>7</sup> – C<sup>maj7</sup></td>
+              </tr>
+              <tr>
+                <td>ii7(b5) - V7 - Im6</td>
+                <td class="chord">Dm<sup>7(b5)</sup> – G<sup>7</sup> – Cm<sup>6</sup></td>
+              </tr>
+              <tr>
+                <td>Imaj7 - vi7 - ii7 - V7</td>
+                <td class="chord">C<sup>maj7</sup> – Am<sup>7</sup> – Dm<sup>7</sup> – G<sup>7</sup></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          Each progression comes in two versions. <b>One bar</b> fits the whole progression into a single bar.
+          <b>Two bars</b> spreads it over two and gives each chord more time: ii–V in the first bar and I in the second,
+          or two chords per bar for Imaj7–vi7–ii7–V7.
+        </p>
+        <p>
+          Chords are spelled as they are usually read: in the keys of G, D, A, E and B with sharps, in all other keys
+          with flats.
+        </p>
+
+        <h3 id="custom">Custom progressions</h3>
+        <p>
+          Choose <b>Custom</b> in the Chords list and a <b>Custom progression</b> field appears. Write the progression
+          in Roman numerals; the app turns them into chords in a new key every time. Your progression is saved when you
+          leave the field.
+        </p>
+
+        <h4>Building blocks</h4>
+        <div class="table-wrap">
+          <table class="syntax">
+            <thead>
+              <tr>
+                <th scope="col">Write</th>
+                <th scope="col">Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>I</code> to <code>VII</code></td>
+                <td>Scale degree of the key; upper and lower case mean the same</td>
+              </tr>
+              <tr>
+                <td><code>IIb</code>, <code>IIIb</code>, <code>Vb</code>, <code>VIb</code>, <code>VIIb</code></td>
+                <td>Lowered a half step; the <code>b</code> comes after the numeral</td>
+              </tr>
+              <tr>
+                <td><code>m</code></td>
+                <td>Shown as written: <code>iim</code> becomes Dm</td>
+              </tr>
+              <tr>
+                <td><code>*7*</code></td>
+                <td>Chord type between asterisks, shown in superscript and kept exactly as written</td>
+              </tr>
+              <tr>
+                <td><code>-</code></td>
+                <td>Next chord in the same bar (up to four per bar)</td>
+              </tr>
+              <tr>
+                <td><code>|</code></td>
+                <td>Next bar</td>
+              </tr>
+              <tr>
+                <td><code>||</code></td>
+                <td>Alternatives: one of them is picked at random each time</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4>Scale degrees in C</h4>
+        <ul class="degree-scale">
+          @for (d of degrees; track d.numeral) {
+          <li><code>{{ d.numeral }}</code><span>{{ d.note }}</span></li>
+          }
+        </ul>
+
+        <h4>Examples</h4>
+        <div class="table-wrap">
+          <table class="syntax">
+            <thead>
+              <tr>
+                <th scope="col">You write</th>
+                <th scope="col">Result in C</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>I*maj7*</code></td>
+                <td class="chord">C<sup>maj7</sup></td>
+              </tr>
+              <tr>
+                <td><code>iim*7* - V*7*</code></td>
+                <td class="chord">Dm<sup>7</sup> – G<sup>7</sup></td>
+              </tr>
+              <tr>
+                <td><code>iim*7* - V*7* | I*maj7*</code></td>
+                <td>Bar 1: <span class="chord">Dm<sup>7</sup> – G<sup>7</sup></span><br />
+                  Bar 2: <span class="chord">C<sup>maj7</sup></span></td>
+              </tr>
+              <tr>
+                <td><code>I*maj7* || Im*7* || I*7*</code></td>
+                <td>One of <span class="chord">C<sup>maj7</sup></span>, <span class="chord">Cm<sup>7</sup></span>,
+                  <span class="chord">C<sup>7</sup></span></td>
+              </tr>
+              <tr>
+                <td><code>viim*7(b5)* - III*7* | vim*7*</code></td>
+                <td>Bar 1: <span class="chord">Bm<sup>7(b5)</sup> – E<sup>7</sup></span><br />
+                  Bar 2: <span class="chord">Am<sup>7</sup></span></td>
+              </tr>
+              <tr>
+                <td><code>IV*7* - VIIb*7* | I*maj7*</code></td>
+                <td>Bar 1: <span class="chord">F<sup>7</sup> – Bb<sup>7</sup></span><br />
+                  Bar 2: <span class="chord">C<sup>maj7</sup></span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="note">
+          <mat-icon aria-hidden="true" fontIcon="info"></mat-icon>
+          <span>Outside the asterisks, every <i>i</i> and <i>v</i> is read as a numeral. Write <code>m</code> for
+            minor, as in <code>iim*7*</code>, and put everything else between asterisks, such as
+            <code>vii*dim7*</code>.</span>
+        </p>
+      </section>
+
+      <!-- Key order -->
+      <section id="key-order" class="docs-section">
+        <h2>Key order</h2>
+        <p><b>Key order</b> decides which key comes next. The same key never comes twice in a row.</p>
+        <dl class="terms">
+          <dt>Random</dt>
+          <dd>Any key can come next. Keys with fewer stars come up more often (see
+            <a href="/documentation/#key-ratings" (click)="go('key-ratings', $event)">Key ratings</a>).</dd>
+          <dt>Weighted Cycle</dt>
+          <dd>Goes through the keys in rounds, in random order within each round. A key with one star is in every
+            round, a key with two stars in every second round, up to every fifth round for five stars.</dd>
+          <dt>Perfect 4th up</dt>
+          <dd>Moves up a fourth each time, around the circle of fifths:
+            <span class="key-cycle">C F Bb Eb Ab Db Gb B E A D G</span></dd>
+          <dt>Perfect 4th down</dt>
+          <dd>Moves down a fourth each time:
+            <span class="key-cycle">C G D A E B Gb Db Ab Eb Bb F</span></dd>
+        </dl>
+        <p>Both fourths orders always start in C and ignore the key ratings.</p>
+      </section>
+
+      <!-- Key ratings -->
+      <section id="key-ratings" class="docs-section">
+        <h2>Key ratings</h2>
+        <p>
+          Open <b>Rate your keys</b> and give each of the twelve keys one to five stars: one star for a key you still
+          struggle with, five for a key you know well. Every key starts at one star.
+        </p>
+        <ul>
+          <li>With <b>Random</b>, a key with one star comes up five times as often as a key with five stars.</li>
+          <li>With <b>Weighted Cycle</b>, the stars decide how many rounds a key sits out.</li>
+        </ul>
+        <p>
+          The keyboard on the <b>Rate your keys</b> card shows your ratings at a glance: the more of a key is filled in
+          white or black, the better you know it. A key that is still mostly blue needs practice.
+        </p>
+        <p>
+          To practice all keys equally often, turn off <b>Practice unfamiliar keys more often</b>. Your ratings are kept
+          and count again when you turn it back on.
+        </p>
+      </section>
+
+      <!-- Root note -->
+      <section id="root-note" class="docs-section">
+        <h2>Root note</h2>
+        <p>
+          With <b>Play root note</b> on, a bass note plays the root of each chord: on beats 1 and 3 when a bar has one
+          or two chords, on every beat when it has three or four. The sound is still basic, which is why the option is
+          marked experimental.
+        </p>
+      </section>
+
+      <!-- Keyboard shortcuts -->
+      <section id="shortcuts" class="docs-section">
+        <h2>Keyboard shortcuts</h2>
+        <div class="table-wrap">
+          <table class="shortcut-table">
+            <thead>
+              <tr>
+                <th scope="col">Keys</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><kbd>Space</kbd></td>
+                <td>Start or stop practice</td>
+              </tr>
+              <tr>
+                <td><kbd><span aria-hidden="true">&larr;</span><span class="sr-only">Left arrow</span></kbd>
+                  <kbd><span aria-hidden="true">&rarr;</span><span class="sr-only">Right arrow</span></kbd></td>
+                <td>Tempo −1 or +1</td>
+              </tr>
+              <tr>
+                <td><kbd>Shift</kbd> + <kbd><span aria-hidden="true">&larr;</span><span class="sr-only">Left
+                      arrow</span></kbd> <kbd><span aria-hidden="true">&rarr;</span><span class="sr-only">Right
+                      arrow</span></kbd></td>
+                <td>Tempo −5 or +5</td>
+              </tr>
+              <tr>
+                <td><kbd>Ctrl</kbd> + <kbd><span aria-hidden="true">&larr;</span><span class="sr-only">Left
+                      arrow</span></kbd> <kbd><span aria-hidden="true">&rarr;</span><span class="sr-only">Right
+                      arrow</span></kbd></td>
+                <td>Tempo −10 or +10</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          The shortcuts work on the practice page while no field or list is selected. The keyboard icon in the menu
+          lists them on every page.
+        </p>
+      </section>
+
+      <!-- Settings and appearance -->
+      <section id="settings" class="docs-section">
+        <h2>Settings and appearance</h2>
+        <p>
+          Tempo, chords, key order, root note, key ratings, the choice to practice unfamiliar keys more often and your
+          custom progression are saved in this browser. There is no account, so another browser or device starts with
+          the default settings.
+        </p>
+        <p>
+          The app follows the light or dark mode of your device. To choose one yourself, open the appearance menu
+          (the icon at the right end of the menu bar, or the menu on small screens) and pick <b>Light</b>,
+          <b>Dark</b> or <b>System</b>.
+        </p>
+      </section>
+
+      <!-- Practice tips -->
+      <section id="tips" class="docs-section">
+        <h2>Practice tips</h2>
+        <ul>
+          <li>Choose a tempo you can play without mistakes, then raise it a few BPM at a time.</li>
+          <li>Use <b>next</b>: find the coming chord while you still hold the current one.</li>
+          <li>Rate your keys honestly and update the stars as you improve, so practice time goes where it is needed.</li>
+          <li>Short daily sessions build chord shapes into muscle memory faster than long occasional ones.</li>
+        </ul>
+      </section>
+
+      <!-- Feedback -->
+      <section id="feedback" class="docs-section">
+        <h2>Feedback</h2>
+        <p>
+          Practice Jazz Chords keeps growing with the ideas of the people who use it. For suggestions or problems, write
+          to <a href="mailto:charlie@practice-jazz-chords.com">charlie&#64;practice-jazz-chords.com</a>. Recent changes
+          are listed in the <a href="/change-log/">Change Log</a>.
+        </p>
+      </section>
+    </article>
+  </div>
 </div>

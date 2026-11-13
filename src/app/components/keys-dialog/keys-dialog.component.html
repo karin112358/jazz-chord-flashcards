@@ -1,28 +1,24 @@
-<h2>Keys</h2>
+<h2>Rate your keys</h2>
 <mat-dialog-content>
-  <p>Rate your familiarity with each key on a scale from 1 to 5. Keys you know well
-    should be rated 5, while unfamiliar keys should be rated 1. Keys with higher ratings will appear less frequently
-    during practice in random mode.</p>
+  <p>How well do you know each key? Give one star to a key you still struggle with and five stars to a key you know
+    well. Keys with fewer stars come up more often.</p>
 
   <div class="outer-key-container">
     <div class="key-container">
-      @for (key of data.keysConfiguration.keys; track key) {
+      @for (key of data.keysConfiguration.keys; track key.key) {
       <div>{{ key.key }}</div>
-      <mat-icon (click)="setKeyRating(key.key, 1)" style="{{key.rating >= 1 ? 'color: var(--mat-sys-primary)' : ''}}"
-        aria-hidden="false" aria-label="Example home icon" fontIcon="star"></mat-icon>
-      <mat-icon (click)="setKeyRating(key.key, 2)" style="{{key.rating >= 2 ? 'color: var(--mat-sys-primary)' : ''}}"
-        aria-hidden="false" aria-label="Example home icon" fontIcon="star"></mat-icon>
-      <mat-icon (click)="setKeyRating(key.key, 3)" style="{{key.rating >= 3 ? 'color: var(--mat-sys-primary)' : ''}}"
-        aria-hidden="false" aria-label="Example home icon" fontIcon="star"></mat-icon>
-      <mat-icon (click)="setKeyRating(key.key, 4)" style="{{key.rating >= 4 ? 'color: var(--mat-sys-primary)' : ''}}"
-        aria-hidden="false" aria-label="Example home icon" fontIcon="star"></mat-icon>
-      <mat-icon (click)="setKeyRating(key.key, 5)" style="{{key.rating >= 5 ? 'color: var(--mat-sys-primary)' : ''}}"
-        aria-hidden="false" aria-label="Example home icon" fontIcon="star"></mat-icon>
+      @for (n of stars; track n) {
+      <mat-icon role="button" tabindex="0" fontIcon="star" [class.selected]="key.rating >= n"
+        [attr.aria-label]="key.key + ': ' + n + (n === 1 ? ' star' : ' stars')"
+        [attr.aria-pressed]="key.rating === n" (click)="setKeyRating(key.key, n)"
+        (keydown.enter)="setKeyRating(key.key, n)"
+        (keydown.space)="$event.preventDefault(); setKeyRating(key.key, n)"></mat-icon>
+      }
       }
     </div>
   </div>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button (click)="close()">Close</button>
+  <button mat-button (click)="close()">Done</button>
 </mat-dialog-actions>
