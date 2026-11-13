@@ -1,9 +1,9 @@
 import { DOCUMENT } from '@angular/common';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, isDevMode } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 
-/** Search and sharing metadata for one page. */
-interface PageSeo {
+/** Search and sharing metadata for one page, set as `data: { seo }` on its route. */
+export interface PageSeo {
   title: string;
   description: string;
   /** Extra schema.org nodes for this page, added to the WebSite node every page has. */
@@ -13,6 +13,10 @@ interface PageSeo {
 const ORIGIN = 'https://practice-jazz-chords.com';
 const SITE_NAME = 'Practice Jazz Chords';
 const SHARE_IMAGE = `${ORIGIN}/assets/og-image.png`;
+const SHARE_TAGS = [
+  'og:type', 'og:site_name', 'og:title', 'og:description', 'og:url',
+  'og:image', 'og:image:width', 'og:image:height', 'og:image:alt',
+];
 
 const WEB_APPLICATION = {
   '@type': 'WebApplication',
@@ -43,18 +47,19 @@ const WEB_APPLICATION = {
 };
 
 /**
- * Pages by path. Titles and descriptions are what search results and link previews show;
- * the structured data describes the app to search engines and AI tools.
+ * Metadata of the pages, used as route data in app.module.ts. Titles and descriptions are what
+ * search results and link previews show; the structured data describes the app to search engines
+ * and AI tools.
  */
-const PAGES: Record<string, PageSeo> = {
-  '/': {
+export const PAGE_SEO = {
+  home: {
     title: 'Practice Jazz Chords – Jazz chord flashcards in all 12 keys',
     description:
       'Free jazz chord trainer in the browser. Play one bar of chords at a time in tempo, in all 12 keys: ' +
       'maj7, m7 and 7 chords, ii–V–I and your own progressions, with extra practice for unfamiliar keys.',
     structuredData: [WEB_APPLICATION],
   },
-  '/documentation': {
+  documentation: {
     title: 'Documentation – Practice Jazz Chords',
     description:
       'How Practice Jazz Chords works: starting a session, tempo, chord exercises, writing custom ' +
@@ -81,15 +86,15 @@ const PAGES: Record<string, PageSeo> = {
       },
     ],
   },
-  '/change-log': {
+  changeLog: {
     title: 'Change Log – Practice Jazz Chords',
     description: 'What changed in Practice Jazz Chords, newest first.',
   },
-  '/contact': {
+  contact: {
     title: 'Contact – Practice Jazz Chords',
     description: 'Ideas, questions or a bug to report? Contact Practice Jazz Chords by email or on GitHub.',
   },
-};
+} satisfies Record<string, PageSeo>;
 
 @Injectable({ providedIn: 'root' })
 export class SeoService {
@@ -97,23 +102,35 @@ export class SeoService {
   private readonly meta = inject(Meta);
   private readonly document = inject(DOCUMENT);
 
-  /** Applies the metadata for a router URL; unknown paths are marked noindex. Runs during prerendering too. */
-  update(url: string) {
-    const path = url.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
-    const page = PAGES[path];
+  /**
+   * Applies a page's metadata. `seo` is the route's data; null marks an unknown path, which gets
+   * noindex and loses everything that described the previous page. Runs during prerendering too.
+   */
+  update(url: string, seo: PageSeo | null | undefined) {
+    if (seo === undefined && isDevMode()) {
+      console.warn(`No SEO data on the route for ${url}; add data: { seo } in app.module.ts`);
+    }
+    const page: PageSeo = seo ?? { title: SITE_NAME, description: PAGE_SEO.home.description };
 
-    if (!page) {
+    this.title.setTitle(page.title);
+    this.meta.updateTag({ name: 'description', content: page.description });
+
+    if (seo === null) {
       this.meta.updateTag({ name: 'robots', content: 'noindex' });
+      for (const tag of SHARE_TAGS) {
+        this.meta.removeTag(`property="${tag}"`);
+      }
+      this.meta.removeTag('name="twitter:card"');
       this.setCanonical(null);
+      this.setStructuredData(null);
       return;
     }
 
     // GitHub Pages serves the prerendered pages as folders, so their final URLs end in a slash
-    const canonical = path === '/' ? `${ORIGIN}/` : `${ORIGIN}${path}/`;
+    const path = url.split(/[?#]/)[0].replace(/\/+$/, '');
+    const canonical = `${ORIGIN}${path}/`;
 
-    this.title.setTitle(page.title);
     this.meta.removeTag('name="robots"');
-    this.meta.updateTag({ name: 'description', content: page.description });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
     this.meta.updateTag({ property: 'og:site_name', content: SITE_NAME });
     this.meta.updateTag({ property: 'og:title', content: page.title });
@@ -145,8 +162,12 @@ export class SeoService {
     link.href = href;
   }
 
-  private setStructuredData(nodes: object[]) {
+  private setStructuredData(nodes: object[] | null) {
     let script = this.document.head.querySelector<HTMLScriptElement>('script#structured-data');
+    if (!nodes) {
+      script?.remove();
+      return;
+    }
     if (!script) {
       script = this.document.createElement('script');
       script.id = 'structured-data';

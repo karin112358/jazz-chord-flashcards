@@ -16,15 +16,17 @@ import { PlayerComponent } from './components/player/player.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ChangeLogComponent } from './components/change-log/change-log.component';
 import { DocumentationComponent } from './components/documentation/documentation.component';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Routes } from '@angular/router';
+import { PAGE_SEO } from './services/seo.service';
 import { ContactComponent } from './components/contact/contact.component';
 
-const routes = [
-  { path: '', component: PlayerComponent },
-  { path: 'change-log', component: ChangeLogComponent },
-  { path: 'documentation', component: DocumentationComponent },
-  { path: 'contact', component: ContactComponent },
-  { path: '**', component: PlayerComponent },
+// Every route carries its search metadata; `seo: null` marks the fallback for unknown paths (noindex)
+const routes: Routes = [
+  { path: '', component: PlayerComponent, data: { seo: PAGE_SEO.home } },
+  { path: 'change-log', component: ChangeLogComponent, data: { seo: PAGE_SEO.changeLog } },
+  { path: 'documentation', component: DocumentationComponent, data: { seo: PAGE_SEO.documentation } },
+  { path: 'contact', component: ContactComponent, data: { seo: PAGE_SEO.contact } },
+  { path: '**', component: PlayerComponent, data: { seo: null } },
 ];
 
 @NgModule({

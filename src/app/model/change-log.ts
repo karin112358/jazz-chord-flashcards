@@ -1,5 +1,9 @@
 export const changeLog = [
   {
+    date: '2026-11-13',
+    changes: 'Redesign: light and dark mode, one-bar count-in, key ratings on a keyboard and new documentation',
+  },
+  {
     date: '2025-12-08',
     changes: 'Play root note of current chord',
   },

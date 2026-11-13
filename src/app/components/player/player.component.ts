@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -128,6 +129,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   exercises = exercises;
   readonly selectedMode = signal<'R' | 'WC' | number>('R');
   readonly isRunning = signal(false);
+  /** The last start failed because the sound could not be loaded; shown until the next start. */
+  readonly audioFailed = signal(false);
   /** Number of chords in the current and the next bar (set in updateChord), used to size the text. */
   readonly chordCount = signal(1);
   readonly nextChordCount = signal(1);
@@ -209,13 +212,36 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.silentAudio.nativeElement.loop = true;
   }
 
-  start() {
-    this.silentAudio.nativeElement.play();
-    this.toneService.start();
+  /**
+   * index.html hides the player while the stored settings are not applied yet, so a returning
+   * visitor does not see the prerendered defaults jump to their own tempo and chords.
+   */
+  private readonly revealSettings = afterNextRender(() => {
+    document.documentElement.classList.remove('restoring-settings');
+  });
+
+  async start() {
+    // Keeps the audio session alive on iOS; a refused play() must not stop practice
+    this.silentAudio.nativeElement.play().catch(() => {});
+    this.audioFailed.set(false);
     this.isRunning.set(true);
     this.cycle = 0;
     this.cycleKeys = [];
-    (<any>window).sa_event('click_start');
+
+    // Analytics is optional: blocked or not yet loaded, it must not break Start
+    try {
+      (window as { sa_event?: (name: string) => void }).sa_event?.('click_start');
+    } catch {}
+
+    try {
+      await this.toneService.start();
+    } catch (error) {
+      console.error('Audio could not start', error);
+      if (this.isRunning()) {
+        this.stop();
+        this.audioFailed.set(true);
+      }
+    }
   }
 
   stop() {

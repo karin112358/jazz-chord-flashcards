@@ -46,12 +46,19 @@ export class AppComponent {
 
     // Title, description, canonical and structured data per page (also written into the prerendered HTML)
     const seo = inject(SeoService);
-    inject(Router)
-      .events.pipe(
+    const router = inject(Router);
+    router.events
+      .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((event) => seo.update(event.urlAfterRedirects));
+      .subscribe((event) => {
+        let route = router.routerState.snapshot.root;
+        while (route.firstChild) {
+          route = route.firstChild;
+        }
+        seo.update(event.urlAfterRedirects, route.data['seo']);
+      });
 
     // index.html applies the stored theme before first paint; sync the menu state with it.
     afterNextRender(() => {
@@ -69,6 +76,12 @@ export class AppComponent {
     } else {
       this.root.setAttribute('data-theme', theme);
     }
+    // The browser bar follows the chosen theme too (index.html applies the stored choice on load)
+    this.root.ownerDocument.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach((meta) => {
+      const scheme = meta.dataset['scheme'];
+      meta.media =
+        theme === 'system' ? `(prefers-color-scheme: ${scheme})` : scheme === theme ? 'all' : 'not all';
+    });
     try {
       if (theme === 'system') {
         localStorage.removeItem('theme');
