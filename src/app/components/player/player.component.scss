@@ -509,11 +509,17 @@ h2 {
   }
 }
 
-#docs {
-  cursor: pointer;
-  text-align: center;
+// Links into the documentation below "How it works"
+.docs-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 20px;
   margin-top: 20px;
   font-size: 14px;
-  text-decoration: underline;
-  color: var(--mat-sys-primary);
+
+  a {
+    color: var(--mat-sys-primary);
+    text-underline-offset: 3px;
+  }
 }

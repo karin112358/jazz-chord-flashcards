@@ -6,12 +6,15 @@ import {
   effect,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
+  PLATFORM_ID,
   signal,
   untracked,
   ViewChild,
   WritableSignal,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { exercises, keys, keysSharp, modes } from 'src/app/model/configuration';
 import { ToneService } from 'src/app/services/tone.service';
@@ -172,6 +175,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       pos: blackPos[k.key] ?? 0,
     }));
   });
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private probabilityMap: { [key: number]: number } = {};
   private probabilityCount = 0;
   private cycle = 0;
@@ -192,7 +196,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.loadConfiguration();
+    // Settings live in localStorage; the prerendered page shows the defaults
+    if (this.isBrowser) {
+      this.loadConfiguration();
+    }
     this.initialized = true;
   }
 
@@ -498,7 +505,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   private saveConfiguration() {
-    if (this.initialized) {
+    if (this.initialized && this.isBrowser) {
       localStorage.setItem('tempo', this.toneService.tempo().toString());
       localStorage.setItem('mode', this.selectedMode().toString());
       localStorage.setItem('exercise', this.selectedExercise().name);

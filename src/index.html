@@ -9,15 +9,19 @@
       if (theme === 'light' || theme === 'dark') document.documentElement.setAttribute('data-theme', theme);
     } catch (e) {}
   </script>
-  <title>Jazz Chord Trainer - Practice Jazz Chords with Random Flashcards</title>
+  <!-- Defaults; each page sets its own title, description, canonical and share tags (SeoService) -->
+  <title>Practice Jazz Chords – Jazz chord flashcards in all 12 keys</title>
   <meta name="description"
-    content="The Jazz Chord Trainer helps musicians practice jazz chords. The app displays random chord flashcards, challenging users to play them in time.">
+    content="Free jazz chord trainer in the browser. Play one bar of chords at a time in tempo, in all 12 keys: maj7, m7 and 7 chords, ii–V–I and your own progressions, with extra practice for unfamiliar keys.">
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="16x16 32x32 48x48">
   <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-  <link href="https://practice-jazz-chords.com/" rel="canonical">
+  <meta name="theme-color" content="#CBEAFB" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0D425D" media="(prefers-color-scheme: dark)">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>

@@ -36,6 +36,8 @@
               "src/assets",
               "src/robots.txt",
               "src/sitemap.xml",
+              "src/llms.txt",
+              "src/llms-full.txt",
               "src/404.html"
             ],
             "styles": [
@@ -113,6 +115,8 @@
               "src/assets",
               "src/robots.txt",
               "src/sitemap.xml",
+              "src/llms.txt",
+              "src/llms-full.txt",
               "src/404.html"
             ],
             "styles": [

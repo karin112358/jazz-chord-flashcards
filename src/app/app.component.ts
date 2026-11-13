@@ -2,6 +2,9 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DOCUMENT } from '@angular/common';
 import { Component, DestroyRef, afterNextRender, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
+import { SeoService } from './services/seo.service';
 
 type Theme = 'system' | 'light' | 'dark';
 
@@ -40,6 +43,15 @@ export class AppComponent {
           this.isMobile.set(false);
         }
       });
+
+    // Title, description, canonical and structured data per page (also written into the prerendered HTML)
+    const seo = inject(SeoService);
+    inject(Router)
+      .events.pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((event) => seo.update(event.urlAfterRedirects));
 
     // index.html applies the stored theme before first paint; sync the menu state with it.
     afterNextRender(() => {

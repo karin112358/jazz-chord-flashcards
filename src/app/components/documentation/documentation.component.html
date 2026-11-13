@@ -18,7 +18,7 @@
       <ul id="docs-toc" class="toc">
         @for (s of sections; track s.id) {
         <li [class.sub]="s.parent">
-          <a [href]="'/documentation#' + s.id" [class.active]="activeId() === s.id"
+          <a [href]="'/documentation/#' + s.id" [class.active]="activeId() === s.id"
             [attr.aria-current]="activeId() === s.id ? 'location' : null" (click)="go(s.id, $event)">{{ s.title }}</a>
         </li>
         }
@@ -250,7 +250,7 @@
         <dl class="terms">
           <dt>Random</dt>
           <dd>Any key can come next. Keys with fewer stars come up more often (see
-            <a href="/documentation#key-ratings" (click)="go('key-ratings', $event)">Key ratings</a>).</dd>
+            <a href="/documentation/#key-ratings" (click)="go('key-ratings', $event)">Key ratings</a>).</dd>
           <dt>Weighted Cycle</dt>
           <dd>Goes through the keys in rounds, in random order within each round. A key with one star is in every
             round, a key with two stars in every second round, up to every fifth round for five stars.</dd>
@@ -341,8 +341,9 @@
       <section id="settings" class="docs-section">
         <h2>Settings and appearance</h2>
         <p>
-          Tempo, chords, mode, root note, key ratings and your custom progression are saved in this browser. There is no
-          account, so another browser or device starts with the default settings.
+          Tempo, chords, key order, root note, key ratings, the choice to practice unfamiliar keys more often and your
+          custom progression are saved in this browser. There is no account, so another browser or device starts with
+          the default settings.
         </p>
         <p>
           The app follows the light or dark mode of your device. To choose one yourself, open the appearance menu
@@ -368,7 +369,7 @@
         <p>
           Practice Jazz Chords keeps growing with the ideas of the people who use it. For suggestions or problems, write
           to <a href="mailto:charlie@practice-jazz-chords.com">charlie&#64;practice-jazz-chords.com</a>. Recent changes
-          are listed in the <a href="/change-log">Change Log</a>.
+          are listed in the <a href="/change-log/">Change Log</a>.
         </p>
       </section>
     </article>
