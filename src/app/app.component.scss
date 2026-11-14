@@ -24,16 +24,20 @@ nav {
     // With the nav's 5px padding the logo sits on the 16px page gutter
     padding-left: 11px;
     color: var(--mat-sys-on-primary-container);
-    font-weight: 500;
-    font-size: 14px;
-    letter-spacing: 0.04em;
+    font-weight: calc(800 + var(--w));
+    font-stretch: 112%;
+    font-size: 13px;
+    letter-spacing: 0.06em;
     text-decoration: none;
   }
 
   button,
   a.mat-mdc-button {
     color: var(--mat-sys-on-primary-container);
-    font-weight: 300;
+    font-weight: calc(500 + var(--w));
+    font-stretch: 112%;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
   }
 }
 
@@ -143,9 +147,11 @@ dialog {
   h3 {
     margin: 24px 0 10px;
     font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
+    font-weight: calc(700 + var(--w));
+    font-stretch: 125%;
+    letter-spacing: 0.16em;
     line-height: 1;
+    text-transform: uppercase;
     text-align: left;
     color: var(--mat-sys-on-surface-variant);
   }
@@ -163,10 +169,23 @@ kbd {
   background-color: var(--mat-sys-surface-container-lowest);
   color: var(--mat-sys-on-surface);
   font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.2;
+  font-size: 12.5px;
+  font-weight: calc(700 + var(--w));
+  font-stretch: 112%;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
   text-align: center;
+  text-transform: uppercase;
+}
+
+// Arrow keys show the icon font's arrows; the text face's arrow glyph is too small to read
+.key-arrow {
+  width: 1em;
+  height: 1em;
+  margin-block: -0.3em; // keeps the key cap as tall as one with text
+  font-size: 1.3em;
+  line-height: 1;
+  vertical-align: middle;
 }
 
 .shortcut-list {
@@ -202,15 +221,19 @@ kbd {
 
   thead th {
     padding-top: 0;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11.5px;
+    font-weight: calc(700 + var(--w));
+    font-stretch: 125%;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     color: var(--mat-sys-on-surface-variant);
   }
 
   tbody th {
     width: 1%;
     padding-right: 20px;
-    font-weight: 500;
+    font-weight: calc(700 + var(--w));
+    font-stretch: 87%;
     font-variant-numeric: tabular-nums;
   }
 

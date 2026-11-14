@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   afterNextRender,
+  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -146,7 +147,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   });
   /** Shown in the next card before Start: the exercise the session will practice. */
   readonly exerciseLabel = computed(() => {
-    const name = this.selectedExercise().name;
+    // An en dash between chords, as on the stage
+    const name = this.selectedExercise().name.replaceAll(' - ', ' – ');
     if (name === 'Custom') {
       return { text: 'Custom progression', chords: 'Custom progression', note: '' };
     }
@@ -186,6 +188,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   private nextChordTasks: Chord[] = [];
   private readonly keyRegex = new RegExp(/^[A-H]+#?b?/);
 
+  private readonly host = inject(ElementRef<HTMLElement>);
+
   constructor(
     public toneService: ToneService,
     private dialog: MatDialog,
@@ -199,6 +203,16 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       }
     });
 
+    // The type sizes per chord count fit typical bars; a long one (e.g. Bm7(b5) – E7 – Am6 or a
+    // custom progression) is scaled down after rendering so it stays on one line
+    afterRenderEffect(() => {
+      this.currKey();
+      this.nextKey1();
+      this.countdown();
+      const host: HTMLElement = this.host.nativeElement;
+      host.querySelectorAll<HTMLElement>('#currentChord, #nextChord').forEach((bar) => this.fitBar(bar));
+    });
+
     // Settings live in localStorage; the prerendered page shows the defaults
     if (this.isBrowser) {
       this.loadConfiguration();
@@ -207,6 +221,21 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {}
+
+  /** Scales a bar's text down just enough to fit the content width of its card. */
+  private fitBar(bar: HTMLElement) {
+    bar.style.fontSize = '';
+    const card = bar.parentElement;
+    if (!card) {
+      return;
+    }
+    const style = getComputedStyle(card);
+    const available = card.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    const needed = bar.scrollWidth;
+    if (needed > available && available > 0) {
+      bar.style.fontSize = `${Math.floor((available / needed) * 100) / 100}em`;
+    }
+  }
 
   ngAfterViewInit(): void {
     this.silentAudio.nativeElement.loop = true;
@@ -382,8 +411,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
     let nextKey1Index = nextChords[0].index;
     nextKey1 = nextKey1.replace(/(\*)([0-9a-z()\#]+)(\*)/g, '<sup>$2</sup>');
+    const chords = nextKey1.split('-').map((chord) => chord.trim());
 
-    this.nextKey1.set(nextKey1);
+    // Each chord stays whole; an en dash separates the chords of a bar (styled in styles.scss)
+    this.nextKey1.set(chords.map((chord) => `<span class="ch">${chord}</span>`).join('<span class="sep">–</span>'));
     this.nextKey1Index = nextKey1Index;
 
     if (nextChords.length > 1) {
@@ -392,7 +423,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.nextChordTasks = [];
     }
 
-    const chords = nextKey1.split('-').map((chord) => chord.trim());
     this.nextChordCount.set(chords.length);
 
     if (chords.length === 1) {

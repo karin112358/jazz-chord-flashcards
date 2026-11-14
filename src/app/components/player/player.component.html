@@ -61,9 +61,9 @@
   <mat-card appearance="outlined">
     <div class="tempo-configuration">
       <button mat-mini-fab (click)="changeTempo(-10)" title="Slower by 10 BPM (Ctrl + &larr;)"
-        aria-label="Slower by 10 BPM">-10</button>
+        aria-label="Slower by 10 BPM">&minus;10</button>
       <button mat-mini-fab (click)="changeTempo(-1)" title="Slower by 1 BPM (&larr;)"
-        aria-label="Slower by 1 BPM">-1</button>
+        aria-label="Slower by 1 BPM">&minus;1</button>
       <mat-form-field>
         <mat-label>Tempo (BPM)</mat-label>
         <input matInput class="tempo-input" type="number" [min]="minTempo" [max]="maxTempo" #tempoInput

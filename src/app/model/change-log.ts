@@ -9,7 +9,7 @@ export const changeLog = [
   },
   {
     date: '2025-12-07',
-    changes: 'Add "Weighted Cycle" mode',
+    changes: 'Add “Weighted Cycle” mode',
   },
   {
     date: '2025-03-02',
@@ -18,7 +18,7 @@ export const changeLog = [
   {
     date: '2025-02-16',
     changes:
-      'Add Imaj7 - vi7 - ii7 - V7 chord progression, allow custom chord progressions',
+      'Add Imaj7–vi7–ii7–V7 chord progression, allow custom chord progressions',
   },
   {
     date: '2025-01-22',
@@ -27,7 +27,7 @@ export const changeLog = [
   {
     date: '2025-01-20',
     changes:
-      "Domain update: the app's domain has been updated to practice-jazz-chords.com, all prior configurations need to be reapplied due to the domain transfer",
+      "Domain update: the app’s domain has been updated to practice-jazz-chords.com, all prior configurations need to be reapplied due to the domain transfer",
   },
   {
     date: '2025-01-18',
@@ -44,6 +44,6 @@ export const changeLog = [
   },
   {
     date: '2025-01-08',
-    changes: "Add modes 'Perfect 4th up' and 'Perfect 4th down'",
+    changes: 'Add modes “Perfect 4th up” and “Perfect 4th down”',
   },
 ];

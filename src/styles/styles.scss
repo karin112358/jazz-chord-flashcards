@@ -1,8 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
 
+// Type: Archivo, a variable grotesque with a width axis (font-stretch 62%–125%), carries every
+// role: condensed bold for chords and headings, expanded caps for labels. JetBrains Mono for code.
+html {
+  --font-ui: 'Archivo', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  // Light text on dark surfaces reads thinner, so dark mode adds a little weight: calc(700 + var(--w))
+  --w: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) {
+    --w: 25;
+  }
+}
+
+html[data-theme='dark'] {
+  --w: 25;
+}
+
 body {
-  font-family: Roboto, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial,
-    Lucida Grande, sans-serif;
+  font-family: var(--font-ui);
   background-color: var(--mat-sys-background);
   color: var(--mat-sys-on-surface);
   min-height: 100dvh;
@@ -15,12 +33,12 @@ body {
   line-height: 28px;
 }
 
-// The menu stays at the top while the page scrolls; anchors and scrollIntoView stop below it
 // Set by index.html for returning visitors until the player has applied their stored settings
 html.restoring-settings app-player {
   visibility: hidden;
 }
 
+// The menu stays at the top while the page scrolls; anchors and scrollIntoView stop below it
 html {
   --app-bar-height: 50px;
   scroll-padding-top: var(--app-bar-height);
@@ -44,19 +62,22 @@ main #app {
 
   h1 {
     margin: 0;
-    font-size: 40px;
-    line-height: 1.1;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-size: 46px;
+    line-height: 1;
+    font-weight: calc(800 + var(--w));
+    font-stretch: 78%;
+    letter-spacing: -0.005em;
     text-align: left;
     text-transform: none;
   }
 
   .lede {
     max-width: 60ch;
-    margin: 12px 0 0;
+    margin: 14px 0 0;
     font-size: 18px;
+    font-stretch: 96%;
     line-height: 1.55;
+    text-wrap: pretty;
   }
 
   // Phones and narrow windows: a shorter band
@@ -64,7 +85,7 @@ main #app {
     padding: 28px 0 32px;
 
     h1 {
-      font-size: 32px;
+      font-size: 38px;
     }
 
     .lede {
@@ -78,8 +99,11 @@ h2,
 h3,
 h4 {
   text-align: center;
-  font-weight: 300;
-  text-transform: uppercase;
+  font-weight: calc(800 + var(--w));
+  font-stretch: 78%;
+  letter-spacing: -0.005em;
+  line-height: 1.1;
+  text-wrap: balance;
 }
 
 h1 {
@@ -87,12 +111,12 @@ h1 {
   margin-block-start: 1.33em;
   .version {
     font-size: 14px;
-    font-weight: 300;
+    font-weight: 400;
   }
 }
 
 h2 {
-  font-size: 24px;
+  font-size: 28px;
 }
 
 h3 {
@@ -121,6 +145,50 @@ a {
   color: var(--mat-sys-primary);
 }
 
+// Chord types and other superscripts in running text: large enough to read, without growing the line
+sup {
+  position: relative;
+  top: -0.45em;
+  font-size: 0.75em;
+  line-height: 0;
+  vertical-align: baseline;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-weight: 450;
+  letter-spacing: 0;
+}
+
+// Chord symbols rendered into the practice stage (innerHTML, so the rules are global):
+// each chord stays whole, the type is a superscript that does not grow the line,
+// and an en dash with set spacing separates the chords of a bar
+app-player {
+  .ch {
+    white-space: nowrap;
+  }
+
+  .ch sup {
+    position: relative;
+    top: -0.6em; // 0.36em of the chord size
+    font-size: 0.6em;
+    font-weight: calc(760 + var(--w));
+    font-stretch: 90%;
+    letter-spacing: 0.01em;
+    line-height: 0;
+    vertical-align: baseline;
+  }
+
+  .sep {
+    display: inline-block;
+    position: relative;
+    top: -0.07em;
+    margin-inline: 0.22em;
+    font-stretch: 100%;
+    opacity: 0.55;
+  }
+}
+
 ul {
   padding-inline-start: 20px;
 }
@@ -140,9 +208,6 @@ mat-dialog-container .mat-mdc-dialog-surface {
   }
 }
 
-mat-label {
-  opacity: 0.5;
-}
 
 .mdc-dialog--open .mat-mdc-dialog-surface,
 .mdc-dialog--closing .mat-mdc-dialog-surface {
@@ -166,7 +231,7 @@ td {
 }
 
 th {
-  font-weight: normal;
+  font-weight: calc(650 + var(--w));
   text-align: left;
   background-color: var(
     --mat-form-field-filled-container-color,
