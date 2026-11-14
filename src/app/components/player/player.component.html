@@ -43,11 +43,12 @@
   </div>
 </div>
 
-<div id="beats">
-  <div class="beat" [ngClass]="{'highlight-beat': toneService.beat() % 4 === 0}"></div>
-  <div class="beat" [ngClass]="{'highlight-beat': toneService.beat() % 4 === 1}"></div>
-  <div class="beat" [ngClass]="{'highlight-beat': toneService.beat() % 4 === 2}"></div>
-  <div class="beat" [ngClass]="{'highlight-beat': toneService.beat() % 4 === 3}"></div>
+<!-- The current beat pulses; the beats already played in this bar stay half filled -->
+<div id="beats" [style.--beat-pulse]="beatPulse()">
+  @for (i of [0, 1, 2, 3]; track i) {
+  <div class="beat" [class.highlight-beat]="toneService.beat() >= 0 && toneService.beat() % 4 === i"
+    [class.past-beat]="toneService.beat() >= 0 && toneService.beat() % 4 > i"></div>
+  }
 </div>
 
 <div id="buttons">

@@ -30,7 +30,7 @@
 }
 
 #buttons {
-  padding: 28px 0 40px;
+  padding: 22px 0 40px;
   display: flex;
   justify-content: center;
   gap: 24px;
@@ -121,6 +121,8 @@ h1 {
   font-weight: calc(700 + var(--w));
   font-stretch: 85%;
   box-shadow: 0 -6px 18px -12px rgb(0 0 0 / 0.35);
+  // The new next chord slides up from the card's edge (the stage itself must not clip: the chord flies in)
+  overflow: hidden;
 
   // Bars with several chords get narrower, then smaller type so they stay on one line
   &[data-chords='2'] {
@@ -295,6 +297,8 @@ h1 {
 
 #beats {
   padding-top: 16px;
+  // Room for the pulse (scaleY 2.4); the band clips this block vertically
+  padding-bottom: 6px;
   display: flex;
   justify-content: center;
   gap: 8px;
@@ -307,8 +311,27 @@ h1 {
   background-color: color-mix(in srgb, var(--mat-sys-on-primary-container) 18%, transparent);
 }
 
+.past-beat {
+  background-color: color-mix(in srgb, var(--mat-sys-primary) 45%, var(--mat-sys-primary-container));
+}
+
+// The class moves to the next bar on every beat, so the pulse restarts each time
 .highlight-beat {
   background-color: var(--mat-sys-primary);
+  animation: beat-pulse var(--beat-pulse, 260ms) cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes beat-pulse {
+  from {
+    transform: scaleY(2.4);
+    filter: brightness(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .highlight-beat {
+    animation: none;
+  }
 }
 
 #configuration {

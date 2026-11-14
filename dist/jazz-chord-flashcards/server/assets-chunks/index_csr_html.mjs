@@ -54,6 +54,6 @@ export default `<!doctype html>
 
   <!-- 100% privacy-first analytics -->
   <script async="" src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-<link rel="modulepreload" href="chunk-YLR24SBI.js"><script src="polyfills-6ISPNSXF.js" type="module"></script><script src="main-EMKGRED2.js" type="module"></script></body>
+<link rel="modulepreload" href="chunk-LO7GQGAP.js"><script src="polyfills-6ISPNSXF.js" type="module"></script><script src="main-NPRIWRWY.js" type="module"></script></body>
 
 </html>`;

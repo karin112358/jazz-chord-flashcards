@@ -137,6 +137,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   readonly nextChordCount = signal(1);
   /** True during the count-in bar after start, before the first chord is shown. */
   private readonly countingIn = signal(false);
+  /** The beat pulse lasts 260 ms, or 60% of a beat at fast tempos, so it settles before the next click. */
+  readonly beatPulse = computed(() => `${Math.round(Math.min(260, (0.6 * 60000) / this.toneService.tempo()))}ms`);
   /** 4-3-2-1 during the count-in bar. */
   readonly countdown = computed(() => {
     const beat = this.toneService.beat();
@@ -211,6 +213,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.countdown();
       const host: HTMLElement = this.host.nativeElement;
       host.querySelectorAll<HTMLElement>('#currentChord, #nextChord').forEach((bar) => this.fitBar(bar));
+      this.playHandoff();
     });
 
     // Settings live in localStorage; the prerendered page shows the defaults
@@ -221,6 +224,55 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {}
+
+  /** Where the chord stood in the next card before the bar change, for the handoff animation. */
+  private handoff: { from: DOMRect; ink: string } | null = null;
+
+  /**
+   * The bar change: the chord travels from the next card onto the stage, growing and taking on the
+   * stage color, then the new next chord slides up into its card. Runs after fitBar, so the
+   * stage size is final. With reduced motion, both simply fade in.
+   */
+  private playHandoff() {
+    const handoff = this.handoff;
+    this.handoff = null;
+    const host: HTMLElement = this.host.nativeElement;
+    const stage = host.querySelector<HTMLElement>('#currentChord');
+    const next = host.querySelector<HTMLElement>('#nextChord');
+    if (!handoff || !stage || !next) {
+      return;
+    }
+
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      stage.animate([{ opacity: 0.35 }, { opacity: 1 }], { duration: 120 });
+      next.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 120 });
+      return;
+    }
+
+    const { from, ink } = handoff;
+    const to = stage.getBoundingClientRect();
+    if (!from.height || !to.height) {
+      return;
+    }
+    const dx = from.left + from.width / 2 - (to.left + to.width / 2);
+    const dy = from.top + from.height / 2 - (to.top + to.height / 2);
+    const scale = from.height / to.height;
+    const ease = 'cubic-bezier(0.16, 1, 0.3, 1)';
+    stage.animate(
+      [
+        { transform: `translate(${dx}px, ${dy}px) scale(${scale})`, color: ink },
+        { transform: 'none', color: getComputedStyle(stage).color },
+      ],
+      { duration: 240, easing: ease },
+    );
+    next.animate(
+      [
+        { transform: 'translateY(115%)', opacity: 0 },
+        { transform: 'none', opacity: 1 },
+      ],
+      { duration: 220, delay: 40, easing: ease, fill: 'backwards' },
+    );
+  }
 
   /** Scales a bar's text down just enough to fit the content width of its card. */
   private fitBar(bar: HTMLElement) {
@@ -274,6 +326,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   stop() {
+    this.handoff = null;
     this.silentAudio.nativeElement.pause();
     this.toneService.stop();
 
@@ -387,6 +440,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   private updateChord(): void {
+    // The chord moves from the next card onto the stage: measure where it starts before the change
+    // (also for the first chord after the count-in; not when the count-in begins)
+    const nextBar =
+      this.isBrowser && this.nextKey1() !== null
+        ? (this.host.nativeElement.querySelector('#nextChord') as HTMLElement | null)
+        : null;
+    this.handoff = nextBar ? { from: nextBar.getBoundingClientRect(), ink: getComputedStyle(nextBar).color } : null;
+
     // No next chord yet means this is the count-in bar right after start
     this.countingIn.set(this.nextKey1() === null);
     this.chordCount.set(this.nextChordCount());
