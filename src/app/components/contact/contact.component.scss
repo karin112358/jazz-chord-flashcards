@@ -61,16 +61,21 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   min-width: 0;
 }
 
+// Small expanded caps, the label style used across the app
 .contact-label {
   color: var(--mat-sys-on-surface-variant);
-  font-size: 14px;
+  font-size: 11.5px;
+  font-weight: calc(700 + var(--w));
+  font-stretch: 125%;
+  letter-spacing: 0.16em;
   line-height: 1.4;
+  text-transform: uppercase;
 }
 
 .contact-value {
   color: var(--mat-sys-primary);
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 17px;
+  font-weight: calc(650 + var(--w));
   line-height: 1.4;
   // Breaks only after @ and / (marked with <wbr>); hyphenated names stay together
   overflow-wrap: break-word;

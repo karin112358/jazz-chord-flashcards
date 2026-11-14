@@ -12,7 +12,7 @@ html {
       primary: mat.$azure-palette,
       theme-type: color-scheme,
     ),
-    typography: Roboto,
+    typography: (plain-family: 'Archivo', brand-family: 'Archivo', bold-weight: 700, medium-weight: 600, regular-weight: 400),
     density: 0,
   ));
 

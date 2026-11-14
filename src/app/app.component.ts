@@ -1,12 +1,20 @@
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { DOCUMENT } from '@angular/common';
-import { Component, DestroyRef, afterNextRender, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { InstallService } from './services/install.service';
 import { SeoService } from './services/seo.service';
 
 type Theme = 'system' | 'light' | 'dark';
+
+/**
+ * Below this width the links move into the burger menu. The full bar (logo, four links, Install,
+ * shortcuts and appearance) needs about 880px; the margin keeps it on one line even if the font
+ * renders a little wider.
+ */
+const COLLAPSED_MENU = '(max-width: 919.98px)';
 
 @Component({
   selector: 'app-root',
@@ -29,20 +37,18 @@ export class AppComponent {
 
   private readonly root = inject(DOCUMENT).documentElement;
 
+  /** Install as an app: the browser's prompt, or the manual steps for Safari */
+  readonly install = inject(InstallService);
+  @ViewChild('installHelp') private installHelp?: ElementRef<HTMLDialogElement>;
+
   constructor(
     private breakpointObserver: BreakpointObserver,
     private destroyRef: DestroyRef
   ) {
     this.breakpointObserver
-      .observe([Breakpoints.XSmall])
+      .observe(COLLAPSED_MENU)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        if (this.breakpointObserver.isMatched(Breakpoints.XSmall)) {
-          this.isMobile.set(true);
-        } else {
-          this.isMobile.set(false);
-        }
-      });
+      .subscribe((state) => this.isMobile.set(state.matches));
 
     // Title, description, canonical and structured data per page (also written into the prerendered HTML)
     const seo = inject(SeoService);
@@ -67,6 +73,12 @@ export class AppComponent {
         this.theme.set(stored);
       }
     });
+  }
+
+  async installApp() {
+    if (!(await this.install.promptInstall())) {
+      this.installHelp?.nativeElement.showModal();
+    }
   }
 
   setTheme(theme: Theme) {

@@ -1,0 +1,18 @@
+{
+  "id": "/",
+  "name": "Practice Jazz Chords",
+  "short_name": "Jazz Chords",
+  "description": "Jazz chord flashcards in all 12 keys: one bar of chords at a time, in tempo, with a count-in and a click. Works offline.",
+  "lang": "en",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#CBEAFB",
+  "background_color": "#CBEAFB",
+  "categories": ["music", "education"],
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

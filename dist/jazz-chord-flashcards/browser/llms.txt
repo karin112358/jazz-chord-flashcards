@@ -8,6 +8,7 @@ Practice Jazz Chords (https://practice-jazz-chords.com/) is a practice tool for 
 - Key order: Random, Weighted Cycle, Perfect 4th up and Perfect 4th down.
 - Key ratings (1–5 stars per key) make unfamiliar keys come up more often; this can be turned off.
 - A one-bar count-in, a click on every beat, an optional bass root note, tempo from 20 to 300 BPM and keyboard shortcuts.
+- Installable as an app (PWA) that also works offline.
 
 ## Docs
 

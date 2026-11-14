@@ -43,11 +43,12 @@
   </div>
 </div>
 
-<div id="beats">
-  <div class="beat" [ngClass]="{'highlight-beat': toneService.beat() % 4 === 0}"></div>
-  <div class="beat" [ngClass]="{'highlight-beat': toneService.beat() % 4 === 1}"></div>
-  <div class="beat" [ngClass]="{'highlight-beat': toneService.beat() % 4 === 2}"></div>
-  <div class="beat" [ngClass]="{'highlight-beat': toneService.beat() % 4 === 3}"></div>
+<!-- The current beat pulses; the beats already played in this bar stay half filled -->
+<div id="beats" [style.--beat-pulse]="beatPulse()">
+  @for (i of [0, 1, 2, 3]; track i) {
+  <div class="beat" [class.highlight-beat]="toneService.beat() >= 0 && toneService.beat() % 4 === i"
+    [class.past-beat]="toneService.beat() >= 0 && toneService.beat() % 4 > i"></div>
+  }
 </div>
 
 <div id="buttons">
@@ -61,9 +62,9 @@
   <mat-card appearance="outlined">
     <div class="tempo-configuration">
       <button mat-mini-fab (click)="changeTempo(-10)" title="Slower by 10 BPM (Ctrl + &larr;)"
-        aria-label="Slower by 10 BPM">-10</button>
+        aria-label="Slower by 10 BPM">&minus;10</button>
       <button mat-mini-fab (click)="changeTempo(-1)" title="Slower by 1 BPM (&larr;)"
-        aria-label="Slower by 1 BPM">-1</button>
+        aria-label="Slower by 1 BPM">&minus;1</button>
       <mat-form-field>
         <mat-label>Tempo (BPM)</mat-label>
         <input matInput class="tempo-input" type="number" [min]="minTempo" [max]="maxTempo" #tempoInput

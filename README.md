@@ -21,6 +21,15 @@ Run `ng generate component component-name` to generate a new component. You can 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 All routes are prerendered, so each page is complete HTML for search engines and AI crawlers.
 
+## Install as an app (PWA)
+
+- Web app manifest: `src/manifest.webmanifest`, icons in `src/assets/icons/icon-*.png`
+- Offline support: Angular service worker, configured in `ngsw-config.json`. Online, every page loads
+  its prerendered HTML (`freshness`); offline, the cached client shell (`index.csr.html`) renders any page.
+- The service worker runs only in production builds. To try it, serve `dist/jazz-chord-flashcards/browser`
+  with a static server (e.g. `npx http-server dist/jazz-chord-flashcards/browser`), not with `ng serve`.
+- The Install button: `src/app/services/install.service.ts` (browser prompt, or steps for Safari)
+
 ## Search and AI metadata
 
 - Titles, descriptions, canonical URLs, share tags and structured data per page: `src/app/services/seo.service.ts`
