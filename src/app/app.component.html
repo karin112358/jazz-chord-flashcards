@@ -21,6 +21,12 @@
     <a mat-menu-item href="/change-log/">Change Log</a>
     <a mat-menu-item href="/contact/">Contact</a>
     <mat-divider></mat-divider>
+    @if (install.visible()) {
+    <button mat-menu-item (click)="installApp()">
+      <mat-icon fontIcon="install_mobile"></mat-icon>
+      <span>Install app</span>
+    </button>
+    }
     <button mat-menu-item (click)="shortcuts.showModal()">
       <mat-icon fontIcon="keyboard"></mat-icon>
       <span>Keyboard shortcuts</span>
@@ -33,6 +39,12 @@
   <a mat-button href="/documentation/">Documentation</a>
   <a mat-button href="/change-log/">Change Log</a>
   <a mat-button href="/contact/">Contact</a>
+  @if (install.visible()) {
+  <button mat-icon-button class="nav-icon-button" (click)="installApp()" aria-label="Install app"
+    title="Install app">
+    <mat-icon fontIcon="install_desktop"></mat-icon>
+  </button>
+  }
   <button mat-icon-button class="nav-icon-button" (click)="shortcuts.showModal()" aria-label="Keyboard shortcuts"
     title="Keyboard shortcuts">
     <mat-icon fontIcon="keyboard"></mat-icon>
@@ -113,5 +125,29 @@
     </dl>
 
     <button mat-fab extended class="shortcuts-close" (click)="shortcuts.close()">Close</button>
+  </div>
+</dialog>
+
+<!-- Install steps for browsers without an install prompt (Safari on iPhone, iPad and Mac) -->
+<dialog #installHelp id="install-help" aria-labelledby="install-title"
+  (click)="$event.target === installHelp && installHelp.close()">
+  <div class="shortcuts-panel">
+    <h2 id="install-title">Install Practice Jazz Chords</h2>
+    @if (install.hint() === 'ios') {
+    <ol class="install-steps">
+      <li>Tap <span class="install-share"><mat-icon fontIcon="ios_share" aria-hidden="true"></mat-icon>Share</span>
+        in the browser bar.</li>
+      <li>Choose <b>Add to Home Screen</b>.</li>
+      <li>Tap <b>Add</b>.</li>
+    </ol>
+    } @else {
+    <ol class="install-steps">
+      <li>Open the <b>File</b> menu in the menu bar.</li>
+      <li>Choose <b>Add to Dock</b>, then <b>Add</b>.</li>
+    </ol>
+    }
+    <p class="install-note">Practice Jazz Chords then opens in its own window and works offline too.</p>
+
+    <button mat-fab extended class="shortcuts-close" (click)="installHelp.close()">Close</button>
   </div>
 </dialog>

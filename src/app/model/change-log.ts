@@ -1,5 +1,9 @@
 export const changeLog = [
   {
+    date: '2026-11-14',
+    changes: 'Install as an app from the menu bar; the installed app works offline',
+  },
+  {
     date: '2026-11-13',
     changes: 'Redesign: light and dark mode, one-bar count-in, key ratings on a keyboard and new documentation',
   },

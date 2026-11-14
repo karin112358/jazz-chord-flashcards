@@ -7,12 +7,12 @@ export default {
   routes: undefined,
   entryPointToBrowserMapping: {
   "node_modules/@angular/animations/fesm2022/browser.mjs": [
-    "chunk-PPPY5GKI.js"
+    "chunk-5D7WOLYB.js"
   ]
 },
   assets: {
-    'index.csr.html': {size: 22071, hash: '69dea89c09a591b2a967baeaef5c474edfe74e535eafe3fc2eecf152b40f8a80', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
-    'index.server.html': {size: 9268, hash: '22b16974629725782a387039c3e28f2c8a212ccd1eedba46cc5d43f13dbfcb68', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
+    'index.csr.html': {size: 22489, hash: 'c56cad07b3ca5c8789f79ee38efbf398d7d5b6d2f80020af7421180b5d7d1893', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
+    'index.server.html': {size: 9686, hash: 'f3afa5fb677c26136663ddd82fafd3f9924961a4a4c5a155fc07f477f822e440', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
     'styles-DPQVY2RW.css': {size: 17150, hash: 'c8fxKvV+SQU', text: () => import('./assets-chunks/styles-DPQVY2RW_css.mjs').then(m => m.default)}
   },
 };

@@ -249,6 +249,46 @@ kbd {
   }
 }
 
+// Install steps (Safari): numbered, with the Share icon as it looks in the browser bar
+.install-steps {
+  margin: 16px 0 0;
+  padding-inline-start: 22px;
+  line-height: 1.5;
+
+  li + li {
+    margin-top: 8px;
+  }
+
+  li::marker {
+    color: var(--mat-sys-primary);
+    font-weight: calc(800 + var(--w));
+  }
+
+  b {
+    font-weight: calc(650 + var(--w));
+  }
+}
+
+.install-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: calc(650 + var(--w));
+  white-space: nowrap;
+
+  mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+}
+
+.install-note {
+  margin: 16px 0 0;
+  color: var(--mat-sys-on-surface-variant);
+  line-height: 1.5;
+}
+
 .shortcuts-close {
   display: flex;
   width: 100%;

@@ -124,6 +124,8 @@ Tempo, chords, key order, root note, key ratings, the choice to practice unfamil
 
 The app follows the light or dark mode of your device. To choose one yourself, open the appearance menu (the icon at the right end of the menu bar, or the menu on small screens) and pick **Light**, **Dark** or **System**.
 
+To use Practice Jazz Chords like an app, press **Install app** in the menu bar (in the menu on small screens), where the browser supports it. The installed app opens in its own window and also works offline. In Safari on iPhone, iPad and Mac, the button shows how to add the app to the Home Screen or the Dock.
+
 ## Practice tips
 
 - Choose a tempo you can play without mistakes, then raise it a few BPM at a time.

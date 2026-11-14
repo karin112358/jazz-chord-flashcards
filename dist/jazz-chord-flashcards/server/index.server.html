@@ -11,6 +11,7 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="16x16 32x32 48x48">
   <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#CBEAFB" media="(prefers-color-scheme: light)" data-scheme="light">
   <meta name="theme-color" content="#0D425D" media="(prefers-color-scheme: dark)" data-scheme="dark">
   <script>
@@ -32,6 +33,15 @@
         setTimeout(function () { root.classList.remove('restoring-settings'); }, 4000);
       }
     } catch (e) {}
+    // The install prompt can arrive before the app has started; keep it for the Install button
+    // (InstallService picks it up)
+    addEventListener('beforeinstallprompt', function (event) {
+      event.preventDefault();
+      window.__installPrompt = event;
+    });
+    addEventListener('appinstalled', function () {
+      window.__appInstalled = true;
+    });
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -45,6 +55,6 @@
 
   <!-- 100% privacy-first analytics -->
   <script async="" src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-<link rel="modulepreload" href="chunk-XPOOCITE.js"><script src="polyfills-6ISPNSXF.js" type="module"></script><script src="main-ENXRHKXJ.js" type="module"></script></body>
+<link rel="modulepreload" href="chunk-YLR24SBI.js"><script src="polyfills-6ISPNSXF.js" type="module"></script><script src="main-EMKGRED2.js" type="module"></script></body>
 
 </html>

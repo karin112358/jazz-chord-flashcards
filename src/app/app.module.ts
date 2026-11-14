@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,6 +19,7 @@ import { DocumentationComponent } from './components/documentation/documentation
 import { provideRouter, Routes } from '@angular/router';
 import { PAGE_SEO } from './services/seo.service';
 import { ContactComponent } from './components/contact/contact.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 // Every route carries its search metadata; `seo: null` marks the fallback for unknown paths (noindex)
 const routes: Routes = [
@@ -44,6 +45,12 @@ const routes: Routes = [
     MatInputModule,
     MatMenuModule,
     MatSelectModule,
+    // Offline support for the installed app; production builds only (ngsw-config.json).
+    // Registers once the app is stable, or after 30 seconds at the latest.
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
   providers: [provideAnimationsAsync(), provideRouter(routes), provideClientHydration(withEventReplay())],
   bootstrap: [AppComponent],
