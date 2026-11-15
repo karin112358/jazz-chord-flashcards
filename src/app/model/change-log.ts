@@ -1,5 +1,10 @@
 export const changeLog = [
   {
+    date: '2026-11-15',
+    changes:
+      'Fix: after Stop and Start, practice no longer begins with the leftover bar of the last progression; chord types between asterisks are always shown in superscript',
+  },
+  {
     date: '2026-11-14',
     changes: 'Install as an app from the menu bar; the installed app works offline',
   },

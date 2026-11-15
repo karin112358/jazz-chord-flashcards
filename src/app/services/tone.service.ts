@@ -22,6 +22,11 @@ export class ToneService {
   private initialized: Promise<void> | null = null;
   /** Counts starts and stops, so a start that is still loading knows when it was cancelled. */
   private request = 0;
+  /**
+   * True between start and stop. Tone.js schedules beats a little ahead, so one can still arrive
+   * right after stop; it must not count, or the next start would skip its first bar change.
+   */
+  private running = false;
 
   /** Starts the transport once the audio is ready. Rejects when the audio cannot be set up. */
   async start(): Promise<void> {
@@ -37,11 +42,13 @@ export class ToneService {
     if (request !== this.request) {
       return;
     }
+    this.running = true;
     Tone.getTransport().start();
   }
 
   stop() {
     this.request++;
+    this.running = false;
     if (this.synth) {
       Tone.getTransport().stop();
     }
@@ -88,7 +95,7 @@ export class ToneService {
   }
 
   private onBeat() {
-    if (!this.synth) {
+    if (!this.synth || !this.running) {
       return;
     }
     const beat = parseInt(Tone.getTransport().position.toString().split(':')[1]);
