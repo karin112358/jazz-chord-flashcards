@@ -7,6 +7,8 @@
     "build": "ng build && node scripts/build-llms-full.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:engine": "node --test \"src/app/chord-engine/*.test.ts\"",
+    "typecheck:engine": "tsc -p src/app/chord-engine",
     "serve:ssr:jazz-chord-flashcards": "node dist/jazz-chord-flashcards/server/server.mjs"
   },
   "private": true,

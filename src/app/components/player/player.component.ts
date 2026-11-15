@@ -18,18 +18,25 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { exercises, keys, keysSharp, modes } from 'src/app/model/configuration';
+import {
+  bassLine,
+  chordToHtml,
+  ChordSequence,
+  CUSTOM_EXERCISE,
+  DEFAULT_CUSTOM_PROGRESSION,
+  defaultKeyRatings,
+  EXERCISES,
+  findExercise,
+  isKeyOrder,
+  KEY_ORDERS,
+  parseKeyRatings,
+  type ChordSequenceOptions,
+  type Exercise,
+  type KeyOrder,
+  type KeyRatings,
+} from 'src/app/chord-engine';
 import { ToneService } from 'src/app/services/tone.service';
 import { KeysDialogComponent } from '../keys-dialog/keys-dialog.component';
-import { KeysConfiguration } from 'src/app/model/keys-configuration';
-
-type Chord = {
-  index: number;
-  chord: string;
-};
-
-/** Half steps from the root for each scale degree of a major scale. */
-const degreeSteps: Record<string, number> = { I: 0, II: 2, III: 4, IV: 5, V: 7, VI: 9, VII: 11 };
 
 @Component({
   selector: 'app-player',
@@ -126,9 +133,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   maxTempo = 300;
   readonly currKey: WritableSignal<string | null> = signal(null);
   readonly nextKey1: WritableSignal<string | null> = signal(null);
-  modes = modes;
-  exercises = exercises;
-  readonly selectedMode = signal<'R' | 'WC' | number>('R');
+  modes = KEY_ORDERS;
+  exercises = EXERCISES;
+  readonly selectedMode = signal<KeyOrder>('R');
   readonly isRunning = signal(false);
   /** The last start failed because the sound could not be loaded; shown until the next start. */
   readonly audioFailed = signal(false);
@@ -151,26 +158,20 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   readonly exerciseLabel = computed(() => {
     // An en dash between chords, as on the stage
     const name = this.selectedExercise().name.replaceAll(' - ', ' – ');
-    if (name === 'Custom') {
+    if (name === CUSTOM_EXERCISE) {
       return { text: 'Custom progression', chords: 'Custom progression', note: '' };
     }
     // The chords stay on one line; only a note like "(two bars)" may wrap below them
     const [, chords, note] = name.match(/^(.*?)(?:\s+(\([^()]*\)))?$/) ?? [name, name, ''];
     return { text: name, chords, note: note ?? '' };
   });
-  readonly selectedExercise: WritableSignal<{
-    name: string;
-    configuration: string | string[];
-    root: string[];
-  }> = signal(exercises[0]);
+  readonly selectedExercise: WritableSignal<Exercise> = signal(EXERCISES[0]);
+  /** The progression of the Custom exercise, as the user wrote it. */
+  readonly customProgression = signal(DEFAULT_CUSTOM_PROGRESSION);
 
-  private currentKeyIndex = -1;
-  private nextKey1Index = -1;
-  private keys = keys;
-  private keysSharp = keysSharp;
   private initialized = false;
   /** Key ratings; replaced with a new object whenever they change so the piano updates. */
-  private readonly keysConfiguration = signal<KeysConfiguration>(new KeysConfiguration());
+  private readonly keysConfiguration = signal<KeyRatings>(defaultKeyRatings());
   /** When false, all keys come up equally often and the ratings are ignored. */
   readonly weightKeys = signal(true);
   /** The ratings laid out as one piano octave: black keys sit on the boundary after white key `pos`. */
@@ -183,12 +184,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }));
   });
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
-  private probabilityMap: { [key: number]: number } = {};
-  private probabilityCount = 0;
-  private cycle = 0;
-  private cycleKeys: string[] = [];
-  private nextChordTasks: Chord[] = [];
-  private readonly keyRegex = new RegExp(/^[A-H]+#?b?/);
+  /** Hands out the bars; it reads the current settings before every bar. */
+  private readonly sequence = new ChordSequence(this.sequenceOptions());
 
   private readonly host = inject(ElementRef<HTMLElement>);
 
@@ -306,8 +303,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.silentAudio.nativeElement.play().catch(() => {});
     this.audioFailed.set(false);
     this.isRunning.set(true);
-    this.cycle = 0;
-    this.cycleKeys = [];
+    // A new session starts with a new key, not with the rest of the last session's progression
+    this.sequence.reset();
 
     // Analytics is optional: blocked or not yet loaded, it must not break Start
     try {
@@ -330,8 +327,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.silentAudio.nativeElement.pause();
     this.toneService.stop();
 
-    this.currentKeyIndex = -1;
-    this.nextKey1Index = -1;
     this.currKey.set(null);
     this.nextKey1.set(null);
     this.chordCount.set(1);
@@ -390,7 +385,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     input.value = String(this.toneService.tempo());
   }
 
-  setMode(key: 'R' | 'WC' | number) {
+  setMode(key: KeyOrder) {
     if (key) {
       this.selectedMode.set(key);
       this.saveConfiguration();
@@ -399,20 +394,15 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   setExercise(name: string) {
     if (name) {
-      this.selectedExercise.set(
-        this.exercises.find((c) => c.name === name) ?? this.exercises[0],
-      );
+      this.selectedExercise.set(findExercise(name) ?? EXERCISES[0]);
       this.saveConfiguration();
     }
   }
 
   setCustomExercise(config: Event) {
-    const custom = this.exercises.find((e) => e.name === 'Custom');
-    if (custom) {
-      const customExercise = (<HTMLTextAreaElement>config.target).value;
-      custom.configuration = customExercise;
-      localStorage.setItem('customExercise', customExercise);
-    }
+    const customExercise = (<HTMLTextAreaElement>config.target).value;
+    this.customProgression.set(customExercise);
+    localStorage.setItem('customExercise', customExercise);
   }
 
   setPlayRootNote(value: boolean) {
@@ -422,7 +412,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   setWeightKeys(value: boolean) {
     this.weightKeys.set(value);
-    this.cycleKeys = [];
     this.saveConfiguration();
   }
 
@@ -452,173 +441,30 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.countingIn.set(this.nextKey1() === null);
     this.chordCount.set(this.nextChordCount());
     this.currKey.set(this.nextKey1() ?? '');
-    this.currentKeyIndex = this.nextKey1Index;
 
-    let nextChords: Chord[];
-    let nextKey1: string = '';
-
-    if (this.nextChordTasks.length) {
-      nextChords = this.nextChordTasks;
-      nextKey1 = nextChords[0].chord;
-    } else {
-      nextChords = this.getNextChords(this.currentKeyIndex);
-      nextKey1 = nextChords[0].chord;
-
-      while (nextKey1 === this.currKey()) {
-        nextChords = this.getNextChords(this.currentKeyIndex);
-        nextKey1 = nextChords[0].chord;
-      }
-    }
-
-    let nextKey1Index = nextChords[0].index;
-    nextKey1 = nextKey1.replace(/(\*)([0-9a-z()\#]+)(\*)/g, '<sup>$2</sup>');
-    const chords = nextKey1.split('-').map((chord) => chord.trim());
+    this.sequence.configure(this.sequenceOptions());
+    const bar = this.sequence.next();
 
     // Each chord stays whole; an en dash separates the chords of a bar (styled in styles.scss)
-    this.nextKey1.set(chords.map((chord) => `<span class="ch">${chord}</span>`).join('<span class="sep">–</span>'));
-    this.nextKey1Index = nextKey1Index;
+    this.nextKey1.set(
+      bar.chords.map((chord) => `<span class="ch">${chordToHtml(chord)}</span>`).join('<span class="sep">–</span>'),
+    );
+    this.nextChordCount.set(Math.max(1, bar.chords.length));
 
-    if (nextChords.length > 1) {
-      this.nextChordTasks = nextChords.slice(1);
-    } else {
-      this.nextChordTasks = [];
-    }
-
-    this.nextChordCount.set(chords.length);
-
-    if (chords.length === 1) {
-      const key = chords[0].match(this.keyRegex)?.[0] ?? '';
-      this.toneService.nextBarRoot = [key, key, key, key];
-      this.toneService.walking = false;
-    } else if (chords.length === 2) {
-      const key0 = chords[0].match(this.keyRegex)?.[0] ?? '';
-      const key1 = chords[1].match(this.keyRegex)?.[0] ?? '';
-      this.toneService.nextBarRoot = [key0, key0, key1, key1];
-      this.toneService.walking = false;
-    } else if (chords.length === 3) {
-      const key0 = chords[0].match(this.keyRegex)?.[0] ?? '';
-      const key1 = chords[1].match(this.keyRegex)?.[0] ?? '';
-      const key2 = chords[2].match(this.keyRegex)?.[0] ?? '';
-      this.toneService.nextBarRoot = [key0, key1, key2, key2];
-      this.toneService.walking = true;
-    } else if (chords.length === 4) {
-      const key0 = chords[0].match(this.keyRegex)?.[0] ?? '';
-      const key1 = chords[1].match(this.keyRegex)?.[0] ?? '';
-      const key2 = chords[2].match(this.keyRegex)?.[0] ?? '';
-      const key3 = chords[3].match(this.keyRegex)?.[0] ?? '';
-      this.toneService.nextBarRoot = [key0, key1, key2, key3];
-      this.toneService.walking = true;
-    } else {
-      this.toneService.nextBarRoot = ['empty', 'empty', 'empty', 'empty'];
-    }
+    const bass = bassLine(bar);
+    this.toneService.nextBarRoot = bass.roots;
+    this.toneService.walking = bass.walking;
   }
 
-  private getNextChords(currentKeyIndex: number): Chord[] {
-    let key = this.keys[currentKeyIndex];
-    let keyIndex = 0;
-
-    while (key === this.keys[currentKeyIndex]) {
-      if (this.selectedMode() === 'R') {
-        // Random mode
-        const probabilityIndex = Math.floor(
-          Math.random() * this.probabilityCount,
-        );
-        keyIndex = this.probabilityMap[probabilityIndex];
-      } else if (this.selectedMode() === 'WC') {
-        // Weighted Cycle mode
-        while (this.cycleKeys.length === 0) {
-          this.cycle++;
-          this.cycleKeys = this.keysConfiguration().keys
-            .filter((key) => this.cycle % this.keyWeight(key.rating) === 0)
-            .map((key) => key.key);
-        }
-
-        console.log('cycle', this.cycle, 'keys', this.cycleKeys);
-
-        const key =
-          this.cycleKeys[Math.floor(Math.random() * this.cycleKeys.length)];
-        if (key) {
-          keyIndex = this.keys.indexOf(key);
-          this.cycleKeys = this.cycleKeys.filter((k) => k !== key);
-        }
-        // TODO
-      } else {
-        // Interval modes: the mode key is the step in semitones, stored as a
-        // string ('5', '-5'), so convert it before doing arithmetic with it.
-        const mode = Number(this.selectedMode());
-        if (!Number.isInteger(mode) || mode % this.keys.length === 0) {
-          // An unusable step would never reach a new key; fall back to random.
-          this.selectedMode.set('R');
-          continue;
-        }
-
-        // Start on C: the first step lands on index 0.
-        const fromIndex = currentKeyIndex === -1 ? -mode : currentKeyIndex;
-        const length = this.keys.length;
-        keyIndex = (((fromIndex + mode) % length) + length) % length;
-      }
-
-      key = this.keys[keyIndex];
-    }
-
-    let keys = this.keys;
-    if (['G', 'D', 'A', 'E', 'B'].includes(this.keys[keyIndex])) {
-      keys = this.keysSharp;
-    }
-
-    let config = this.selectedExercise().configuration;
-    if (!Array.isArray(config)) {
-      config = config.split('||');
-    }
-
-    if (Array.isArray(config)) {
-      config = config[Math.floor(Math.random() * config.length)];
-    }
-
-    config = this.resolveNumerals(config, keyIndex, keys);
-
-    return config
-      .split('|')
-      .map((config) => ({ index: keyIndex, chord: config }));
-  }
-
-
-  /**
-   * Replaces the Roman numerals (I–VII, a trailing b lowers them a half step) with the note names
-   * of the key. Chord types between asterisks are kept as written, so 'dim' or 'sus' stay intact.
-   */
-  private resolveNumerals(config: string, keyIndex: number, keys: string[]): string {
-    return config
-      .split(/(\*[^*]*\*)/)
-      .map((part) =>
-        part.startsWith('*')
-          ? part
-          : // Longest numerals first, so VII is not read as V + II
-            part.replace(/(VII|VI|V|IV|III|II|I)(b?)/gi, (_, numeral: string, flat: string) => {
-              const step = degreeSteps[numeral.toUpperCase()] - (flat ? 1 : 0);
-              return keys[(keyIndex + step + 12) % 12];
-            }),
-      )
-      .join('');
-  }
-
-  /** Weighted cycle: a key with rating r appears every r-th cycle; unweighted: every cycle. */
-  private keyWeight(rating: number): number {
-    return this.weightKeys() ? rating : 1;
-  }
-
-  private updateProbabilityMap() {
-    this.probabilityMap = {};
-    this.probabilityCount = 0;
-
-    this.keysConfiguration().keys.forEach((key, index) => {
-      // Rating 1 (unfamiliar) gets 5 tickets, rating 5 gets 1; unweighted: 1 each
-      const tickets = this.weightKeys() ? 6 - key.rating : 1;
-      for (let i = 0; i < tickets; i++) {
-        this.probabilityMap[this.probabilityCount] = index;
-        this.probabilityCount++;
-      }
-    });
+  /** The settings the chord sequence uses for the next bar. */
+  private sequenceOptions(): ChordSequenceOptions {
+    const exercise = this.selectedExercise();
+    return {
+      progression: exercise.name === CUSTOM_EXERCISE ? this.customProgression() : exercise.progression,
+      keyOrder: this.selectedMode(),
+      keyRatings: this.keysConfiguration(),
+      weightKeys: this.weightKeys(),
+    };
   }
 
   private saveConfiguration() {
@@ -635,8 +481,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         'keysConfiguration',
         JSON.stringify(this.keysConfiguration()),
       );
-
-      this.updateProbabilityMap();
     }
   }
 
@@ -644,40 +488,18 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.toneService.setTempo(
       JSON.parse(localStorage.getItem('tempo') ?? '60'),
     );
-    this.setExercise(
-      localStorage.getItem('exercise') ?? this.exercises[0].name,
-    );
-    const storedMode = localStorage.getItem('mode');
-    this.setMode(
-      (this.modes.find((m) => m.key === storedMode)?.key ??
-        this.modes[0].key) as 'R' | 'WC' | number,
-    );
+    this.setExercise(localStorage.getItem('exercise') ?? EXERCISES[0].name);
+    const storedMode = localStorage.getItem('mode') ?? '';
+    this.setMode(isKeyOrder(storedMode) ? storedMode : KEY_ORDERS[0].key);
     this.toneService.playRootNote =
       localStorage.getItem('playRootNote') === 'true';
     this.weightKeys.set(localStorage.getItem('weightKeys') !== 'false');
 
-    let keysConfiguration = new KeysConfiguration();
-    const storedKeys = localStorage.getItem('keysConfiguration');
-    if (storedKeys) {
-      try {
-        const parsed: KeysConfiguration = JSON.parse(storedKeys);
-        if (parsed.keys?.length === this.keys.length) {
-          keysConfiguration = parsed;
-        }
-      } catch (error) {
-        // keep the default configuration
-      }
-    }
-    this.keysConfiguration.set(keysConfiguration);
+    this.keysConfiguration.set(parseKeyRatings(localStorage.getItem('keysConfiguration')));
 
     const customExercise = localStorage.getItem('customExercise');
     if (customExercise) {
-      const custom = this.exercises.find((e) => e.name === 'Custom');
-      if (custom) {
-        custom.configuration = customExercise;
-      }
+      this.customProgression.set(customExercise);
     }
-
-    this.updateProbabilityMap();
   }
 }

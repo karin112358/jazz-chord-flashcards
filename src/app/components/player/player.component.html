@@ -92,7 +92,7 @@
     @if (selectedExercise().name === 'Custom') {
     <mat-form-field class="custom-progression">
       <mat-label>Custom progression</mat-label>
-      <textarea matInput [value]="selectedExercise().configuration" (change)="setCustomExercise($event)"
+      <textarea matInput [value]="customProgression()" (change)="setCustomExercise($event)"
         [rows]="3" aria-describedby="custom-progression-help"></textarea>
     </mat-form-field>
     <p id="custom-progression-help" class="field-help">

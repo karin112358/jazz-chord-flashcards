@@ -7,7 +7,7 @@ import {
 } from '@angular/material/dialog';
 import { MatDialogActions } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { KeysConfiguration } from 'src/app/model/keys-configuration';
+import type { KeyRatings, Rating } from 'src/app/chord-engine';
 
 @Component({
   selector: 'app-keys-dialog',
@@ -18,7 +18,7 @@ import { KeysConfiguration } from 'src/app/model/keys-configuration';
 })
 export class KeysDialogComponent {
   readonly dialogRef = inject(MatDialogRef<KeysDialogComponent>);
-  readonly data = inject<{ keysConfiguration: KeysConfiguration }>(
+  readonly data = inject<{ keysConfiguration: KeyRatings }>(
     MAT_DIALOG_DATA,
   );
 
@@ -28,7 +28,7 @@ export class KeysDialogComponent {
     this.dialogRef.close();
   }
 
-  setKeyRating(key: string, rating: 1 | 2 | 3 | 4 | 5): void {
+  setKeyRating(key: string, rating: Rating): void {
     this.data.keysConfiguration.keys.find((k) => k.key === key)!.rating =
       rating;
   }

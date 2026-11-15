@@ -5,7 +5,8 @@ import * as Tone from 'tone';
   providedIn: 'root',
 })
 export class ToneService {
-  nextBarRoot: string[] = ['empty', 'empty', 'empty', 'empty'];
+  /** The bass note for each beat of the next bar; null means no note. */
+  nextBarRoot: (string | null)[] = [null, null, null, null];
   playRootNote: boolean = true;
   walking = false;
   readonly beat: WritableSignal<number> = signal(-1);
@@ -15,7 +16,7 @@ export class ToneService {
   // there is no Web Audio, and creating them there would break the server render.
   private synth: Tone.MonoSynth | null = null;
   private drumStickPlayer: Tone.Player | null = null;
-  private currentBarRoot: string[] = ['empty', 'empty', 'empty', 'empty'];
+  private currentBarRoot: (string | null)[] = [null, null, null, null];
 
   /** The audio setup of the first start; reset when it fails, so the next start tries again. */
   private initialized: Promise<void> | null = null;
@@ -25,7 +26,7 @@ export class ToneService {
   /** Starts the transport once the audio is ready. Rejects when the audio cannot be set up. */
   async start(): Promise<void> {
     const request = ++this.request;
-    this.nextBarRoot = ['empty', 'empty', 'empty', 'empty'];
+    this.nextBarRoot = [null, null, null, null];
     this.initialized ??= this.init().catch((error) => {
       this.initialized = null;
       throw error;
@@ -96,13 +97,9 @@ export class ToneService {
       this.currentBarRoot = this.nextBarRoot;
     }
 
-    if (
-      this.playRootNote &&
-      this.currentBarRoot[0] !== 'empty' &&
-      (beat % 4 === 0 || beat % 4 === 2 || this.walking)
-    ) {
+    const root = this.currentBarRoot[beat % 4];
+    if (this.playRootNote && root && (beat % 4 === 0 || beat % 4 === 2 || this.walking)) {
       const now = Tone.now();
-      const root = this.currentBarRoot[beat % 4];
 
       // get right octave
       let note = root + '2';
