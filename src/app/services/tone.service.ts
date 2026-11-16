@@ -5,7 +5,8 @@ import * as Tone from 'tone';
   providedIn: 'root',
 })
 export class ToneService {
-  nextBarRoot: string[] = ['empty', 'empty', 'empty', 'empty'];
+  /** The bass note for each beat of the next bar; null means no note. */
+  nextBarRoot: (string | null)[] = [null, null, null, null];
   playRootNote: boolean = true;
   walking = false;
   readonly beat: WritableSignal<number> = signal(-1);
@@ -15,17 +16,22 @@ export class ToneService {
   // there is no Web Audio, and creating them there would break the server render.
   private synth: Tone.MonoSynth | null = null;
   private drumStickPlayer: Tone.Player | null = null;
-  private currentBarRoot: string[] = ['empty', 'empty', 'empty', 'empty'];
+  private currentBarRoot: (string | null)[] = [null, null, null, null];
 
   /** The audio setup of the first start; reset when it fails, so the next start tries again. */
   private initialized: Promise<void> | null = null;
   /** Counts starts and stops, so a start that is still loading knows when it was cancelled. */
   private request = 0;
+  /**
+   * True between start and stop. Tone.js schedules beats a little ahead, so one can still arrive
+   * right after stop; it must not count, or the next start would skip its first bar change.
+   */
+  private running = false;
 
   /** Starts the transport once the audio is ready. Rejects when the audio cannot be set up. */
   async start(): Promise<void> {
     const request = ++this.request;
-    this.nextBarRoot = ['empty', 'empty', 'empty', 'empty'];
+    this.nextBarRoot = [null, null, null, null];
     this.initialized ??= this.init().catch((error) => {
       this.initialized = null;
       throw error;
@@ -36,11 +42,13 @@ export class ToneService {
     if (request !== this.request) {
       return;
     }
+    this.running = true;
     Tone.getTransport().start();
   }
 
   stop() {
     this.request++;
+    this.running = false;
     if (this.synth) {
       Tone.getTransport().stop();
     }
@@ -87,7 +95,7 @@ export class ToneService {
   }
 
   private onBeat() {
-    if (!this.synth) {
+    if (!this.synth || !this.running) {
       return;
     }
     const beat = parseInt(Tone.getTransport().position.toString().split(':')[1]);
@@ -96,13 +104,9 @@ export class ToneService {
       this.currentBarRoot = this.nextBarRoot;
     }
 
-    if (
-      this.playRootNote &&
-      this.currentBarRoot[0] !== 'empty' &&
-      (beat % 4 === 0 || beat % 4 === 2 || this.walking)
-    ) {
+    const root = this.currentBarRoot[beat % 4];
+    if (this.playRootNote && root && (beat % 4 === 0 || beat % 4 === 2 || this.walking)) {
       const now = Tone.now();
-      const root = this.currentBarRoot[beat % 4];
 
       // get right octave
       let note = root + '2';

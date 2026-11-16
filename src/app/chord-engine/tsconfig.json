@@ -1,0 +1,17 @@
+{
+  // The engine's own settings: what Node.js needs to run it directly, and strict enough for the
+  // projects that import it. The Angular build uses its own tsconfig files and ignores this one.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["*.ts"]
+}
